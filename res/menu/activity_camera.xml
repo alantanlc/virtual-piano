@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    
+    <item
+        android:id="@+id/menu_detect_piano"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_detect_piano" />
+    
+    <item
+        android:id="@+id/menu_detect_skin"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_detect_skin" />
+    
+    <item
+        android:id="@+id/menu_play"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_play" />
+    
+    <item
+        android:id="@+id/menu_next_camera"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_next_camera" />
+
+</menu>
