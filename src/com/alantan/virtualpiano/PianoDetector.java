@@ -19,9 +19,12 @@ public class PianoDetector implements Detector {
 	
 	private final static String TAG = PianoDetector.class.getSimpleName();
 	
-	private final Mat hsvMat = new Mat();
+	private final Mat mHSVMat = new Mat();
 	private final Mat mMaskMat = new Mat();
 	private final Mat mDilatedMat = new Mat();
+	
+	private final Scalar lowerThreshold = new Scalar(0, 0, 100);
+	private final Scalar upperThreshold = new Scalar(179, 255, 255);
 	
 	// The color of the outline drawn around the detected image.
 	private final Scalar mLineColorRed = new Scalar(255, 0, 0);
@@ -30,35 +33,33 @@ public class PianoDetector implements Detector {
 	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-		List<MatOfPoint> pianoKeyContours = new ArrayList<MatOfPoint>();
+		List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
+		List<MatOfPoint> mPianoKeyContours = new ArrayList<MatOfPoint>();
 		
 		// 1. Color Space Conversion
 		// Convert the image to HSV
-		Imgproc.cvtColor(src, hsvMat, Imgproc.COLOR_RGB2HSV);
+		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2HSV);
 		
 		// 2. Image Processing
 		// Preprocess image to select all pixels within white color range
 		// using OpenCV's InRange function
-		Scalar lowerThreshold = new Scalar(0, 0, 100);
-		Scalar upperThreshold = new Scalar(179, 255, 255);
-		Core.inRange(hsvMat, lowerThreshold, upperThreshold, mMaskMat);
+		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
 		
 		// 3. Perform morphological operations
 		// Dilation, helps in removing noise in the mask.
 		Imgproc.dilate(mMaskMat, mDilatedMat, new Mat());
 		
-		// 4. Finding contours
-		Imgproc.findContours(mDilatedMat, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+		// 4. Find contours
+		Imgproc.findContours(mDilatedMat, mContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 		
 		// 5. Reduce number of points for each contours
 		// and store potential piano key contours in a separate ArrayList
 		MatOfPoint2f approxCurve = new MatOfPoint2f();
-		for(int i=0; i<contours.size(); i++) {
-			if(Imgproc.contourArea(contours.get(i)) > 10000
-					&& Imgproc.contourArea(contours.get(i)) < 200000) {
+		for(int i=0; i<mContours.size(); i++) {
+			if(Imgproc.contourArea(mContours.get(i)) > 10000
+					&& Imgproc.contourArea(mContours.get(i)) < 200000) {
 				// Convert contour(i) from MatOfPoint to MatOfPoint2f
-				MatOfPoint2f contour2f = new MatOfPoint2f(contours.get(i).toArray());
+				MatOfPoint2f contour2f = new MatOfPoint2f(mContours.get(i).toArray());
 				
 				// Processing on mMOP2f1 which is in type MatOfPoint2f
 				// The function approxPolyDP approximates a curve or a polygon to another curve/polygon 
@@ -73,7 +74,7 @@ public class PianoDetector implements Detector {
 				// If point size between 6 and 8, assume that it is a piano key contour
 				// and add to pianoKeyContours list
 				if(points.rows() >= 6 && points.rows() <= 8) {
-					pianoKeyContours.add(points);
+					mPianoKeyContours.add(points);
 				}
 				
 				//Log.i(TAG, "Coordinates: " + contours.get(i).toArray()[0].toString());
@@ -83,7 +84,7 @@ public class PianoDetector implements Detector {
 		// Log.i("ContourDetectionFilter", "Piano Key Contour Size: " + Integer.toString(pianoKeyContours.size()));
 		
 		// If no contours, just return
-		if(pianoKeyContours.size() == 0) {
+		if(mPianoKeyContours.size() == 0) {
 			return;
 		}
 		
@@ -97,12 +98,13 @@ public class PianoDetector implements Detector {
 		MatOfPoint pianoKeyContourPointsMOP = new MatOfPoint();
 		MatOfInt hull = new MatOfInt();
 		
-		for(int i=0; i<pianoKeyContours.size(); i++) {
-			pianoKeyContourPointsList.addAll(pianoKeyContours.get(i).toList());
+		for(int i=0; i<mPianoKeyContours.size(); i++) {
+			pianoKeyContourPointsList.addAll(mPianoKeyContours.get(i).toList());
 		}
 		
 		pianoKeyContourPointsMOP.fromList(pianoKeyContourPointsList);
 		Imgproc.convexHull(pianoKeyContourPointsMOP, hull, true);	//Imgproc.convexHull(MatOfPoints points, MatOfInt hull);
+		
 		//Log.i(TAG, "Convex Hull Rows:" + Integer.toString(hull.rows()));
 		
 		// Hull contains the indices of the points in pianoKeyContours which comprise a convex hull

@@ -295,12 +295,12 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		final Mat rgba = inputFrame.rgba();
 		
 		if(mIsPianoDetection) {
-			Log.i(TAG, "Applying piano detection");
+			//Log.i(TAG, "Applying piano detection");
 			mPianoDetector.apply(rgba, rgba);
 		}
 		
 		if(mIsFingersDetection) {
-			Log.i(TAG, "Applying skin detection");
+			//Log.i(TAG, "Applying skin detection");
 			mFingersDetector.apply(rgba, rgba);
 		}
 		
