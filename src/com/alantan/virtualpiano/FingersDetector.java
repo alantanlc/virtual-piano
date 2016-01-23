@@ -7,6 +7,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -44,6 +45,7 @@ public class FingersDetector implements Detector {
 		
 		// 5. If no contours, return
 		if(mContours.size() == 0) {
+			Log.i(TAG, "No contours found");
 			return;
 		}
 		
@@ -54,6 +56,7 @@ public class FingersDetector implements Detector {
 		// 6b. If hand area is smaller than specific number,
 		// assume contour is not a hand and return (i.e, no hand exists in frame)
 		if(largestContourIndex == -1) {
+			Log.i(TAG, "No hand detected");
 			return;
 		}
 		
@@ -94,6 +97,26 @@ public class FingersDetector implements Detector {
 		
 		// 11. Draw hull contours
 		Imgproc.drawContours(dst, hullContours, 0, new Scalar(0, 255, 0), 2);
+		
+		MatOfInt4 mConvexityDefectsMatOfInt4 = new MatOfInt4();
+		
+		Imgproc.convexityDefects(mHandContours.get(0), hull, mConvexityDefectsMatOfInt4);
+		
+		if(!mConvexityDefectsMatOfInt4.empty()) {
+			List<Integer> cdList = mConvexityDefectsMatOfInt4.toList();
+			Point data[] = mHandContours.get(0).toArray();
+			
+			for(int i=0; i<cdList.size(); i+=4) {
+				Point start = data[cdList.get(i)];
+				Point end = data[cdList.get(i+1)];
+				Point defect = data[cdList.get(i+2)];
+		        //Point depth = data[cdList.get(j+3)];
+
+		        Imgproc.circle(dst, start, 5, new Scalar(0, 255, 0), 2);
+		        Imgproc.circle(dst, end, 5, new Scalar(0, 255, 0), 2);
+		        Imgproc.circle(dst, defect, 5, new Scalar(0, 255, 0), 2);
+			}
+		}
 	}
 	
 	private int findLargestContour(List<MatOfPoint> contours) {
@@ -101,7 +124,7 @@ public class FingersDetector implements Detector {
 		double maxArea = -1;
 		
 		for(int i=0; i<contours.size(); i++) {
-			if(Imgproc.contourArea(contours.get(i)) > maxArea) {
+			if(Imgproc.contourArea(contours.get(i)) > maxArea && Imgproc.contourArea(contours.get(i)) > 25000) {
 				index = i;
 			}
 		}
