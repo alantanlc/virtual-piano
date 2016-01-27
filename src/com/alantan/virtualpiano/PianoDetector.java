@@ -56,8 +56,10 @@ public class PianoDetector implements Detector {
 		// and store potential piano key contours in a separate ArrayList
 		MatOfPoint2f approxCurve = new MatOfPoint2f();
 		for(int i=0; i<mContours.size(); i++) {
-			if(Imgproc.contourArea(mContours.get(i)) > 10000
-					&& Imgproc.contourArea(mContours.get(i)) < 200000) {
+			//if(Imgproc.contourArea(mContours.get(i)) > 10000
+				//&& Imgproc.contourArea(mContours.get(i)) < 200000) {
+			if(Imgproc.contourArea(mContours.get(i)) > 1000
+					&& Imgproc.contourArea(mContours.get(i)) < 10000) {
 				// Convert contour(i) from MatOfPoint to MatOfPoint2f
 				MatOfPoint2f contour2f = new MatOfPoint2f(mContours.get(i).toArray());
 				

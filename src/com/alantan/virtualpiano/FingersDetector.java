@@ -89,6 +89,10 @@ public class FingersDetector implements Detector {
 			int index = (int) hull.get(i, 0)[0];
 			double[] point = new double[] { handContourMOP.get(index, 0)[0], handContourMOP.get(index, 0)[1] };
 			mopOut.put(i, 0, point);
+			
+			Point x = new Point(point[0], point[1]);
+			Imgproc.circle(dst, x, 5, Colors.mLineColorRed, 4);
+			
 			//Log.i(TAG, "Point " + i + ": " + point[0] + ", " + point[1]);
 		}
 		
@@ -96,7 +100,7 @@ public class FingersDetector implements Detector {
 		hullContours.add(mopOut);
 		
 		// 11. Draw hull contours
-		Imgproc.drawContours(dst, hullContours, 0, new Scalar(0, 255, 0), 2);
+		Imgproc.drawContours(dst, hullContours, 0, Colors.mLineColorGreen, 2);
 		
 		// 12. Find convexity defects
 		MatOfInt4 mConvexityDefectsMatOfInt4 = new MatOfInt4();
@@ -121,10 +125,9 @@ public class FingersDetector implements Detector {
 				Point start = data[cdList.get(i)];
 				Point end = data[cdList.get(i+1)];
 				Point defect = data[cdList.get(i+2)];
-				
-				Imgproc.circle(dst, start, 5, Colors.mLineColorRed, 4);
+				//Imgproc.circle(dst, start, 5, Colors.mLineColorRed, 4);
 				//Imgproc.circle(dst, end, 10, Colors.mLineColorBlue, 4);
-		        Imgproc.circle(dst, defect, 5, Colors.mLineColorGreen, 4);
+		       // Imgproc.circle(dst, defect, 5, Colors.mLineColorGreen, 4);
 				
 				// Filter out convexity defects that are not relevant
 				// The properties determining whether a convexity defect is to be dismissed
