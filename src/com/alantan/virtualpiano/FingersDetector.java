@@ -98,9 +98,20 @@ public class FingersDetector implements Detector {
 		// 11. Draw hull contours
 		Imgproc.drawContours(dst, hullContours, 0, new Scalar(0, 255, 0), 2);
 		
+		// 12. Find convexity defects
 		MatOfInt4 mConvexityDefectsMatOfInt4 = new MatOfInt4();
-		
 		Imgproc.convexityDefects(mHandContours.get(0), hull, mConvexityDefectsMatOfInt4);
+		
+		/* 
+		 * Imgproc.convexityDefects finds all convexity defects of the input contour
+		 * returns a sequence of CvConvexityDefect structures defined as:
+		 * 
+		 * Point start (point of the contour where the defect begins)
+		 * Point end (point of the contour where the defect ends)
+		 * Point defect (farthest from the convex hull point within the defect)
+		 * float depth (distance between the farthest point and the convex hull)
+		 * 
+		 */
 		
 		if(!mConvexityDefectsMatOfInt4.empty()) {
 			List<Integer> cdList = mConvexityDefectsMatOfInt4.toList();
@@ -110,11 +121,19 @@ public class FingersDetector implements Detector {
 				Point start = data[cdList.get(i)];
 				Point end = data[cdList.get(i+1)];
 				Point defect = data[cdList.get(i+2)];
-		        //Point depth = data[cdList.get(j+3)];
-
-		        Imgproc.circle(dst, start, 5, new Scalar(0, 255, 0), 2);
-		        Imgproc.circle(dst, end, 5, new Scalar(0, 255, 0), 2);
-		        Imgproc.circle(dst, defect, 5, new Scalar(0, 255, 0), 2);
+				
+				Imgproc.circle(dst, start, 5, Colors.mLineColorRed, 4);
+				//Imgproc.circle(dst, end, 10, Colors.mLineColorBlue, 4);
+		        Imgproc.circle(dst, defect, 5, Colors.mLineColorGreen, 4);
+				
+				// Filter out convexity defects that are not relevant
+				// The properties determining whether a convexity defect is to be dismissed
+				// is the angle between the lines from the defect to the neighbouring
+				// convex polygon vertices.
+				
+				// The defect is dismissed if:
+				// length < 0.4lbb
+				// angle > 80 degrees
 			}
 		}
 	}
