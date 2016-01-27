@@ -7,6 +7,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -71,10 +72,26 @@ public class FingerDetector implements Detector {
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
-		// Draw contour
+		// 11. Get convexity defects
+		MatOfInt4 convDefMOI4 = new MatOfInt4();
+		Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
+		
+		// Draw contours
 		Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
 		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
+	
+		// Draw convexity defect points
+		if(!convDefMOI4.empty()) {
+			List<Integer> cdList = convDefMOI4.toList();
+			
+			Point data[] = reducedHandContours.get(0).toArray();
+			
+			for(int i=0; i<cdList.size(); i+=4) {
+				Point defect = data[cdList.get(i+2)];
+				Imgproc.circle(dst, defect, 10, Colors.mLineColorPurple, 2);
+			}
+		}
 	}
 	
 	private void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
