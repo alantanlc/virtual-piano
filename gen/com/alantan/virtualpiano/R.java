@@ -2080,8 +2080,10 @@ containing a value of this type.
         public static final int media_actions=0x7f090056;
         public static final int menu_detect_piano=0x7f090060;
         public static final int menu_detect_skin=0x7f090061;
-        public static final int menu_next_camera=0x7f090063;
-        public static final int menu_play=0x7f090062;
+        public static final int menu_dilation=0x7f090062;
+        public static final int menu_erosion=0x7f090063;
+        public static final int menu_next_camera=0x7f090065;
+        public static final int menu_play=0x7f090064;
         public static final int middle=0x7f090023;
         public static final int multiply=0x7f090017;
         public static final int never=0x7f09001f;
@@ -2279,9 +2281,11 @@ containing a value of this type.
         public static final int edit=0x7f0a0016;
         public static final int menu_detect_piano=0x7f0a0022;
         public static final int menu_detect_skin=0x7f0a0023;
+        public static final int menu_dilation=0x7f0a0024;
+        public static final int menu_erosion=0x7f0a0025;
         public static final int menu_image_size=0x7f0a0019;
         public static final int menu_next_camera=0x7f0a0017;
-        public static final int menu_play=0x7f0a0024;
+        public static final int menu_play=0x7f0a0026;
         public static final int menu_take_photo=0x7f0a0018;
         public static final int photo_delete_prompt_message=0x7f0a001a;
         public static final int photo_delete_prompt_title=0x7f0a001b;

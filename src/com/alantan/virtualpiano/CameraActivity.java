@@ -88,14 +88,20 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	// PianoDetector
 	private PianoDetector mPianoDetector;
 	
-	// FingersDetector
-	private FingersDetector mFingersDetector;
+	// FingerDetector
+	private FingerDetector mFingerDetector;
 	
 	// Whether piano detection should be applied
 	private boolean mIsPianoDetection;
 	
 	// Whether skin detection should be applied
 	private boolean mIsFingersDetection;
+	
+	// Whether dilation should be applied
+	private boolean mIsDilation;
+	
+	// Whether erosion should be applied
+	private boolean mIsErosion;
 		
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -107,7 +113,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				mCameraView.enableView();
 				mBgr = new Mat();
 				mPianoDetector = new PianoDetector();
-				mFingersDetector = new FingersDetector();
+				mFingerDetector = new FingerDetector();
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -276,6 +282,12 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mCameraIndex = (mCameraIndex + 1) % mNumCameras;
 			recreate();
 			return true;
+		case R.id.menu_dilation:
+			mIsDilation = !mIsDilation;
+			return true;
+		case R.id.menu_erosion:
+			mIsErosion = !mIsErosion;
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -302,7 +314,15 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		if(mIsFingersDetection) {
 			//Log.i(TAG, "Applying skin detection");
-			mFingersDetector.apply(rgba, rgba);
+			mFingerDetector.apply(rgba, rgba);
+		}
+		
+		if(mIsDilation) {
+			Imgproc.dilate(rgba, rgba, new Mat());
+		}
+		
+		if(mIsErosion) {
+			Imgproc.erode(rgba, rgba, new Mat());
 		}
 		
 		// Flip image if using front facing camera
