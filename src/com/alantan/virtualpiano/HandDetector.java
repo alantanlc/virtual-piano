@@ -16,9 +16,9 @@ import org.opencv.imgproc.Imgproc;
 
 import android.util.Log;
 
-public class FingerDetector implements Detector {
+public class HandDetector implements Detector {
 	
-	private final static String TAG = FingerDetector.class.getSimpleName();
+	private final static String TAG = HandDetector.class.getSimpleName();
 
 	private final int lowerHue = 3;
 	private final int upperHue = 33;

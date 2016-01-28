@@ -89,7 +89,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private PianoDetector mPianoDetector;
 	
 	// FingerDetector
-	private FingerDetector mFingerDetector;
+	private HandDetector mHandDetector;
 	
 	// Whether piano detection should be applied
 	private boolean mIsPianoDetection;
@@ -113,7 +113,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				mCameraView.enableView();
 				mBgr = new Mat();
 				mPianoDetector = new PianoDetector();
-				mFingerDetector = new FingerDetector();
+				mHandDetector = new HandDetector();
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -314,7 +314,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		if(mIsFingersDetection) {
 			//Log.i(TAG, "Applying skin detection");
-			mFingerDetector.apply(rgba, rgba);
+			mHandDetector.apply(rgba, rgba);
 		}
 		
 		if(mIsDilation) {
