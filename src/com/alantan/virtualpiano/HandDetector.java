@@ -64,6 +64,8 @@ public class HandDetector implements Detector {
 		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
 		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
+		Log.i(TAG, Double.toString(Imgproc.contourArea(reducedHandContours.get(0))));
+		
 		// 9. Get convex hull of hand
 		MatOfInt hullMOI = new MatOfInt();
 		hullMOI = getConvexHull(reducedHandContours.get(0));
@@ -102,11 +104,12 @@ public class HandDetector implements Detector {
 	
 	private int findLargestContourIndex(List<MatOfPoint> contours) {
 		int index = -1;
-		double maxArea = -1;
+		double maxArea = 0;
 		
 		for(int i=0; i<contours.size(); i++) {
 			if(Imgproc.contourArea(contours.get(i)) > maxArea && Imgproc.contourArea(contours.get(i)) > 25000) {
 				index = i;
+				maxArea = Imgproc.contourArea(contours.get(i));
 			}
 		}
 		
