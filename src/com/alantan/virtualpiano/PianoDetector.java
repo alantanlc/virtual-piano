@@ -26,77 +26,56 @@ public class PianoDetector implements Detector {
 	private final Scalar lowerThreshold = new Scalar(0, 0, 100);
 	private final Scalar upperThreshold = new Scalar(179, 255, 255);
 	
-	// The color of the outline drawn around the detected image.
-	private final Scalar mLineColorRed = new Scalar(255, 0, 0);
-	private final Scalar mLineColorGreen = new Scalar(0, 255, 0);
-	private final Scalar mLineColorBlue = new Scalar(0, 0, 255);
+	private final int keySizeLower = 1000;
+	private final int keySizeUpper = 20000;
 	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
 		List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
 		List<MatOfPoint> mPianoKeyContours = new ArrayList<MatOfPoint>();
 		
-		// 1. Color Space Conversion
-		// Convert the image to HSV
+		// 1. Convert the image to HSV color space
 		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2HSV);
 		
-		// 2. Image Processing
-		// Preprocess image to select all pixels within white color range
-		// using OpenCV's InRange function
+		// 2. Apply threshold to detect white piano keys
 		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
 		
-		// 3. Perform morphological operations
-		// Dilation, helps in removing noise in the mask.
-		Imgproc.dilate(mMaskMat, mDilatedMat, new Mat());
+		// 3. Perform dilation, helps in removing noise in the mask.
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		
+		// 4. Perform erosion
+		Imgproc.erode(mMaskMat, mMaskMat, new Mat());
+		Imgproc.erode(mMaskMat, mDilatedMat, new Mat());
 		
 		// 4. Find contours
 		Imgproc.findContours(mDilatedMat, mContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 		
-		// 5. Reduce number of points for each contours
-		// and store potential piano key contours in a separate ArrayList
-		MatOfPoint2f approxCurve = new MatOfPoint2f();
-		for(int i=0; i<mContours.size(); i++) {
-			//if(Imgproc.contourArea(mContours.get(i)) > 10000
-				//&& Imgproc.contourArea(mContours.get(i)) < 200000) {
-			if(Imgproc.contourArea(mContours.get(i)) > 1000
-					&& Imgproc.contourArea(mContours.get(i)) < 10000) {
-				// Convert contour(i) from MatOfPoint to MatOfPoint2f
-				MatOfPoint2f contour2f = new MatOfPoint2f(mContours.get(i).toArray());
-				
-				// Processing on mMOP2f1 which is in type MatOfPoint2f
-				// The function approxPolyDP approximates a curve or a polygon to another curve/polygon 
-				// with less vertices so that the distance between them is less than or equal to the specified precision.
-				// It uses the Douglas-Peucker algorithm
-				double approxDistance = Imgproc.arcLength(contour2f, true) * 0.01;	// arclength returns perimeter
-				Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-				
-				// Convert back to MatOfPoint
-				MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-				
-				// If point size between 6 and 8, assume that it is a piano key contour
-				// and add to pianoKeyContours list
-				if(points.rows() >= 6 && points.rows() <= 8) {
-					mPianoKeyContours.add(points);
-				}
-				
-				//Log.i(TAG, "Coordinates: " + contours.get(i).toArray()[0].toString());
-			}
+		// 5. If no contours detected, return.
+		if(mContours.size() == 0) {
+			Log.i(TAG, "No contours found!");
+			return;
 		}
 		
-		// Log.i("ContourDetectionFilter", "Piano Key Contour Size: " + Integer.toString(pianoKeyContours.size()));
+		// 7. Get contours that are within certain contour size range
+		mPianoKeyContours = getContoursBySizeRange(mContours, keySizeLower, keySizeUpper);
 		
-		// If no contours, just return
+		// 8. Reduce number of points of each contour using DP algorithm
+		for(int i=0; i<mPianoKeyContours.size(); i++) {
+			mPianoKeyContours.set(i, reduceContourPoints(mPianoKeyContours.get(i)));
+		}
+		
+		// 9. Eliminate contours that have less than 6 points or more than 8 points
+		
+		// 10. If no contours, just return
 		if(mPianoKeyContours.size() == 0) {
 			return;
 		}
 		
-		// 6. Draw piano key contours
-		/*for(int i=0; i<pianoKeyContours.size(); i++) {
-			Imgproc.drawContours(dst, pianoKeyContours, i, new Scalar(0), -1);
-		}*/
+		// 11. Draw piano key contours
+		drawAllContours(dst, mPianoKeyContours);
 		
 		// 7. Find piano mask using Convex Hull
-		List<Point> pianoKeyContourPointsList = new ArrayList<Point>();
+		/*List<Point> pianoKeyContourPointsList = new ArrayList<Point>();
 		MatOfPoint pianoKeyContourPointsMOP = new MatOfPoint();
 		MatOfInt hull = new MatOfInt();
 		
@@ -105,7 +84,7 @@ public class PianoDetector implements Detector {
 		}
 		
 		pianoKeyContourPointsMOP.fromList(pianoKeyContourPointsList);
-		Imgproc.convexHull(pianoKeyContourPointsMOP, hull, true);	//Imgproc.convexHull(MatOfPoints points, MatOfInt hull);
+		Imgproc.convexHull(pianoKeyContourPointsMOP, hull, true);*/	//Imgproc.convexHull(MatOfPoints points, MatOfInt hull);
 		
 		//Log.i(TAG, "Convex Hull Rows:" + Integer.toString(hull.rows()));
 		
@@ -114,29 +93,58 @@ public class PianoDetector implements Detector {
 		// populate a new MatOfPoint containing only the points on the convex hull,
 		// and pass that to drawContours
 		
-		MatOfPoint mopOut = new MatOfPoint();
-		mopOut.create((int) hull.size().height, 1, CvType.CV_32SC2);
+		/*MatOfPoint mopOut = new MatOfPoint();
+		mopOut.create((int) hull.size().height, 1, CvType.CV_32SC2);*/
 		
-		for(int i=0; i<hull.size().height; i++) {
+		/*for(int i=0; i<hull.size().height; i++) {
 			int index = (int) hull.get(i, 0)[0];
 			double[] point = new double[] { pianoKeyContourPointsMOP.get(index, 0)[0], pianoKeyContourPointsMOP.get(index, 0)[1] };
 			mopOut.put(i, 0, point);
-			//Log.i(TAG, "Point " + i + ": " + point[0] + ", " + point[1]);
+			Log.i(TAG, "Point " + i + ": " + point[0] + ", " + point[1]);
 		}
 		
 		List<MatOfPoint> hullMOPList = new ArrayList<MatOfPoint>();
 		hullMOPList.add(mopOut);
 		
 		Mat hullMaskMat = new Mat(dst.size(), dst.type(), new Scalar(0));
-		Imgproc.drawContours(hullMaskMat, hullMOPList, 0, new Scalar(255, 255, 255), -1);
+		Imgproc.drawContours(hullMaskMat, hullMOPList, 0, new Scalar(255, 255, 255), -1);*/
 		
 		// 9. Apply mask to binary reference image.
-		dst.copyTo(hullMaskMat, hullMaskMat);
-		hullMaskMat.copyTo(dst);
+		/*dst.copyTo(hullMaskMat, hullMaskMat);
+		hullMaskMat.copyTo(dst);*/
 		
 		// 10. Invert masked image and detect black keys
+	}
+	
+	private void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
+		for(int i=0; i<contours.size(); i++) {
+			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, -1);
+		}
+	}
+	
+	private List<MatOfPoint> getContoursBySizeRange(List<MatOfPoint> contours, int lower, int upper) {
+		List<MatOfPoint> newContours = new ArrayList<MatOfPoint>();
 		
-		//pianoKeyContours.clear();
-		//contours.clear();
+		for(int i=0; i<contours.size(); i++) {
+			//Log.i(TAG, Double.toString(Imgproc.contourArea(contours.get(i))));
+			if(Imgproc.contourArea(contours.get(i)) >= lower && Imgproc.contourArea(contours.get(i)) <= upper) {
+				newContours.add(contours.get(i));
+			}
+		}
+		
+		return newContours;
+	}
+	
+	private MatOfPoint reduceContourPoints(MatOfPoint contours) {
+		MatOfPoint2f approxCurve = new MatOfPoint2f();
+		MatOfPoint2f contour2f = new MatOfPoint2f(contours.toArray());
+		
+		double approxDistance = Imgproc.arcLength(contour2f, true) * 0.01;
+		
+		Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
+		
+		MatOfPoint points = new MatOfPoint(approxCurve.toArray());
+		
+		return points;
 	}
 }
