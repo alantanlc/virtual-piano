@@ -27,7 +27,7 @@ public class Detector {
 		double maxArea = 0;
 		
 		for(int i=0; i<contours.size(); i++) {
-			if(Imgproc.contourArea(contours.get(i)) > maxArea && Imgproc.contourArea(contours.get(i)) > 25000) {
+			if(Imgproc.contourArea(contours.get(i)) > maxArea) {
 				index = i;
 				maxArea = Imgproc.contourArea(contours.get(i));
 			}

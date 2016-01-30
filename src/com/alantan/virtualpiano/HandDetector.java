@@ -20,11 +20,16 @@ public class HandDetector extends Detector {
 	
 	private final static String TAG = HandDetector.class.getSimpleName();
 
+	private final int handArea = 15000;
+	
 	private final int lowerHue = 3;
 	private final int upperHue = 33;
+	
 	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 50);
 	private final Scalar upperThreshold = new Scalar(upperHue, 255, 255);
+	
 	private final Mat mMat = new Mat();
+	
 	private List<MatOfPoint> contoursOut = new ArrayList<MatOfPoint>();
 	
 	@Override
@@ -56,7 +61,7 @@ public class HandDetector extends Detector {
 		int largestContourIndex = findLargestContourIndex(contours);
 		
 		// 7. If index equals -1, return
-		if(largestContourIndex == -1) {
+		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
 			Log.i(TAG, "No hand detected");
 			return;
 		};
@@ -83,7 +88,7 @@ public class HandDetector extends Detector {
 		Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
 		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
-	
+		
 		// Draw convexity defect points
 		if(!convDefMOI4.empty()) {
 			List<Integer> cdList = convDefMOI4.toList();
@@ -96,10 +101,31 @@ public class HandDetector extends Detector {
 			}
 		}
 		
+		// Draw lowest point
+		Imgproc.circle(dst, getLowestPoint(reducedHandContours.get(0)), 10, Colors.mLineColorGreen, -1);
+		
 		contoursOut = reducedHandContours;
 	}
 	
 	public List<MatOfPoint> getHandContours() {
 		return contoursOut;
+	}
+	
+	public Point getLowestPoint(MatOfPoint contour) {
+		//int index = -1;
+		
+		Point highest = new Point();
+		highest.x = 0;
+		highest.y = 0;
+		
+		for(int i=0; i<contour.rows(); i++) {
+			if(contour.get(i, 0)[1] > highest.y) {
+				highest.x = contour.get(i, 0)[0];
+				highest.y = contour.get(i, 0)[1];
+				//index = i;
+			}
+		}
+		
+		return highest;
 	}
 }
