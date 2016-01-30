@@ -17,6 +17,8 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -330,6 +332,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		if(mIsFingersDetection) {
 			//Log.i(TAG, "Applying skin detection");
 			mHandDetector.apply(rgba, rgba);
+			checkKeyPressed(mHandDetector.getLowestPoint());
 		}
 		
 		if(mIsDilation) {
@@ -357,5 +360,19 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private void setPianoKeys() {
 		Log.i(TAG, "Set piano keys");
 		mPianoKeyContours = mPianoDetector.getPianoContours();
+	}
+	
+	private void checkKeyPressed(Point point) {
+		MatOfPoint2f MOP2f = new MatOfPoint2f();
+		
+		for(int i=0; i<mPianoKeyContours.size(); i++) {
+			MOP2f.fromArray(mPianoKeyContours.get(i).toArray());
+			
+			if(Imgproc.pointPolygonTest(MOP2f, point, false) == 1) {
+				Log.i(TAG, "INSIDE!!!");
+			} else {
+				Log.i(TAG, "NOT INSIDE!!!");
+			}
+		}
 	}
 }

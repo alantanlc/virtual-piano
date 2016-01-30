@@ -32,6 +32,8 @@ public class HandDetector extends Detector {
 	
 	private List<MatOfPoint> contoursOut = new ArrayList<MatOfPoint>();
 	
+	private Point lowestPoint = new Point();
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -53,7 +55,7 @@ public class HandDetector extends Detector {
 		
 		// 5. If no contours, return
 		if(contours.size() == 0) { 
-			Log.i(TAG, "No contours found");
+			//Log.i(TAG, "No contours found");
 			return;
 		}
 		
@@ -62,7 +64,7 @@ public class HandDetector extends Detector {
 		
 		// 7. If index equals -1, return
 		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
-			Log.i(TAG, "No hand detected");
+			//Log.i(TAG, "No hand detected");
 			return;
 		};
 		
@@ -70,7 +72,7 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
 		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
-		Log.i(TAG, Double.toString(Imgproc.contourArea(reducedHandContours.get(0))));
+		//Log.i(TAG, Double.toString(Imgproc.contourArea(reducedHandContours.get(0))));
 		
 		// 9. Get convex hull of hand
 		MatOfInt hullMOI = new MatOfInt();
@@ -101,8 +103,15 @@ public class HandDetector extends Detector {
 			}
 		}
 		
+		// Find lowest point
+		lowestPoint = null;
+		
+		lowestPoint = findLowestPoint(reducedHandContours.get(0));
+		
 		// Draw lowest point
-		Imgproc.circle(dst, getLowestPoint(reducedHandContours.get(0)), 10, Colors.mLineColorGreen, -1);
+		if(lowestPoint != null) {
+			Imgproc.circle(dst, lowestPoint, 10, Colors.mLineColorGreen, -1);
+		}
 		
 		contoursOut = reducedHandContours;
 	}
@@ -111,7 +120,7 @@ public class HandDetector extends Detector {
 		return contoursOut;
 	}
 	
-	public Point getLowestPoint(MatOfPoint contour) {
+	private Point findLowestPoint(MatOfPoint contour) {
 		//int index = -1;
 		
 		Point highest = new Point();
@@ -127,5 +136,9 @@ public class HandDetector extends Detector {
 		}
 		
 		return highest;
+	}
+	
+	public Point getLowestPoint() {
+		return lowestPoint;
 	}
 }
