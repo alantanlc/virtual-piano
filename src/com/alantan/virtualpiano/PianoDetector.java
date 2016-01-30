@@ -74,7 +74,7 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 11. Draw piano key contours
-		//drawAllContours(dst, mPianoKeyContours);
+		drawAllContours(dst, mPianoKeyContours);
 		
 		// 12. Update contoursOut list
 		contoursOut = mPianoKeyContours;
@@ -123,6 +123,13 @@ public class PianoDetector extends Detector {
 	
 	public List<MatOfPoint> getPianoContours() {
 		return contoursOut;
+	}
+	
+	@Override
+	public void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
+		for(int i=0; i<contours.size(); i++) {
+			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, -1);
+		}
 	}
 	
 	private List<MatOfPoint> getContoursBySizeRange(List<MatOfPoint> contours, int lower, int upper) {

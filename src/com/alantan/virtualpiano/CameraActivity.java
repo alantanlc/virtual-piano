@@ -277,6 +277,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		switch (item.getItemId()) {
 		case R.id.menu_detect_piano:
 			mIsPianoDetection = !mIsPianoDetection;
+			mPianoKeyContours.clear();
+			return true;
+		case R.id.menu_set_piano:
+			mIsPianoDetection = false;
+			setPianoKeys();
 			return true;
 		case R.id.menu_detect_skin:
 			mIsFingersDetection = !mIsFingersDetection;
@@ -316,13 +321,15 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		if(mIsPianoDetection) {
 			//Log.i(TAG, "Applying piano detection");
 			mPianoDetector.apply(rgba, rgba);
-			mPianoKeyContours = mPianoDetector.getPianoContours();
-			mPianoDetector.drawAllContours(rgba, mPianoKeyContours);
 		}
 		
 		if(mIsFingersDetection) {
 			//Log.i(TAG, "Applying skin detection");
 			mHandDetector.apply(rgba, rgba);
+		}
+		
+		if(!mPianoKeyContours.isEmpty()) {
+			mPianoDetector.drawAllContours(rgba, mPianoKeyContours);
 		}
 		
 		if(mIsDilation) {
@@ -347,9 +354,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		return rgba;
 	}
 	
-	private void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
-		for(int i=0; i<contours.size(); i++) {
-			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, -1);
-		}
+	private void setPianoKeys() {
+		Log.i(TAG, "Set piano keys");
+		mPianoKeyContours = mPianoDetector.getPianoContours();
 	}
 }

@@ -25,6 +25,7 @@ public class HandDetector extends Detector {
 	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 50);
 	private final Scalar upperThreshold = new Scalar(upperHue, 255, 255);
 	private final Mat mMat = new Mat();
+	private List<MatOfPoint> contoursOut = new ArrayList<MatOfPoint>();
 	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
@@ -94,5 +95,11 @@ public class HandDetector extends Detector {
 				Imgproc.circle(dst, defect, 10, Colors.mLineColorPurple, 2);
 			}
 		}
+		
+		contoursOut = reducedHandContours;
+	}
+	
+	public List<MatOfPoint> getHandContours() {
+		return contoursOut;
 	}
 }

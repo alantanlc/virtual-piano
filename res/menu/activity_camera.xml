@@ -7,6 +7,11 @@
         android:title="@string/menu_detect_piano" />
     
     <item
+        android:id="@+id/menu_set_piano"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_set_piano" />
+    
+    <item
         android:id="@+id/menu_detect_skin"
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_detect_skin" />
