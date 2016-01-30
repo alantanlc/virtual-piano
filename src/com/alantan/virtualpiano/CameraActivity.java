@@ -323,13 +323,13 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mPianoDetector.apply(rgba, rgba);
 		}
 		
+		if(!mPianoKeyContours.isEmpty()) {
+			mPianoDetector.drawAllContours(rgba, mPianoKeyContours);
+		}
+		
 		if(mIsFingersDetection) {
 			//Log.i(TAG, "Applying skin detection");
 			mHandDetector.apply(rgba, rgba);
-		}
-		
-		if(!mPianoKeyContours.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mPianoKeyContours);
 		}
 		
 		if(mIsDilation) {
