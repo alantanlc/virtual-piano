@@ -15,7 +15,7 @@ import org.opencv.imgproc.Imgproc;
 
 import android.util.Log;
 
-public class PianoDetector implements Detector {
+public class PianoDetector extends Detector {
 	
 	private final static String TAG = PianoDetector.class.getSimpleName();
 	
@@ -27,7 +27,9 @@ public class PianoDetector implements Detector {
 	private final Scalar upperThreshold = new Scalar(179, 255, 255);
 	
 	private final int keySizeLower = 1000;
-	private final int keySizeUpper = 20000;
+	private final int keySizeUpper = 15000;
+	
+	private List<MatOfPoint> contoursOut = new ArrayList<MatOfPoint>();
 	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
@@ -72,7 +74,10 @@ public class PianoDetector implements Detector {
 		}
 		
 		// 11. Draw piano key contours
-		drawAllContours(dst, mPianoKeyContours);
+		//drawAllContours(dst, mPianoKeyContours);
+		
+		// 12. Update contoursOut list
+		contoursOut = mPianoKeyContours;
 		
 		// 7. Find piano mask using Convex Hull
 		/*List<Point> pianoKeyContourPointsList = new ArrayList<Point>();
@@ -116,10 +121,8 @@ public class PianoDetector implements Detector {
 		// 10. Invert masked image and detect black keys
 	}
 	
-	private void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
-		for(int i=0; i<contours.size(); i++) {
-			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, -1);
-		}
+	public List<MatOfPoint> getPianoContours() {
+		return contoursOut;
 	}
 	
 	private List<MatOfPoint> getContoursBySizeRange(List<MatOfPoint> contours, int lower, int upper) {
@@ -133,18 +136,5 @@ public class PianoDetector implements Detector {
 		}
 		
 		return newContours;
-	}
-	
-	private MatOfPoint reduceContourPoints(MatOfPoint contours) {
-		MatOfPoint2f approxCurve = new MatOfPoint2f();
-		MatOfPoint2f contour2f = new MatOfPoint2f(contours.toArray());
-		
-		double approxDistance = Imgproc.arcLength(contour2f, true) * 0.01;
-		
-		Imgproc.approxPolyDP(contour2f, approxCurve, approxDistance, true);
-		
-		MatOfPoint points = new MatOfPoint(approxCurve.toArray());
-		
-		return points;
 	}
 }

@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -15,6 +16,7 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -88,6 +90,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	
 	// PianoDetector
 	private PianoDetector mPianoDetector;
+	
+	// Piano keys contour list
+	private List<MatOfPoint> mPianoKeyContours = new ArrayList<MatOfPoint>();
 	
 	// FingerDetector
 	private HandDetector mHandDetector;
@@ -311,6 +316,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		if(mIsPianoDetection) {
 			//Log.i(TAG, "Applying piano detection");
 			mPianoDetector.apply(rgba, rgba);
+			mPianoKeyContours = mPianoDetector.getPianoContours();
+			mPianoDetector.drawAllContours(rgba, mPianoKeyContours);
 		}
 		
 		if(mIsFingersDetection) {
@@ -338,5 +345,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		}
 		
 		return rgba;
+	}
+	
+	private void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
+		for(int i=0; i<contours.size(); i++) {
+			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, -1);
+		}
 	}
 }
