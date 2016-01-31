@@ -30,6 +30,9 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -110,7 +113,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	
 	// Whether erosion should be applied
 	private boolean mIsErosion;
-		
+	
+	private SoundPoolPlayer sound;
+	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
@@ -183,6 +188,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		mCameraView.setCvCameraViewListener(this);
 		
 		setContentView(mCameraView);
+		
+		sound = new SoundPoolPlayer(this);
 	}
 	
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -365,8 +372,45 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			
 			if(Imgproc.pointPolygonTest(p, point, false) == 0
 					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				Log.i(TAG, "Success!");
+				playSound(i);
 			}
+		}
+	}
+	
+	private void playSound(int i) {
+		switch(i) {
+		case 0:
+			sound.playShortResource(R.raw.pianoc1);
+			break;
+		case 1:
+			sound.playShortResource(R.raw.pianod1);
+			break;
+		case 2:
+			sound.playShortResource(R.raw.pianoe1);
+			break;
+		case 3:
+			sound.playShortResource(R.raw.pianof1);
+			break;
+		case 4:
+			sound.playShortResource(R.raw.pianog1);
+			break;
+		case 5:
+			sound.playShortResource(R.raw.pianoa1);
+			break;
+		case 6:
+			sound.playShortResource(R.raw.pianob1);
+			break;
+		case 7:
+			sound.playShortResource(R.raw.pianoc2);
+			break;
+		case 8:
+			sound.playShortResource(R.raw.pianod2);
+			break;
+		case 9:
+			sound.playShortResource(R.raw.pianoe2);
+			break;
+		default:
+			sound.playShortResource(R.raw.pianoc1);
 		}
 	}
 }
