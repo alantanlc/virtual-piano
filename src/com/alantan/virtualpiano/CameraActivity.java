@@ -321,27 +321,24 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		final Mat rgba = inputFrame.rgba();
 		
 		if(mIsPianoDetection) {
-			//Log.i(TAG, "Applying piano detection");
 			mPianoDetector.apply(rgba, rgba);
+		}
+		
+		if(mIsFingersDetection) {
+			mHandDetector.apply(rgba, rgba);
+			checkKeyPressed(rgba, mHandDetector.getLowestPoint());
 		}
 		
 		if(!mPianoKeyContours.isEmpty()) {
 			mPianoDetector.drawAllContours(rgba, mPianoKeyContours);
 		}
 		
-		if(mIsFingersDetection) {
-			//Log.i(TAG, "Applying skin detection");
-			mHandDetector.apply(rgba, rgba);
-			checkKeyPressed(mHandDetector.getLowestPoint());
-		}
-		
 		if(mIsDilation) {
-			//Imgproc.dilate(rgba, rgba, new Mat());
-			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(7, 50, 50);
-			Scalar upperThreshold = new Scalar(33, 255, 255);
-			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 			Imgproc.dilate(rgba, rgba, new Mat());
+			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
+			Scalar lowerThreshold = new Scalar(0, 0, 100);
+			Scalar upperThreshold = new Scalar(179, 255, 255);
+			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 		}
 		
 		if(mIsErosion) {
@@ -358,20 +355,17 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	}
 	
 	private void setPianoKeys() {
-		Log.i(TAG, "Set piano keys");
 		mPianoKeyContours = mPianoDetector.getPianoContours();
 	}
 	
-	private void checkKeyPressed(Point point) {
-		MatOfPoint2f MOP2f = new MatOfPoint2f();
-		
+	private void checkKeyPressed(final Mat dst, Point point) {
 		for(int i=0; i<mPianoKeyContours.size(); i++) {
-			MOP2f.fromArray(mPianoKeyContours.get(i).toArray());
+			MatOfPoint2f p = new MatOfPoint2f();
+			p.fromArray(mPianoKeyContours.get(i).toArray());
 			
-			if(Imgproc.pointPolygonTest(MOP2f, point, false) == 1) {
-				Log.i(TAG, "INSIDE!!!");
-			} else {
-				Log.i(TAG, "NOT INSIDE!!!");
+			if(Imgproc.pointPolygonTest(p, point, false) == 0
+					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
+				Log.i(TAG, "Success!");
 			}
 		}
 	}

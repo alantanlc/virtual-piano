@@ -27,7 +27,7 @@ public class PianoDetector extends Detector {
 	private final Scalar upperThreshold = new Scalar(179, 255, 255);
 	
 	private final int keySizeLower = 1000;
-	private final int keySizeUpper = 15000;
+	private final int keySizeUpper = 12500;
 	
 	private List<MatOfPoint> contoursOut = new ArrayList<MatOfPoint>();
 	
@@ -79,7 +79,7 @@ public class PianoDetector extends Detector {
 		// 12. Update contoursOut list
 		contoursOut = mPianoKeyContours;
 		
-		// 7. Find piano mask using Convex Hull
+		// Find piano mask using Convex Hull
 		/*List<Point> pianoKeyContourPointsList = new ArrayList<Point>();
 		MatOfPoint pianoKeyContourPointsMOP = new MatOfPoint();
 		MatOfInt hull = new MatOfInt();
