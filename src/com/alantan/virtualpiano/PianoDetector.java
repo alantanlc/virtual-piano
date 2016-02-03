@@ -132,7 +132,7 @@ public class PianoDetector extends Detector {
 	@Override
 	public void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
 		for(int i=0; i<contours.size(); i++) {
-			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, -1);
+			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, 2);
 		}
 	}
 	
