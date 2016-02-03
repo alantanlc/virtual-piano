@@ -1,6 +1,8 @@
 package com.alantan.virtualpiano;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -10,8 +12,10 @@ import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 
 import android.util.Log;
 
@@ -76,8 +80,8 @@ public class PianoDetector extends Detector {
 		// 11. Draw piano key contours
 		drawAllContours(dst, mPianoKeyContours);
 		
-		// 12. Update contoursOut list
-		contoursOut = mPianoKeyContours;
+		// 12. Sort piano keys and update contoursOut list
+		contoursOut = sortPianoKeys(mPianoKeyContours, true);
 		
 		// Find piano mask using Convex Hull
 		/*List<Point> pianoKeyContourPointsList = new ArrayList<Point>();
@@ -143,5 +147,23 @@ public class PianoDetector extends Detector {
 		}
 		
 		return newContours;
+	}
+	
+	private List<MatOfPoint> sortPianoKeys(List<MatOfPoint> contours, boolean reverse) {
+		if(reverse) {
+			Collections.sort(contours, new Comparator<MatOfPoint>() {
+				public int compare(MatOfPoint mop1, MatOfPoint mop2) {
+					return Double.compare(Imgproc.boundingRect(mop2).tl().x, Imgproc.boundingRect(mop1).tl().x);
+				}
+			});
+		} else {
+			Collections.sort(contours, new Comparator<MatOfPoint>() {
+				public int compare(MatOfPoint mop1, MatOfPoint mop2) {
+					return Double.compare(Imgproc.boundingRect(mop1).tl().x, Imgproc.boundingRect(mop2).tl().x);
+				}
+			});
+		}
+		
+		return contours;
 	}
 }

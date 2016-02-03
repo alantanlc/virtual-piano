@@ -20,7 +20,7 @@ public class HandDetector extends Detector {
 	
 	private final static String TAG = HandDetector.class.getSimpleName();
 
-	private final int handArea = 15000;
+	private final int handArea = 500;
 	
 	private final int lowerHue = 3;
 	private final int upperHue = 33;
@@ -56,6 +56,7 @@ public class HandDetector extends Detector {
 		// 5. If no contours, return
 		if(contours.size() == 0) { 
 			//Log.i(TAG, "No contours found");
+			lowestPoint = null;
 			return;
 		}
 		
@@ -65,6 +66,7 @@ public class HandDetector extends Detector {
 		// 7. If index equals -1, return
 		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
 			//Log.i(TAG, "No hand detected");
+			lowestPoint = null;
 			return;
 		};
 		
@@ -105,7 +107,7 @@ public class HandDetector extends Detector {
 		
 		// Find lowest point
 		lowestPoint = null;
-		lowestPoint = findLowestPoint(hullContourLMOP.get(0));
+		lowestPoint = findHighestPoint(hullContourLMOP.get(0));
 		
 		// Draw lowest point
 		if(lowestPoint != null) {
@@ -117,7 +119,7 @@ public class HandDetector extends Detector {
 		return contoursOut;
 	}
 	
-	private Point findLowestPoint(MatOfPoint contour) {
+	private Point findHighestPoint(MatOfPoint contour) {
 		Point highest = new Point();
 		highest.x = 0;
 		highest.y = 0;
@@ -130,6 +132,21 @@ public class HandDetector extends Detector {
 		}
 		
 		return highest;
+	}
+	
+	private Point findLowestPoint(MatOfPoint contour) {
+		Point lowest = new Point();
+		lowest.x = 5000;
+		lowest.y = 5000;
+		
+		for(int i=0; i<contour.rows(); i++) {
+			if(contour.get(i, 0)[1] < lowest.y) {
+				lowest.x = contour.get(i, 0)[0];
+				lowest.y = contour.get(i, 0)[1];
+			}
+		}
+		
+		return lowest;
 	}
 	
 	public Point getLowestPoint() {

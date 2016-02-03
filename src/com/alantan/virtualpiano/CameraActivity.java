@@ -333,7 +333,10 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		if(mIsFingersDetection) {
 			mHandDetector.apply(rgba, rgba);
-			checkKeyPressed(rgba, mHandDetector.getLowestPoint());
+			
+			if(mHandDetector.getLowestPoint() != null) {
+				checkKeyPressed(rgba, mHandDetector.getLowestPoint());
+			}
 		}
 		
 		if(!mPianoKeyContours.isEmpty()) {
