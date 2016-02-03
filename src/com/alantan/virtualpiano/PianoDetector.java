@@ -25,7 +25,6 @@ public class PianoDetector extends Detector {
 	
 	private final Mat mHSVMat = new Mat();
 	private final Mat mMaskMat = new Mat();
-	private final Mat mDilatedMat = new Mat();
 	
 	private final Scalar lowerThreshold = new Scalar(0, 0, 100);
 	private final Scalar upperThreshold = new Scalar(179, 255, 255);
@@ -46,15 +45,11 @@ public class PianoDetector extends Detector {
 		// 2. Apply threshold to detect white piano keys
 		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
 		
-		// 3. Perform dilation, helps in removing noise in the mask.
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		
-		// 4. Perform erosion
-		Imgproc.erode(mMaskMat, mMaskMat, new Mat());
-		Imgproc.erode(mMaskMat, mDilatedMat, new Mat());
+		// 3. Perform erosion
+		Imgproc.erode(src, src, new Mat());
 		
 		// 4. Find contours
-		Imgproc.findContours(mDilatedMat, mContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+		Imgproc.findContours(mMaskMat, mContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 		
 		// 5. If no contours detected, return.
 		if(mContours.size() == 0) {

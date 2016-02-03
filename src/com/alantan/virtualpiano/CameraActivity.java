@@ -334,7 +334,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		if(mIsFingersDetection) {
 			mHandDetector.apply(rgba, rgba);
 			
-			if(mHandDetector.getLowestPoint() != null) {
+			if(mHandDetector.getLowestPoint() != null && !mPianoKeyContours.isEmpty()) {
 				checkKeyPressed(rgba, mHandDetector.getLowestPoint());
 			}
 		}
@@ -345,13 +345,20 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		if(mIsDilation) {
 			Imgproc.dilate(rgba, rgba, new Mat());
+			Imgproc.dilate(rgba, rgba, new Mat());
+			Imgproc.dilate(rgba, rgba, new Mat());
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
 			Scalar lowerThreshold = new Scalar(0, 0, 100);
 			Scalar upperThreshold = new Scalar(179, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
+			Core.bitwise_not(rgba, rgba);
 		}
 		
 		if(mIsErosion) {
+			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
+			Scalar lowerThreshold = new Scalar(0, 0, 100);
+			Scalar upperThreshold = new Scalar(179, 255, 255);
+			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 			Imgproc.erode(rgba, rgba, new Mat());
 		}
 		
