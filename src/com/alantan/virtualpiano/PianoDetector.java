@@ -6,17 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
 
 import android.util.Log;
 
@@ -47,8 +42,8 @@ public class PianoDetector extends Detector {
 		List<MatOfPoint> mBlackContoursLMOP = new ArrayList<MatOfPoint>();
 		List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
 		
-		List<Point> mPianoKeyContoursLP = new ArrayList<Point>();
-		MatOfPoint mPianoKeyContoursMOP = new MatOfPoint();
+		List<Point> mWhiteKeysLP = new ArrayList<Point>();
+		MatOfPoint mWhiteKeysMOP = new MatOfPoint();
 		
 		MatOfInt hullMOI = new MatOfInt();
 		
@@ -70,7 +65,7 @@ public class PianoDetector extends Detector {
 		
 		// 5. If no contours detected, return.
 		if(mWhiteContoursLMOP.size() == 0) {
-			Log.i(TAG, "No contours found!");
+			Log.i(TAG, "No white contours found!");
 			return;
 		}
 		
@@ -86,6 +81,7 @@ public class PianoDetector extends Detector {
 		
 		// 10. If no contours, just return
 		if(mWhiteKeysLMOP.size() == 0) {
+			Log.i(TAG, "No white keys found!");
 			return;
 		}
 		
@@ -93,17 +89,24 @@ public class PianoDetector extends Detector {
 		drawAllContours(dst, mWhiteKeysLMOP, Colors.mLineColorBlue, -1);
 		
 		// 12. Get convex hull of piano
+		// 12a. Convert LMOP to LP
 		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
-			mPianoKeyContoursLP.addAll(mWhiteKeysLMOP.get(i).toList());
+			mWhiteKeysLP.addAll(mWhiteKeysLMOP.get(i).toList());
 		}
 		
-		mPianoKeyContoursMOP.fromList(mPianoKeyContoursLP);
-		Imgproc.convexHull(mPianoKeyContoursMOP, hullMOI);
+		// 12b. Convert LP to MOP
+		mWhiteKeysMOP.fromList(mWhiteKeysLP);
 		
-		mPianoMaskMOP = hullToContour(hullMOI, mPianoKeyContoursMOP);
+		// 12c. Get convex hull
+		Imgproc.convexHull(mWhiteKeysMOP, hullMOI);
+		
+		// 12d. Convert hullMOI to MOP
+		mPianoMaskMOP = hullToContour(hullMOI, mWhiteKeysMOP);
+		
+		// 12e. Convert MOP to LMOP
 		mPianoMaskLMOP.add(mPianoMaskMOP);
 		
-		// 13. Create piano mask
+		// 13. Create piano mask mat
 		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
 		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
 		
@@ -144,7 +147,7 @@ public class PianoDetector extends Detector {
 		// 22. Draw black key contours
 		drawAllContours(dst, mBlackKeysLMOP, Colors.mLineColorRed, -1);
 		
-		// 25. Sort piano keys and update contoursOut list
+		// 25. Sort piano keys and update whiteKeysOutLMOP and blackKeysOutLMOP
 		whiteKeysOutLMOP = sortPianoKeys(mWhiteKeysLMOP, true);
 		blackKeysOutLMOP = sortPianoKeys(mBlackKeysLMOP, true);
 	}

@@ -85,8 +85,8 @@ public class HandDetector extends Detector {
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
 		// 11. Get convexity defects
-		MatOfInt4 convDefMOI4 = new MatOfInt4();
-		Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
+		//MatOfInt4 convDefMOI4 = new MatOfInt4();
+		//Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);

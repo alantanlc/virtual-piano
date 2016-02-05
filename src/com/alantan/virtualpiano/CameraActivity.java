@@ -261,10 +261,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(mIsMenuLocked) {
-			return true;
-		}
-		
 		if(item.getGroupId() == MENU_GROUP_ID_SIZE) {
 			mImageSizeIndex = item.getItemId();
 			recreate();
