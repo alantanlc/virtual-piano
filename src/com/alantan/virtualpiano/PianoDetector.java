@@ -37,8 +37,8 @@ public class PianoDetector extends Detector {
 	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
-		List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
-		List<MatOfPoint> mPianoKeyContours = new ArrayList<MatOfPoint>();
+		List<MatOfPoint> mContoursMOP = new ArrayList<MatOfPoint>();
+		List<MatOfPoint> mPianoKeyContoursLMOP = new ArrayList<MatOfPoint>();
 		
 		List<Point> mPianoKeyContoursLP = new ArrayList<Point>();
 		MatOfPoint mPianoKeyContoursMOP = new MatOfPoint();
@@ -53,38 +53,39 @@ public class PianoDetector extends Detector {
 		Imgproc.erode(src, src, new Mat());
 		
 		// 4. Find contours
-		Imgproc.findContours(mMaskMat, mContours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+		Imgproc.findContours(mMaskMat, mContoursMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 		
 		// 5. If no contours detected, return.
-		if(mContours.size() == 0) {
+		if(mContoursMOP.size() == 0) {
 			Log.i(TAG, "No contours found!");
 			return;
 		}
 		
 		// 7. Get contours that are within certain contour size range
-		mPianoKeyContours = getContoursBySizeRange(mContours, keySizeLower, keySizeUpper);
+		mPianoKeyContoursLMOP = getContoursBySizeRange(mContoursMOP, keySizeLower, keySizeUpper);
 		
 		// 8. Reduce number of points of each contour using DP algorithm
-		for(int i=0; i<mPianoKeyContours.size(); i++) {
-			mPianoKeyContours.set(i, reduceContourPoints(mPianoKeyContours.get(i)));
+		for(int i=0; i<mPianoKeyContoursLMOP.size(); i++) {
+			mPianoKeyContoursLMOP.set(i, reduceContourPoints(mPianoKeyContoursLMOP.get(i)));
 		}
 		
 		// 9. Eliminate contours that have less than 6 points or more than 8 points
 		
 		// 10. If no contours, just return
-		if(mPianoKeyContours.size() == 0) {
+		if(mPianoKeyContoursLMOP.size() == 0) {
 			return;
 		}
 		
 		// 11. Draw piano key contours
-		drawAllContours(dst, mPianoKeyContours, -1);
+		drawAllContours(dst, mPianoKeyContoursLMOP, -1);
 		
 		// Get convex hull of piano
+		
 		//mPianoKeyContours.addAll(mPianoKeyContours);
 		//mPianoKeyContoursMOP.fromList(mPianoKeyContoursLP);
 		
 		// 12. Sort piano keys and update contoursOut list
-		contoursOutLMOP = sortPianoKeys(mPianoKeyContours, true);
+		contoursOutLMOP = sortPianoKeys(mPianoKeyContoursLMOP, true);
 		
 		// 14. Piano mask
 		
