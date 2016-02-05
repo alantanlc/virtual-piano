@@ -25,6 +25,13 @@ public class SoundPoolPlayer {
         mSounds.put(R.raw.pianoc2, this.mShortPlayer.load(pContext, R.raw.pianoc2, 1));
         mSounds.put(R.raw.pianod2, this.mShortPlayer.load(pContext, R.raw.pianod2, 1));
         mSounds.put(R.raw.pianoe2, this.mShortPlayer.load(pContext, R.raw.pianoe2, 1));
+        mSounds.put(R.raw.pianocd1, this.mShortPlayer.load(pContext, R.raw.pianocd1, 1));
+        mSounds.put(R.raw.pianode1, this.mShortPlayer.load(pContext, R.raw.pianode1, 1));
+        mSounds.put(R.raw.pianofg1, this.mShortPlayer.load(pContext, R.raw.pianofg1, 1));
+        mSounds.put(R.raw.pianoga1, this.mShortPlayer.load(pContext, R.raw.pianoga1, 1));
+        mSounds.put(R.raw.pianoab1, this.mShortPlayer.load(pContext, R.raw.pianoab1, 1));
+        mSounds.put(R.raw.pianocd2, this.mShortPlayer.load(pContext, R.raw.pianocd2, 1));
+        mSounds.put(R.raw.pianode2, this.mShortPlayer.load(pContext, R.raw.pianode2, 1));
     }
 
     public void playShortResource(int piResource) {

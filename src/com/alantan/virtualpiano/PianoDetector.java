@@ -36,7 +36,8 @@ public class PianoDetector extends Detector {
 	private final int blackKeySizeLower = 500;
 	private final int blackKeySizeUpper = 70000;
 	
-	private List<MatOfPoint> contoursOutLMOP = new ArrayList<MatOfPoint>();
+	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
+	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
 	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
@@ -140,17 +141,20 @@ public class PianoDetector extends Detector {
 			return;
 		}
 		
-		// 22. Draw piano key contours
+		// 22. Draw black key contours
 		drawAllContours(dst, mBlackKeysLMOP, Colors.mLineColorRed, -1);
 		
-		mWhiteKeysLMOP.addAll(mBlackKeysLMOP);
-		
 		// 25. Sort piano keys and update contoursOut list
-		contoursOutLMOP = sortPianoKeys(mWhiteKeysLMOP, true);
+		whiteKeysOutLMOP = sortPianoKeys(mWhiteKeysLMOP, true);
+		blackKeysOutLMOP = sortPianoKeys(mBlackKeysLMOP, true);
 	}
 	
-	public List<MatOfPoint> getPianoContours() {
-		return contoursOutLMOP;
+	public List<MatOfPoint> getWhiteKeysLMOP() {
+		return whiteKeysOutLMOP;
+	}
+	
+	public List<MatOfPoint> getBlackKeysLMOP() {
+		return blackKeysOutLMOP;
 	}
 	
 	public void drawAllContours(final Mat dst, List<MatOfPoint> contours, Scalar color, int thickness) {

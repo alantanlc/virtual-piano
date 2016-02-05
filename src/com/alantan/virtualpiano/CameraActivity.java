@@ -85,7 +85,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private PianoDetector mPianoDetector;
 	
 	// Piano keys contour list
-	private List<MatOfPoint> mPianoKeyContours = new ArrayList<MatOfPoint>();
+	private List<MatOfPoint> mWhiteKeysLMOP = new ArrayList<MatOfPoint>();
+	private List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
 	
 	// FingerDetector
 	private HandDetector mHandDetector;
@@ -274,7 +275,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		switch (item.getItemId()) {
 		case R.id.menu_detect_piano:
 			mIsPianoDetection = !mIsPianoDetection;
-			mPianoKeyContours.clear();
+			mWhiteKeysLMOP.clear();
+			mBlackKeysLMOP.clear();
 			return true;
 		case R.id.menu_set_piano:
 			mIsPianoDetection = false;
@@ -322,13 +324,17 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		if(mIsFingersDetection) {
 			mHandDetector.apply(rgba, rgba);
 			
-			if(mHandDetector.getLowestPoint() != null && !mPianoKeyContours.isEmpty()) {
+			if(mHandDetector.getLowestPoint() != null && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				checkKeyPressed(rgba, mHandDetector.getLowestPoint());
 			}
 		}
 		
-		if(!mPianoKeyContours.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mPianoKeyContours, Colors.mLineColorYellow, 2);
+		if(!mWhiteKeysLMOP.isEmpty()) {
+			mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 2);
+		}
+		
+		if(!mBlackKeysLMOP.isEmpty()) {
+			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 2);
 		}
 		
 		if(mIsDilation) {
@@ -359,17 +365,28 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	}
 	
 	private void setPianoKeys() {
-		mPianoKeyContours = mPianoDetector.getPianoContours();
+		mWhiteKeysLMOP = mPianoDetector.getWhiteKeysLMOP();
+		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
 	}
 	
 	private void checkKeyPressed(final Mat dst, Point point) {
-		for(int i=0; i<mPianoKeyContours.size(); i++) {
+		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
 			MatOfPoint2f p = new MatOfPoint2f();
-			p.fromArray(mPianoKeyContours.get(i).toArray());
+			p.fromArray(mWhiteKeysLMOP.get(i).toArray());
 			
 			if(Imgproc.pointPolygonTest(p, point, false) == 0
 					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
 				playSound(i);
+			}
+		}
+		
+		for(int i=0; i<mBlackKeysLMOP.size(); i++) {
+			MatOfPoint2f p = new MatOfPoint2f();
+			p.fromArray(mBlackKeysLMOP.get(i).toArray());
+			
+			if(Imgproc.pointPolygonTest(p, point, false) == 0
+					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
+				playSound(i+10);
 			}
 		}
 	}
@@ -405,6 +422,27 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			break;
 		case 9:
 			sound.playShortResource(R.raw.pianoe2);
+			break;
+		case 10:
+			sound.playShortResource(R.raw.pianocd1);
+			break;
+		case 11:
+			sound.playShortResource(R.raw.pianode1);
+			break;
+		case 12:
+			sound.playShortResource(R.raw.pianofg1);
+			break;
+		case 13:
+			sound.playShortResource(R.raw.pianoga1);
+			break;
+		case 14:
+			sound.playShortResource(R.raw.pianoab1);
+			break;
+		case 15:
+			sound.playShortResource(R.raw.pianocd2);
+			break;
+		case 16:
+			sound.playShortResource(R.raw.pianode2);
 			break;
 		default:
 			sound.playShortResource(R.raw.pianoc1);
