@@ -347,7 +347,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			Scalar lowerThreshold = new Scalar(0, 0, 100);
 			Scalar upperThreshold = new Scalar(179, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-			Imgproc.erode(rgba, rgba, new Mat());
 		}
 		
 		// Flip image if using front facing camera

@@ -8,4 +8,5 @@ public class Colors {
 	public static final Scalar mLineColorBlue = new Scalar(0, 0, 255);
 	public static final Scalar mLineColorBlack = new Scalar(0, 0, 0);
 	public static final Scalar mLineColorYellow = new Scalar(255, 255, 0);
+	public static final Scalar mLineColorWhite = new Scalar(255, 255, 255);
 }

@@ -42,6 +42,9 @@ public class PianoDetector extends Detector {
 		
 		List<Point> mPianoKeyContoursLP = new ArrayList<Point>();
 		MatOfPoint mPianoKeyContoursMOP = new MatOfPoint();
+		MatOfInt hullMOI = new MatOfInt();
+		MatOfPoint mPianoMaskMOP = new MatOfPoint();
+		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
 		
 		// 1. Convert the image to HSV color space
 		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2HSV);
@@ -50,7 +53,7 @@ public class PianoDetector extends Detector {
 		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
 		
 		// 3. Perform erosion
-		Imgproc.erode(src, src, new Mat());
+		//Imgproc.erode(mMaskMat, mMaskMat, new Mat());
 		
 		// 4. Find contours
 		Imgproc.findContours(mMaskMat, mContoursMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -77,23 +80,44 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 11. Draw piano key contours
-		drawAllContours(dst, mPianoKeyContoursLMOP, -1);
+		//drawAllContours(dst, mPianoKeyContoursLMOP, -1);
 		
-		// Get convex hull of piano
+		// 12. Get convex hull of piano
+		for(int i=0; i<mPianoKeyContoursLMOP.size(); i++) {
+			mPianoKeyContoursLP.addAll(mPianoKeyContoursLMOP.get(i).toList());
+		}
 		
-		//mPianoKeyContours.addAll(mPianoKeyContours);
-		//mPianoKeyContoursMOP.fromList(mPianoKeyContoursLP);
+		mPianoKeyContoursMOP.fromList(mPianoKeyContoursLP);
+		Imgproc.convexHull(mPianoKeyContoursMOP, hullMOI);
+		
+		mPianoMaskMOP = hullToContour(hullMOI, mPianoKeyContoursMOP);
+		mPianoMaskLMOP.add(mPianoMaskMOP);
+		
+		// Create piano mask
+		Mat mPianoMaskMat = new Mat(mMaskMat.size(), mMaskMat.type(), new Scalar(0));
+		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
+		
+		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
+		
+		// Dilate image 3 times to remove piano lines
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		
+		// Invert piano mask
+		Core.bitwise_not(mMaskMat, mMaskMat);
+		
+		mMaskMat.copyTo(mPianoMaskMat, mPianoMaskMat);
+		
+		List<MatOfPoint> mBlackKeysMOP = new ArrayList<MatOfPoint>();
+		
+		// Find black key contours
+		Imgproc.findContours(mPianoMaskMat, mBlackKeysMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+		
+		drawAllContours(dst, mBlackKeysMOP, 2);
 		
 		// 12. Sort piano keys and update contoursOut list
 		contoursOutLMOP = sortPianoKeys(mPianoKeyContoursLMOP, true);
-		
-		// 14. Piano mask
-		
-		// 15. Apply dilation 3 times to get rid of piano lines
-		
-		// 16. Invert binary image
-		
-		// 17. Get black key contours
 	}
 	
 	public List<MatOfPoint> getPianoContours() {
