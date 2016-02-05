@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfInt4;
@@ -25,7 +24,7 @@ public class HandDetector extends Detector {
 	private final int lowerHue = 3;
 	private final int upperHue = 33;
 	
-	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 50);
+	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 100);
 	private final Scalar upperThreshold = new Scalar(upperHue, 255, 255);
 	
 	private final Mat mMat = new Mat();
@@ -45,10 +44,10 @@ public class HandDetector extends Detector {
 		Core.inRange(mMat, lowerThreshold, upperThreshold, mMat);
 		
 		// 3a. Perform dilation
-		Imgproc.dilate(mMat, mMat, new Mat());
+		//Imgproc.dilate(mMat, mMat, new Mat());
 		
 		// 3a. Perform erosion
-		Imgproc.erode(mMat, mMat, new Mat());
+		//Imgproc.erode(mMat, mMat, new Mat());
 		
 		// 4. Find contours
 		Imgproc.findContours(mMat, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -110,7 +109,7 @@ public class HandDetector extends Detector {
 		
 		// Draw lowest point
 		if(lowestPoint != null) {
-			Imgproc.circle(dst, lowestPoint, 10, Colors.mLineColorGreen, 2);
+			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorBlue, -1);
 		}
 	}
 	

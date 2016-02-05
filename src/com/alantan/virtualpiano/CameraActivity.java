@@ -326,22 +326,19 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		}
 		
 		if(!mWhiteKeysLMOP.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 2);
+			mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 1);
 		}
 		
 		if(!mBlackKeysLMOP.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 2);
+			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
 		}
 		
 		if(mIsDilation) {
-			Imgproc.dilate(rgba, rgba, new Mat());
-			Imgproc.dilate(rgba, rgba, new Mat());
-			Imgproc.dilate(rgba, rgba, new Mat());
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(0, 0, 100);
-			Scalar upperThreshold = new Scalar(179, 255, 255);
+			Scalar lowerThreshold = new Scalar(3, 50, 100);
+			Scalar upperThreshold = new Scalar(33, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-			Core.bitwise_not(rgba, rgba);
+			
 		}
 		
 		if(mIsErosion) {
