@@ -328,7 +328,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		}
 		
 		if(!mPianoKeyContours.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mPianoKeyContours, 2);
+			mPianoDetector.drawAllContours(rgba, mPianoKeyContours, Colors.mLineColorYellow, 2);
 		}
 		
 		if(mIsDilation) {
