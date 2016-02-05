@@ -3,7 +3,6 @@ package com.alantan.virtualpiano;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,31 +19,20 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.media.SoundPool.OnLoadCompleteListener;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 @SuppressLint("NewApi")
 //Use the deprecated Camera class.
@@ -340,7 +328,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		}
 		
 		if(!mPianoKeyContours.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mPianoKeyContours);
+			mPianoDetector.drawAllContours(rgba, mPianoKeyContours, 2);
 		}
 		
 		if(mIsDilation) {

@@ -49,18 +49,6 @@ public class Detector {
 		return points;
 	}
 	
-	public MatOfInt getConvexHull(MatOfPoint contour) {
-		List<Point> contourLP = new ArrayList<Point>();
-		MatOfPoint contourMOP = new MatOfPoint();
-		MatOfInt hullMOI = new MatOfInt();
-		
-		contourLP.addAll(contour.toList());
-		contourMOP.fromList(contourLP);
-		Imgproc.convexHull(contourMOP, hullMOI, true);
-		
-		return hullMOI;
-	}
-	
 	public MatOfPoint hullToContour(MatOfInt hullMOI, MatOfPoint contourMOP) {
 		MatOfPoint mopOut = new MatOfPoint();
 		mopOut.create((int) hullMOI.size().height, 1, CvType.CV_32SC2);

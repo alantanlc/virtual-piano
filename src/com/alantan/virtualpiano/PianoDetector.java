@@ -14,6 +14,7 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 
@@ -32,12 +33,15 @@ public class PianoDetector extends Detector {
 	private final int keySizeLower = 1000;
 	private final int keySizeUpper = 12500;
 	
-	private List<MatOfPoint> contoursOut = new ArrayList<MatOfPoint>();
+	private List<MatOfPoint> contoursOutLMOP = new ArrayList<MatOfPoint>();
 	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
 		List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
 		List<MatOfPoint> mPianoKeyContours = new ArrayList<MatOfPoint>();
+		
+		List<Point> mPianoKeyContoursLP = new ArrayList<Point>();
+		MatOfPoint mPianoKeyContoursMOP = new MatOfPoint();
 		
 		// 1. Convert the image to HSV color space
 		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2HSV);
@@ -73,61 +77,31 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 11. Draw piano key contours
-		drawAllContours(dst, mPianoKeyContours);
+		drawAllContours(dst, mPianoKeyContours, -1);
+		
+		// Get convex hull of piano
+		//mPianoKeyContours.addAll(mPianoKeyContours);
+		//mPianoKeyContoursMOP.fromList(mPianoKeyContoursLP);
 		
 		// 12. Sort piano keys and update contoursOut list
-		contoursOut = sortPianoKeys(mPianoKeyContours, true);
+		contoursOutLMOP = sortPianoKeys(mPianoKeyContours, true);
 		
-		// Find piano mask using Convex Hull
-		/*List<Point> pianoKeyContourPointsList = new ArrayList<Point>();
-		MatOfPoint pianoKeyContourPointsMOP = new MatOfPoint();
-		MatOfInt hull = new MatOfInt();
+		// 14. Piano mask
 		
-		for(int i=0; i<mPianoKeyContours.size(); i++) {
-			pianoKeyContourPointsList.addAll(mPianoKeyContours.get(i).toList());
-		}
+		// 15. Apply dilation 3 times to get rid of piano lines
 		
-		pianoKeyContourPointsMOP.fromList(pianoKeyContourPointsList);
-		Imgproc.convexHull(pianoKeyContourPointsMOP, hull, true);*/	//Imgproc.convexHull(MatOfPoints points, MatOfInt hull);
+		// 16. Invert binary image
 		
-		//Log.i(TAG, "Convex Hull Rows:" + Integer.toString(hull.rows()));
-		
-		// Hull contains the indices of the points in pianoKeyContours which comprise a convex hull
-		// In order to draw the points with drawContours(),
-		// populate a new MatOfPoint containing only the points on the convex hull,
-		// and pass that to drawContours
-		
-		/*MatOfPoint mopOut = new MatOfPoint();
-		mopOut.create((int) hull.size().height, 1, CvType.CV_32SC2);*/
-		
-		/*for(int i=0; i<hull.size().height; i++) {
-			int index = (int) hull.get(i, 0)[0];
-			double[] point = new double[] { pianoKeyContourPointsMOP.get(index, 0)[0], pianoKeyContourPointsMOP.get(index, 0)[1] };
-			mopOut.put(i, 0, point);
-			Log.i(TAG, "Point " + i + ": " + point[0] + ", " + point[1]);
-		}
-		
-		List<MatOfPoint> hullMOPList = new ArrayList<MatOfPoint>();
-		hullMOPList.add(mopOut);
-		
-		Mat hullMaskMat = new Mat(dst.size(), dst.type(), new Scalar(0));
-		Imgproc.drawContours(hullMaskMat, hullMOPList, 0, new Scalar(255, 255, 255), -1);*/
-		
-		// 9. Apply mask to binary reference image.
-		/*dst.copyTo(hullMaskMat, hullMaskMat);
-		hullMaskMat.copyTo(dst);*/
-		
-		// 10. Invert masked image and detect black keys
+		// 17. Get black key contours
 	}
 	
 	public List<MatOfPoint> getPianoContours() {
-		return contoursOut;
+		return contoursOutLMOP;
 	}
 	
-	@Override
-	public void drawAllContours(final Mat dst, List<MatOfPoint> contours) {
+	public void drawAllContours(final Mat dst, List<MatOfPoint> contours, int thickness) {
 		for(int i=0; i<contours.size(); i++) {
-			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, 2);
+			Imgproc.drawContours(dst, contours, i, Colors.mLineColorBlue, thickness);
 		}
 	}
 	

@@ -78,7 +78,7 @@ public class HandDetector extends Detector {
 		
 		// 9. Get convex hull of hand
 		MatOfInt hullMOI = new MatOfInt();
-		hullMOI = getConvexHull(reducedHandContours.get(0));
+		Imgproc.convexHull(reducedHandContours.get(0), hullMOI);
 		
 		// 10. Convert hull to contours
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
