@@ -14,7 +14,6 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -105,6 +104,10 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private boolean mIsErosion;
 	
 	private SoundPoolPlayer sound;
+	
+	private Point prevPoint;
+	
+	private Point currPoint;
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -368,6 +371,24 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	}
 	
 	private void checkKeyPressed(final Mat dst, Point point) {
+		
+		if(prevPoint == null) {
+			prevPoint = point;
+		}
+		
+		currPoint = point;
+		
+		double xDiff = currPoint.x - prevPoint.x;
+		double yDiff = currPoint.y - prevPoint.y;
+		
+		prevPoint = currPoint;
+		
+		if(yDiff < 5) {
+			return;
+		}
+		
+		Log.i(TAG, "Key pressed! Y diff: " + yDiff);
+		
 		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
 			MatOfPoint2f p = new MatOfPoint2f();
 			p.fromArray(mWhiteKeysLMOP.get(i).toArray());

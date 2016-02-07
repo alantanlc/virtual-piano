@@ -29,7 +29,7 @@ public class PianoDetector extends Detector {
 	private final int whiteKeySizeUpper = 12500;
 	
 	private final int blackKeySizeLower = 500;
-	private final int blackKeySizeUpper = 70000;
+	private final int blackKeySizeUpper = 5000;
 	
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
 	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
