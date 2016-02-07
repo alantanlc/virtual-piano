@@ -14,6 +14,7 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -113,7 +114,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			case LoaderCallbackInterface.SUCCESS:
 				Log.d(TAG, "OpenCV loaded successfully");
 				mCameraView.enableView();
-				mBgr = new Mat();
 				mPianoDetector = new PianoDetector();
 				mHandDetector = new HandDetector();
 				break;
@@ -302,6 +302,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	@Override
 	public void onCameraViewStarted(int width, int height) {
 		Log.i(TAG, "onCameraViewStarted");
+		//Log.i(TAG, "Width: " + width + " Height: " + height);
+		
+		mBgr = new Mat();
+		
+		Log.i(TAG, "Width: " + width + " Height: " + height);
 	}
 
 	@Override
