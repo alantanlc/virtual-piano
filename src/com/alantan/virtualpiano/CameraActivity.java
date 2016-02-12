@@ -343,7 +343,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		if(mIsDilation) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(3, 50, 100);
+			Scalar lowerThreshold = new Scalar(3, 50, 50);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 			
