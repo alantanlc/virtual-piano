@@ -33,6 +33,9 @@ public class HandDetector extends Detector {
 	
 	private Point lowestPoint = new Point();
 	
+	private Point f1Point = new Point();
+	private Point f2Point = new Point();
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -102,18 +105,18 @@ public class HandDetector extends Detector {
 				Point defect = data[cdList.get(i+2)];
 				Point start = data[cdList.get(i)];
 				//Imgproc.circle(dst, start, 10, Colors.mLineColorGreen, 2);
-				//Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
+				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
 			}
 		}
 		
 		// Find lowest point
-		lowestPoint = findHighestPoint(hullContourLMOP.get(0));
+		//lowestPoint = findHighestPoint(hullContourLMOP.get(0));
 		//lowestPoint = findLowestPoint(hullContourLMOP.get(0));
 		
 		// Draw lowest point
-		if(lowestPoint != null) {
+		/*if(lowestPoint != null) {
 			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorBlue, -1);
-		}
+		}*/
 	}
 	
 	public List<MatOfPoint> getHandContours() {

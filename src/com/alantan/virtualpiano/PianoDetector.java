@@ -148,8 +148,8 @@ public class PianoDetector extends Detector {
 		drawAllContours(dst, mBlackKeysLMOP, Colors.mLineColorRed, -1);
 		
 		// 25. Sort piano keys and update whiteKeysOutLMOP and blackKeysOutLMOP
-		whiteKeysOutLMOP = sortPianoKeys(mWhiteKeysLMOP, true);
-		blackKeysOutLMOP = sortPianoKeys(mBlackKeysLMOP, true);
+		whiteKeysOutLMOP = sortPianoKeys(mWhiteKeysLMOP, false);
+		blackKeysOutLMOP = sortPianoKeys(mBlackKeysLMOP, false);
 	}
 	
 	public List<MatOfPoint> getWhiteKeysLMOP() {
