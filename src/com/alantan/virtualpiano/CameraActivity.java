@@ -378,16 +378,19 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		currPoint = point;
 		
-		double xDiff = currPoint.x - prevPoint.x;
+		double xDiff = Math.abs(currPoint.x - prevPoint.x);
 		double yDiff = currPoint.y - prevPoint.y;
 		
 		prevPoint = currPoint;
 		
-		if(yDiff < 10) {
+		Log.i(TAG, "Y diff: " + yDiff + ", X diff: " + xDiff);
+		
+		if(yDiff < 5) {
 			return;
 		}
 		
-		Log.i(TAG, "Key pressed! Y diff: " + yDiff);
+		Log.i(TAG, "Key pressed!");
+		//Log.i(TAG, "Key pressed! Y diff: " + yDiff);
 		
 		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
 			MatOfPoint2f p = new MatOfPoint2f();

@@ -93,7 +93,14 @@ public class HandDetector extends Detector {
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
 		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
-		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
+		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
+		
+		// Draw convex hull contour as Points
+		for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
+			double[] p = hullContourLMOP.get(0).get(i, 0);
+			Point m = new Point(p);
+			Imgproc.circle(dst, m, 10, Colors.mLineColorGreen, 2);
+		}
 		
 		// Draw convexity defect points
 		if(!convDefMOI4.empty()) {
@@ -111,12 +118,12 @@ public class HandDetector extends Detector {
 		
 		// Find lowest point
 		//lowestPoint = findHighestPoint(hullContourLMOP.get(0));
-		//lowestPoint = findLowestPoint(hullContourLMOP.get(0));
+		lowestPoint = findLowestPoint(hullContourLMOP.get(0));
 		
 		// Draw lowest point
-		/*if(lowestPoint != null) {
+		if(lowestPoint != null) {
 			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorBlue, -1);
-		}*/
+		}
 	}
 	
 	public List<MatOfPoint> getHandContours() {
