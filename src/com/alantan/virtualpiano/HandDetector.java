@@ -47,7 +47,7 @@ public class HandDetector extends Detector {
 		//Imgproc.dilate(mMat, mMat, new Mat());
 		
 		// 3a. Perform erosion
-		//Imgproc.erode(mMat, mMat, new Mat());
+		Imgproc.erode(mMat, mMat, new Mat());
 		
 		// 4. Find contours
 		Imgproc.findContours(mMat, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -83,14 +83,28 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
+		// 11. Draw convex hull points
+		for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
+			Point p = new Point(hullContourLMOP.get(0).get(i, 0));
+			Imgproc.circle(dst, p, 15, Colors.mLineColorGreen, 2);
+		}
+		
+		// 12. Find convex hull points that are within piano area
+		// (Create new method)
+		// getPointsByRegion();
+		
+		// 13. Reduce convex hull points to (maximum) 5 distinct points
+		// to correspond to 5 finger tips (Create new method)
+		// getFingerTipPoints();
+		
 		// 11. Get convexity defects
 		MatOfInt4 convDefMOI4 = new MatOfInt4();
 		Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
-		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
-		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
+		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
+		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Draw convexity defect points
 		if(!convDefMOI4.empty()) {
@@ -99,10 +113,13 @@ public class HandDetector extends Detector {
 			Point data[] = reducedHandContours.get(0).toArray();
 			
 			for(int i=0; i<cdList.size(); i+=4) {
-				Point defect = data[cdList.get(i+2)];
 				Point start = data[cdList.get(i)];
-				//Imgproc.circle(dst, start, 10, Colors.mLineColorGreen, 2);
-				//Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
+				Point end = data[cdList.get(i+1)];
+				Point defect = data[cdList.get(i+2)];
+				
+				//Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
+				//Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
+				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
 			}
 		}
 		
