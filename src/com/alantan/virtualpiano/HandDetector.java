@@ -86,20 +86,22 @@ public class HandDetector extends Detector {
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
 		// 11. Draw convex hull points
-		for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
-			Point p = new Point(hullContourLMOP.get(0).get(i, 0));
-			Imgproc.circle(dst, p, 15, Colors.mLineColorGreen, 2);
-		}
+		/*List<Point> hullLP = hullContourLMOP.get(0).toList();
+		for(int i=0; i<hullLP.size(); i++) {
+			Imgproc.circle(dst, hullLP.get(i), 15, Colors.mLineColorGreen, 2);
+		}*/
 		
 		List<Point> pianoRegionConvexLP = new ArrayList<Point>();
 		List<Point> fingerTipsLP = new ArrayList<Point>();
 		
 		// 12. Find convex hull points that are within piano area
-		// (Create new method)
-		// getPointsByRegion();
 		if(mPianoMaskMOP != null) {
-			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP.toList());
-			Log.i(TAG, "mPianoMaskMOP is not null");
+			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
+		}
+		
+		// 12. Draw convex hull points that are within piano region
+		for(int i=0; i<pianoRegionConvexLP.size(); i++) {
+			Imgproc.circle(dst, pianoRegionConvexLP.get(i), 15, Colors.mLineColorGreen, 2);
 		}
 		
 		// 13. Reduce convex hull points to (maximum) 5 distinct points
@@ -184,7 +186,18 @@ public class HandDetector extends Detector {
 		mPianoMaskMOP = maskMOP;
 	}
 	
-	private List<Point> getPointsByRegion(List<Point> hullPoints, List<Point> pianoPoints) {
-		return null;
+	private List<Point> getPointsByRegion(List<Point> hullPoints, MatOfPoint pianoMaskMOP) {
+		List<Point> lpOut = new ArrayList<Point>();
+		MatOfPoint2f p = new MatOfPoint2f();
+		p.fromArray(pianoMaskMOP.toArray());
+		
+		for(int i=0; i<hullPoints.size(); i++) {
+			if(Imgproc.pointPolygonTest(p, hullPoints.get(i), false) == 0
+					|| Imgproc.pointPolygonTest(p, hullPoints.get(i), false) == 1) {
+				lpOut.add(hullPoints.get(i));
+			}
+		}
+		
+		return lpOut;
 	}
 }
