@@ -34,6 +34,8 @@ public class PianoDetector extends Detector {
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
 	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
 	
+	private MatOfPoint mPianoMaskMOP = new MatOfPoint();
+	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
 		List<MatOfPoint> mWhiteContoursLMOP = new ArrayList<MatOfPoint>();
@@ -47,7 +49,7 @@ public class PianoDetector extends Detector {
 		
 		MatOfInt hullMOI = new MatOfInt();
 		
-		MatOfPoint mPianoMaskMOP = new MatOfPoint();
+		//MatOfPoint mPianoMaskMOP = new MatOfPoint();
 		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
 		Mat mPianoMaskMat = new Mat(mMaskMat.size(), mMaskMat.type(), new Scalar(0));
 		
@@ -158,6 +160,10 @@ public class PianoDetector extends Detector {
 	
 	public List<MatOfPoint> getBlackKeysLMOP() {
 		return blackKeysOutLMOP;
+	}
+	
+	public MatOfPoint getPianoMaskMOP() {
+		return mPianoMaskMOP;
 	}
 	
 	public void drawAllContours(final Mat dst, List<MatOfPoint> contours, Scalar color, int thickness) {

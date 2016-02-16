@@ -33,6 +33,8 @@ public class HandDetector extends Detector {
 	
 	private Point lowestPoint = new Point();
 	
+	private MatOfPoint mPianoMaskMOP;
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -89,9 +91,16 @@ public class HandDetector extends Detector {
 			Imgproc.circle(dst, p, 15, Colors.mLineColorGreen, 2);
 		}
 		
+		List<Point> pianoRegionConvexLP = new ArrayList<Point>();
+		List<Point> fingerTipsLP = new ArrayList<Point>();
+		
 		// 12. Find convex hull points that are within piano area
 		// (Create new method)
 		// getPointsByRegion();
+		if(mPianoMaskMOP != null) {
+			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP.toList());
+			Log.i(TAG, "mPianoMaskMOP is not null");
+		}
 		
 		// 13. Reduce convex hull points to (maximum) 5 distinct points
 		// to correspond to 5 finger tips (Create new method)
@@ -169,5 +178,13 @@ public class HandDetector extends Detector {
 	
 	public Point getLowestPoint() {
 		return lowestPoint;
+	}
+	
+	public void setPianoMaskMOP(MatOfPoint maskMOP) {
+		mPianoMaskMOP = maskMOP;
+	}
+	
+	private List<Point> getPointsByRegion(List<Point> hullPoints, List<Point> pianoPoints) {
+		return null;
 	}
 }

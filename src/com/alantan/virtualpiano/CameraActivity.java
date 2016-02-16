@@ -368,6 +368,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private void setPianoKeys() {
 		mWhiteKeysLMOP = mPianoDetector.getWhiteKeysLMOP();
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
+		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoMaskMOP());
 	}
 	
 	private void checkKeyPressed(final Mat dst, Point point) {
