@@ -1,6 +1,8 @@
 package com.alantan.virtualpiano;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -99,9 +101,13 @@ public class HandDetector extends Detector {
 			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
 		}
 		
-		// 12. Draw convex hull points that are within piano region
+		// 13. Sort convex hull points by x-coordinate
+		List<Point> sortedPianoRegionConvexLP = sortPoints(pianoRegionConvexLP, false);
+		
+		// Draw convex hull points that are within piano region
 		for(int i=0; i<pianoRegionConvexLP.size(); i++) {
-			Imgproc.circle(dst, pianoRegionConvexLP.get(i), 15, Colors.mLineColorGreen, 2);
+			Imgproc.circle(dst, sortedPianoRegionConvexLP.get(i), 15, Colors.mLineColorRed, 2);
+			}
 		}
 		
 		// 13. Reduce convex hull points to (maximum) 5 distinct points
@@ -130,7 +136,7 @@ public class HandDetector extends Detector {
 				
 				//Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
 				//Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
-				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
+				//Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
 			}
 		}
 		
@@ -199,5 +205,23 @@ public class HandDetector extends Detector {
 		}
 		
 		return lpOut;
+	}
+	
+	private List<Point> sortPoints(List<Point> pointsLP, boolean reverse) {
+		if(reverse) {
+			Collections.sort(pointsLP, new Comparator<Point>() {
+				public int compare(Point p1, Point p2) {
+					return Double.compare(p2.x, p1.x);
+				}
+			});
+		} else {
+			Collections.sort(pointsLP, new Comparator<Point>() {
+				public int compare(Point p1, Point p2) {
+					return Double.compare(p1.x, p2.x);
+				}
+			});
+		}
+		
+		return pointsLP;
 	}
 }
