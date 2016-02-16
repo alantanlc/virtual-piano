@@ -106,8 +106,7 @@ public class HandDetector extends Detector {
 		
 		// Draw convex hull points that are within piano region
 		for(int i=0; i<pianoRegionConvexLP.size(); i++) {
-			Imgproc.circle(dst, sortedPianoRegionConvexLP.get(i), 15, Colors.mLineColorRed, 2);
-			}
+			Imgproc.circle(dst, sortedPianoRegionConvexLP.get(i), 15, Colors.mLineColorYellow, 2);
 		}
 		
 		// 13. Reduce convex hull points to (maximum) 5 distinct points
