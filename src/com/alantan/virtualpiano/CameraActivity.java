@@ -395,7 +395,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		double xDiff = currPoint.x - prevPoint.x;
 		double yDiff = currPoint.y - prevPoint.y;
 		
-		if(yDiff < 5) {
+		if(yDiff < 8 || xDiff >= 30) {
 			return;
 		}
 		
