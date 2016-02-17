@@ -124,8 +124,8 @@ public class HandDetector extends Detector {
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
-		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
-		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
+		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
+		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Draw convexity defect points
 		/*if(!convDefMOI4.empty()) {
@@ -242,7 +242,8 @@ public class HandDetector extends Detector {
 			
 			if(lpIn.get(i).x - lpOut.get(fingerIndex).x < 40) {
 				lpOut.get(fingerIndex).x = (lpOut.get(fingerIndex).x + lpIn.get(i).x)/2;
-				lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y + lpIn.get(i).y)/2;
+				//lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y + lpIn.get(i).y)/2;
+				lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y > lpIn.get(fingerIndex).y) ? lpOut.get(fingerIndex).y :  lpIn.get(fingerIndex).y;
 			} else {
 				lpOut.add(lpIn.get(i));
 				fingerIndex++;
