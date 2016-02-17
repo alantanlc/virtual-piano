@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -87,7 +88,7 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
-		// 11. Draw convex hull points
+		// Draw convex hull points
 		/*List<Point> hullLP = hullContourLMOP.get(0).toList();
 		for(int i=0; i<hullLP.size(); i++) {
 			Imgproc.circle(dst, hullLP.get(i), 15, Colors.mLineColorGreen, 2);
@@ -96,24 +97,24 @@ public class HandDetector extends Detector {
 		List<Point> pianoRegionConvexLP = new ArrayList<Point>();
 		List<Point> fingerTipsLP = new ArrayList<Point>();
 		
-		// 12. Find convex hull points that are within piano area
+		// 11. Find convex hull points that are within piano area
 		if(mPianoMaskMOP != null) {
 			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
 		}
 		
-		// 13. Sort convex hull points by x-coordinate
+		// 12. Sort convex hull points by x-coordinate
 		List<Point> sortedPianoRegionConvexLP = sortPoints(pianoRegionConvexLP, false);
 		
-		// Draw convex hull points that are within piano region
-		for(int i=0; i<pianoRegionConvexLP.size(); i++) {
-			Imgproc.circle(dst, sortedPianoRegionConvexLP.get(i), 15, Colors.mLineColorYellow, 2);
+		// 13. Reduce convex hull points to (maximum) 5 distinct points to correspond to 5 finger tips
+		// may not necessarily return a list of 5 points, depends on how many fingers are within piano
+		fingerTipsLP = getFingerTipsLP(sortedPianoRegionConvexLP);
+		
+		// Draw finger tips
+		for(int i=0; i<fingerTipsLP.size(); i++) {
+			Imgproc.circle(dst, fingerTipsLP.get(i), 10, Colors.mLineColorRed, 2);
 		}
 		
-		// 13. Reduce convex hull points to (maximum) 5 distinct points
-		// to correspond to 5 finger tips (Create new method)
-		// getFingerTipPoints();
-		
-		// 11. Get convexity defects
+		// Get convexity defects
 		MatOfInt4 convDefMOI4 = new MatOfInt4();
 		Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
 		
@@ -222,5 +223,26 @@ public class HandDetector extends Detector {
 		}
 		
 		return pointsLP;
+	}
+	
+	private List<Point> getFingerTipsLP(List<Point> lpIn) {
+		if(lpIn.size() <= 1) return lpIn;
+		
+		List<Point> lpOut = new ArrayList<Point>();
+		int fingerIndex = 0;
+		
+		lpOut.add(lpIn.get(0));
+		
+		for(int i=1; i<lpIn.size(); i++) {
+			if(lpIn.get(i).x - lpOut.get(fingerIndex).x < 30) {
+				lpOut.get(fingerIndex).x = (lpOut.get(fingerIndex).x + lpIn.get(i).x)/2;
+				lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y + lpIn.get(i).y)/2;
+			} else {
+				lpOut.add(lpIn.get(i));
+				fingerIndex++;
+			}
+		}
+		
+		return lpOut;
 	}
 }
