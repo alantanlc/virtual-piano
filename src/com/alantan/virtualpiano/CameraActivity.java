@@ -106,7 +106,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private SoundPoolPlayer sound;
 	
 	private Point prevPoint;
-	
 	private Point currPoint;
 	
 	// The OpenCV loader callback.

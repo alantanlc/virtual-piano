@@ -38,6 +38,8 @@ public class HandDetector extends Detector {
 	
 	private MatOfPoint mPianoMaskMOP;
 	
+	private List<Point> fingerTipsLPOut = new ArrayList<Point>();
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -110,13 +112,15 @@ public class HandDetector extends Detector {
 		fingerTipsLP = getFingerTipsLP(sortedPianoRegionConvexLP);
 		
 		// Draw finger tips
-		for(int i=0; i<fingerTipsLP.size(); i++) {
+		/*for(int i=0; i<fingerTipsLP.size(); i++) {
 			Imgproc.circle(dst, fingerTipsLP.get(i), 10, Colors.mLineColorRed, 2);
-		}
+		}*/
+		
+		setFingerTipsLPOut(fingerTipsLP);
 		
 		// Get convexity defects
-		MatOfInt4 convDefMOI4 = new MatOfInt4();
-		Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
+		//MatOfInt4 convDefMOI4 = new MatOfInt4();
+		//Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
@@ -124,7 +128,7 @@ public class HandDetector extends Detector {
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Draw convexity defect points
-		if(!convDefMOI4.empty()) {
+		/*if(!convDefMOI4.empty()) {
 			List<Integer> cdList = convDefMOI4.toList();
 			
 			Point data[] = reducedHandContours.get(0).toArray();
@@ -138,16 +142,16 @@ public class HandDetector extends Detector {
 				//Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
 				//Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
 			}
-		}
+		}*/
 		
 		// Find lowest point
-		lowestPoint = findHighestPoint(hullContourLMOP.get(0));
+		//lowestPoint = findHighestPoint(hullContourLMOP.get(0));
 		//lowestPoint = findLowestPoint(hullContourLMOP.get(0));
 		
 		// Draw lowest point
-		if(lowestPoint != null) {
+		/*if(lowestPoint != null) {
 			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorBlue, -1);
-		}
+		}*/
 	}
 	
 	public List<MatOfPoint> getHandContours() {
@@ -244,5 +248,14 @@ public class HandDetector extends Detector {
 		}
 		
 		return lpOut;
+	}
+	
+	private void setFingerTipsLPOut(List<Point> lpIn) {
+		fingerTipsLPOut.clear();
+		fingerTipsLPOut = lpIn;
+	}
+	
+	private List<Point> getFingerTipsLPOut() {
+		return fingerTipsLPOut;
 	}
 }
