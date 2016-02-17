@@ -331,6 +331,10 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			if(!mHandDetector.getFingerTipsLPOut().isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				List<Point> currFingerTipsLP = mHandDetector.getFingerTipsLPOut();
 				
+				for(int j=0; j<currFingerTipsLP.size(); j++) {
+					Imgproc.circle(rgba, currFingerTipsLP.get(j), 15, Colors.mLineColorRed, 2);
+				}
+				
 				if(prevFingerTipsLP.size() == 0) {
 					prevFingerTipsLP.addAll(currFingerTipsLP);
 				}
