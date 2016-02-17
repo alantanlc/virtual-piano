@@ -255,7 +255,7 @@ public class HandDetector extends Detector {
 		fingerTipsLPOut = lpIn;
 	}
 	
-	private List<Point> getFingerTipsLPOut() {
+	public List<Point> getFingerTipsLPOut() {
 		return fingerTipsLPOut;
 	}
 }

@@ -105,8 +105,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	
 	private SoundPoolPlayer sound;
 	
-	private Point prevPoint;
-	private Point currPoint;
+	private List<Point> prevFingerTipsLP = new ArrayList<Point>();
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -327,8 +326,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		if(mIsFingersDetection) {
 			mHandDetector.apply(rgba, rgba);
 			
-			if(mHandDetector.getLowestPoint() != null && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
-				checkKeyPressed(rgba, mHandDetector.getLowestPoint());
+			if(!mHandDetector.getFingerTipsLPOut().isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
+				checkKeyPressed(rgba, mHandDetector.getFingerTipsLPOut());
 			}
 		}
 		
@@ -370,44 +369,51 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoMaskMOP());
 	}
 	
-	private void checkKeyPressed(final Mat dst, Point point) {
-		
-		if(prevPoint == null) {
-			prevPoint = point;
-		}
-		
-		currPoint = point;
-		
-		double xDiff = currPoint.x - prevPoint.x;
-		double yDiff = currPoint.y - prevPoint.y;
-		
-		prevPoint = currPoint;
-		
-		if(yDiff < 5) {
+	private void checkKeyPressed(final Mat dst, List<Point> currLP) {
+		if(prevFingerTipsLP.size() == 0) {
+			prevFingerTipsLP.addAll(currLP);
 			return;
 		}
 		
-		Log.i(TAG, "Key pressed! Y diff: " + yDiff);
+		int max = (prevFingerTipsLP.size() <= currLP.size()) ? prevFingerTipsLP.size() : currLP.size();
 		
-		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
-			MatOfPoint2f p = new MatOfPoint2f();
-			p.fromArray(mWhiteKeysLMOP.get(i).toArray());
+		
+		
+		for(int i=0; i<max; i++) {
+			Imgproc.circle(dst, currLP.get(i), 10, Colors.mLineColorRed, 2);
 			
-			if(Imgproc.pointPolygonTest(p, point, false) == 0
-					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				playSound(i);
+			double xDiff = currLP.get(i).x - prevFingerTipsLP.get(i).x;
+			double yDiff = currLP.get(i).y - prevFingerTipsLP.get(i).y;
+			
+			if(yDiff < 5) {
+				return;
+			}
+			
+			Log.i(TAG, "Key pressed! Y diff: " + yDiff);
+			
+			for(int j=0; j<mWhiteKeysLMOP.size(); j++) {
+				MatOfPoint2f p = new MatOfPoint2f();
+				p.fromArray(mWhiteKeysLMOP.get(j).toArray());
+				
+				if(Imgproc.pointPolygonTest(p, currLP.get(i), false) == 0
+						|| Imgproc.pointPolygonTest(p, currLP.get(i), false) == 1) {
+					playSound(j);
+				}
+			}
+			
+			for(int k=0; k<mBlackKeysLMOP.size(); k++) {
+				MatOfPoint2f p = new MatOfPoint2f();
+				p.fromArray(mBlackKeysLMOP.get(k).toArray());
+				
+				if(Imgproc.pointPolygonTest(p, currLP.get(i), false) == 0
+						|| Imgproc.pointPolygonTest(p, currLP.get(i), false) == 1) {
+					playSound(k+10);
+				}
 			}
 		}
 		
-		for(int i=0; i<mBlackKeysLMOP.size(); i++) {
-			MatOfPoint2f p = new MatOfPoint2f();
-			p.fromArray(mBlackKeysLMOP.get(i).toArray());
-			
-			if(Imgproc.pointPolygonTest(p, point, false) == 0
-					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				playSound(i+10);
-			}
-		}
+		prevFingerTipsLP.clear();
+		prevFingerTipsLP.addAll(currLP);
 	}
 	
 	private void playSound(int i) {
