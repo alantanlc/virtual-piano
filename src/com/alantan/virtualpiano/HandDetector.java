@@ -84,10 +84,10 @@ public class HandDetector extends Detector {
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
 		// 11. Draw convex hull points
-		for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
+		/*for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
 			Point p = new Point(hullContourLMOP.get(0).get(i, 0));
-			Imgproc.circle(dst, p, 15, Colors.mLineColorGreen, 2);
-		}
+			Imgproc.circle(dst, p, 10, Colors.mLineColorGreen, 2);
+		}*/
 		
 		// 12. Find convex hull points that are within piano area
 		// (Create new method)
@@ -119,7 +119,7 @@ public class HandDetector extends Detector {
 				
 				//Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
 				//Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
-				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
+				//Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
 			}
 		}
 		
@@ -129,7 +129,7 @@ public class HandDetector extends Detector {
 		
 		// Draw lowest point
 		if(lowestPoint != null) {
-			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorBlue, -1);
+			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorRed, -1);
 		}
 	}
 	
