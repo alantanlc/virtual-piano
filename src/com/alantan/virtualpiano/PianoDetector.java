@@ -3,6 +3,7 @@ package com.alantan.virtualpiano;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -79,7 +80,15 @@ public class PianoDetector extends Detector {
 			mWhiteKeysLMOP.set(i, reduceContourPoints(mWhiteKeysLMOP.get(i)));
 		}
 		
-		// 9. Eliminate contours that have less than 6 points or more than 8 points
+		// 9. Eliminate contours that have less than 4 points or more than 8 points
+		Iterator<MatOfPoint> mWhiteItr = mWhiteKeysLMOP.iterator();
+		
+		while(mWhiteItr.hasNext()) {
+			MatOfPoint mop = mWhiteItr.next();
+			if(mop.rows() < 4 || mop.rows() > 8) {
+				mWhiteKeysLMOP.remove(mop);
+			}
+		}
 		
 		// 10. If no contours, just return
 		if(mWhiteKeysLMOP.size() == 0) {
@@ -138,6 +147,16 @@ public class PianoDetector extends Detector {
 		// 20. Reduce number of points of each contour using DP algorithm
 		for(int i=0; i<mBlackKeysLMOP.size(); i++) {
 			mBlackKeysLMOP.set(i, reduceContourPoints(mBlackKeysLMOP.get(i)));
+		}
+		
+		// 20. Eliminate contours that have less than 4 points or more than 6 points
+		Iterator<MatOfPoint> mBlackItr = mBlackKeysLMOP.iterator();
+				
+		while(mBlackItr.hasNext()) {
+			MatOfPoint mop = mBlackItr.next();
+			if(mop.rows() < 4 || mop.rows() > 6) {
+				mBlackKeysLMOP.remove(mop);
+			}
 		}
 		
 		// 21. If no contours, just return
