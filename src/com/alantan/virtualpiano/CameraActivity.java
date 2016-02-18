@@ -331,23 +331,28 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			if(!mHandDetector.getFingerTipsLPOut().isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				List<Point> currFingerTipsLP = mHandDetector.getFingerTipsLPOut();
 				
+				// Draw finger tips
 				for(int j=0; j<currFingerTipsLP.size(); j++) {
 					Imgproc.circle(rgba, currFingerTipsLP.get(j), 15, Colors.mLineColorRed, 2);
 				}
 				
+				// If prevFingerTipsLP is empty, set it to current finger tips
 				if(prevFingerTipsLP.size() == 0) {
 					prevFingerTipsLP.addAll(currFingerTipsLP);
 				}
 				
+				// Since size of prev and curr LP may vary, it is crucial to find the minimum size
+				// so that 'for' loop does not face any indexing error
 				min = (prevFingerTipsLP.size() < currFingerTipsLP.size()) ? prevFingerTipsLP.size() : currFingerTipsLP.size();
 				
-				Log.i(TAG, "Prev: " + prevFingerTipsLP.size() + " Curr: " + currFingerTipsLP.size() + " Min: " + min);
+				//Log.i(TAG, "Prev: " + prevFingerTipsLP.size() + " Curr: " + currFingerTipsLP.size() + " Min: " + min);
 				
+				// For each finger tip point, check for key press
 				for(int i=0; i<min; i++) {
-					//Imgproc.circle(rgba, currFingerTipsLP.get(i), 15, Colors.mLineColorRed, 2);
-					checkKeyPressed(prevFingerTipsLP.get(i), currFingerTipsLP.get(i));
+					//checkKeyPressed(prevFingerTipsLP.get(i), currFingerTipsLP.get(i));
 				}
 				
+				// Clear prevFingerTipsLP and update to current finger tips LP
 				prevFingerTipsLP.clear();
 				prevFingerTipsLP.addAll(currFingerTipsLP);
 			}
