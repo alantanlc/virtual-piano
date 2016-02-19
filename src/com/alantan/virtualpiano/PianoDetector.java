@@ -37,6 +37,7 @@ public class PianoDetector extends Detector {
 	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
 	
 	private MatOfPoint mPianoMaskMOP = new MatOfPoint();
+	private MatOfPoint mPianoRectMaskMOP = new MatOfPoint();
 	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
@@ -116,6 +117,8 @@ public class PianoDetector extends Detector {
 		
 		Imgproc.rectangle(dst, mPianoRect.tl(), mPianoRect.br(), Colors.mLineColorYellow, 2);
 		
+		
+		
 		// 13. Create piano mask mat
 		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
 		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
@@ -172,6 +175,10 @@ public class PianoDetector extends Detector {
 	
 	public MatOfPoint getPianoMaskMOP() {
 		return mPianoMaskMOP;
+	}
+	
+	public MatOfPoint getPianoRectMaskMOP() {
+		return mPianoRectMaskMOP;
 	}
 	
 	public void drawAllContours(final Mat dst, List<MatOfPoint> contours, Scalar color, int thickness) {
