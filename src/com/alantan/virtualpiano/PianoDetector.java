@@ -11,6 +11,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -106,6 +107,14 @@ public class PianoDetector extends Detector {
 		
 		// 12e. Convert MOP to LMOP
 		mPianoMaskLMOP.add(mPianoMaskMOP);
+		
+		// 12f. Increase piano mask range for key press detection
+		Rect mPianoRect = Imgproc.boundingRect(mPianoMaskMOP);
+		
+		mPianoRect.y -= 20;
+		mPianoRect.height += 20;
+		
+		Imgproc.rectangle(dst, mPianoRect.tl(), mPianoRect.br(), Colors.mLineColorYellow, 2);
 		
 		// 13. Create piano mask mat
 		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
