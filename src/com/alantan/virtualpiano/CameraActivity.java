@@ -345,11 +345,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				// so that 'for' loop does not face any indexing error
 				min = (prevFingerTipsLP.size() < currFingerTipsLP.size()) ? prevFingerTipsLP.size() : currFingerTipsLP.size();
 				
-				//Log.i(TAG, "Prev: " + prevFingerTipsLP.size() + " Curr: " + currFingerTipsLP.size() + " Min: " + min);
-				
 				// For each finger tip point, check for key press
 				for(int i=0; i<min; i++) {
-					//checkKeyPressed(prevFingerTipsLP.get(i), currFingerTipsLP.get(i));
+					checkKeyPressed(prevFingerTipsLP.get(i), currFingerTipsLP.get(i));
 				}
 				
 				// Clear prevFingerTipsLP and update to current finger tips LP
