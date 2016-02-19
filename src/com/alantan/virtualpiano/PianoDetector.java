@@ -69,13 +69,13 @@ public class PianoDetector extends Detector {
 			return;
 		}
 		
-		// 7. Get contours that are within certain contour size range
-		mWhiteKeysLMOP = getPianoKeyContours(mWhiteContoursLMOP, whiteKeySizeLower, whiteKeySizeUpper);
-		
-		// 8. Reduce number of points of each contour using DP algorithm
-		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
-			mWhiteKeysLMOP.set(i, reduceContourPoints(mWhiteKeysLMOP.get(i)));
+		// 7. Reduce number of points of each contour using DP algorithm
+		for(int i=0; i<mWhiteContoursLMOP.size(); i++) {
+			mWhiteContoursLMOP.set(i, reduceContourPoints(mWhiteContoursLMOP.get(i)));
 		}
+		
+		// 8. Get contours that are within certain contour size range
+		mWhiteKeysLMOP = getPianoKeyContours(mWhiteContoursLMOP, whiteKeySizeLower, whiteKeySizeUpper);
 		
 		// 10. If no contours, just return
 		if(mWhiteKeysLMOP.size() == 0) {
