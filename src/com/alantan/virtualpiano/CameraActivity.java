@@ -333,7 +333,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				
 				// Draw finger tips
 				for(int j=0; j<currFingerTipsLP.size(); j++) {
-					Imgproc.circle(rgba, currFingerTipsLP.get(j), 15, Colors.mLineColorRed, 2);
+					Imgproc.circle(rgba, currFingerTipsLP.get(j), 5, Colors.mLineColorRed, 2);
 				}
 				
 				// If prevFingerTipsLP is empty, set it to current finger tips
@@ -392,7 +392,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private void setPianoKeys() {
 		mWhiteKeysLMOP = mPianoDetector.getWhiteKeysLMOP();
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
-		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoMaskMOP());
+		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoRectMaskMOP());
 	}
 	
 	private void checkKeyPressed(Point prevPoint, Point currPoint) {

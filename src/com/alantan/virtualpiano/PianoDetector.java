@@ -52,7 +52,6 @@ public class PianoDetector extends Detector {
 		
 		MatOfInt hullMOI = new MatOfInt();
 		
-		//MatOfPoint mPianoMaskMOP = new MatOfPoint();
 		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
 		Mat mPianoMaskMat = new Mat(mMaskMat.size(), mMaskMat.type(), new Scalar(0));
 		
@@ -109,15 +108,23 @@ public class PianoDetector extends Detector {
 		// 12e. Convert MOP to LMOP
 		mPianoMaskLMOP.add(mPianoMaskMOP);
 		
-		// 12f. Increase piano mask range for key press detection
+		// 12f. Increase piano mask range for key press detection using Rect object
 		Rect mPianoRect = Imgproc.boundingRect(mPianoMaskMOP);
 		
 		mPianoRect.y -= 20;
 		mPianoRect.height += 20;
 		
-		Imgproc.rectangle(dst, mPianoRect.tl(), mPianoRect.br(), Colors.mLineColorYellow, 2);
+		// 12g. Convert Bounding Rect to MatOfPoint
+		List<Point> mPianoRectLP = new ArrayList<Point>();
+		mPianoRectLP.add(mPianoRect.tl());
+		mPianoRectLP.add(new Point(mPianoRect.tl().x + mPianoRect.width, mPianoRect.tl().y));
+		mPianoRectLP.add(mPianoRect.br());
+		mPianoRectLP.add(new Point(mPianoRect.br().x - mPianoRect.width, mPianoRect.br().y));
+		mPianoRectMaskMOP.fromList(mPianoRectLP);
 		
+		mPianoMaskLMOP.add(mPianoRectMaskMOP);
 		
+		Imgproc.drawContours(dst, mPianoMaskLMOP, 1, Colors.mLineColorRed, 2);
 		
 		// 13. Create piano mask mat
 		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
