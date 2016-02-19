@@ -347,7 +347,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				
 				// For each finger tip point, check for key press
 				for(int i=0; i<min; i++) {
-					//checkKeyPressed(prevFingerTipsLP.get(i), currFingerTipsLP.get(i));
+					checkKeyPressed(prevFingerTipsLP.get(i), currFingerTipsLP.get(i));
 				}
 				
 				// Clear prevFingerTipsLP and update to current finger tips LP
@@ -369,7 +369,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			Scalar lowerThreshold = new Scalar(3, 50, 50);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-			
+			Imgproc.erode(rgba, rgba, new Mat());
+			Imgproc.erode(rgba, rgba, new Mat());
 		}
 		
 		if(mIsErosion) {
