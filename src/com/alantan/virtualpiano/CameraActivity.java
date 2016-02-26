@@ -76,11 +76,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	// If so, menu interaction should be disabled.
 	private boolean mIsMenuLocked;
 	
-	// Our Filter implementation rely on classes in OpenCV
-	// and cannot be instantiated until the OpenCV library is loaded.
-	// Thus, our BaseLoaderCallback object is responsible for initializing
-	// the Filter[] arrays.
-	
 	// PianoDetector
 	private PianoDetector mPianoDetector;
 	
@@ -97,6 +92,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	// Whether skin detection should be applied
 	private boolean mIsFingersDetection;
 	
+	// KeyPressDetector
+	private KeyPressDetector mKeyPressDetector;
+	
 	// Whether dilation should be applied
 	//private boolean mIsDilation;
 	
@@ -106,8 +104,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private SoundPoolPlayer sound;
 	
 	private Point prevPoint;
-	
 	private Point currPoint;
+	
+	private boolean mIsPianoLayout1;
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -119,6 +118,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				mCameraView.enableView();
 				mPianoDetector = new PianoDetector();
 				mHandDetector = new HandDetector();
+				mKeyPressDetector = new KeyPressDetector();
+				mIsPianoLayout1 = true;
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -326,7 +327,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mHandDetector.apply(rgba, rgba);
 			
 			if(mHandDetector.getLowestPoint() != null && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
-				checkKeyPressed(rgba, mHandDetector.getLowestPoint());
+				checkKeyPressed();
 			}
 		}
 		
@@ -362,108 +363,38 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		return rgba;
 	}
 	
+	// This method checks for
+		// 1. Finger Press Motion
+		// 2. If true, find note index
+		// 3. Play sound
+	private void checkKeyPressed() {
+		if(prevPoint == null) prevPoint = mHandDetector.getLowestPoint();
+		currPoint = mHandDetector.getLowestPoint();
+		
+		// If finger downward motion is true
+		if(mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
+			playSound(mKeyPressDetector.getPianoKeyIndex(currPoint));
+		}
+		
+		prevPoint = currPoint;
+	}
+	
 	private void setPianoKeys() {
 		mWhiteKeysLMOP = mPianoDetector.getWhiteKeysLMOP();
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
-	}
-	
-	private void checkKeyPressed(final Mat dst, Point point) {
-		
-		if(prevPoint == null) {
-			prevPoint = point;
-		}
-		
-		currPoint = point;
-		
-		double xDiff = currPoint.x - prevPoint.x;
-		double yDiff = currPoint.y - prevPoint.y;
-		
-		prevPoint = currPoint;
-		
-		Log.i(TAG, "Y diff: " + yDiff);
-		
-		if(yDiff < 5) {
-			return;
-		}
-		
-		Log.i(TAG, "Key pressed! Y diff: " + yDiff);
-		
-		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
-			MatOfPoint2f p = new MatOfPoint2f();
-			p.fromArray(mWhiteKeysLMOP.get(i).toArray());
-			
-			if(Imgproc.pointPolygonTest(p, point, false) == 0
-					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				playSound(i);
-			}
-		}
-		
-		for(int i=0; i<mBlackKeysLMOP.size(); i++) {
-			MatOfPoint2f p = new MatOfPoint2f();
-			p.fromArray(mBlackKeysLMOP.get(i).toArray());
-			
-			if(Imgproc.pointPolygonTest(p, point, false) == 0
-					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				playSound(i+10);
-			}
-		}
+		mKeyPressDetector.setWhiteKeysLMOP( mPianoDetector.getWhiteKeysLMOP());
+		mKeyPressDetector.setBlackKeysLMOP( mPianoDetector.getBlackKeysLMOP());
 	}
 	
 	private void playSound(int i) {
-		switch(i) {
-		case 0:
-			sound.playShortResource(R.raw.pianoc1);
-			break;
-		case 1:
-			sound.playShortResource(R.raw.pianod1);
-			break;
-		case 2:
-			sound.playShortResource(R.raw.pianoe1);
-			break;
-		case 3:
-			sound.playShortResource(R.raw.pianof1);
-			break;
-		case 4:
-			sound.playShortResource(R.raw.pianog1);
-			break;
-		case 5:
-			sound.playShortResource(R.raw.pianoa1);
-			break;
-		case 6:
-			sound.playShortResource(R.raw.pianob1);
-			break;
-		case 7:
-			sound.playShortResource(R.raw.pianoc2);
-			break;
-		case 8:
-			sound.playShortResource(R.raw.pianod2);
-			break;
-		case 9:
-			sound.playShortResource(R.raw.pianoe2);
-			break;
-		case 10:
-			sound.playShortResource(R.raw.pianocd1);
-			break;
-		case 11:
-			sound.playShortResource(R.raw.pianode1);
-			break;
-		case 12:
-			sound.playShortResource(R.raw.pianofg1);
-			break;
-		case 13:
-			sound.playShortResource(R.raw.pianoga1);
-			break;
-		case 14:
-			sound.playShortResource(R.raw.pianoab1);
-			break;
-		case 15:
-			sound.playShortResource(R.raw.pianocd2);
-			break;
-		case 16:
-			sound.playShortResource(R.raw.pianode2);
-			break;
-		default:
-			sound.playShortResource(R.raw.pianoc1);
+		Log.i(TAG, "PLAYSOUND, Index: " + i);
+		if(i == -1) return;
+		if(mIsPianoLayout1) {
+			//play sound from layout 1
+			sound.playLayout1Sound(i);
+		} else {
+			// play sound from layout 2
+			sound.playLayout2Sound(i);
 		}
 	}
 }
