@@ -16,6 +16,11 @@
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_detect_skin" />
     
+     <item
+        android:id="@+id/menu_change_layout"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_change_layout" />
+    
     <!-- <item
         android:id="@+id/menu_dilation"
         app:showAsAction="ifRoom|withText"

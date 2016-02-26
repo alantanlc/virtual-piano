@@ -285,6 +285,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		case R.id.menu_detect_skin:
 			mIsFingersDetection = !mIsFingersDetection;
 			return true;
+		case R.id.menu_change_layout:
+			mIsPianoLayout1 = !mIsPianoLayout1;
+			return true;
 		case R.id.menu_next_camera:
 			mIsMenuLocked = true;
 			
@@ -387,7 +390,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	}
 	
 	private void playSound(int i) {
-		Log.i(TAG, "PLAYSOUND, Index: " + i);
 		if(i == -1) return;
 		if(mIsPianoLayout1) {
 			//play sound from layout 1
