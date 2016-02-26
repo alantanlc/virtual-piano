@@ -22,13 +22,13 @@ public class KeyPressDetector {
 		double xDiff = currPoint.x - prevPoint.x;
 		double yDiff = currPoint.y - prevPoint.y;
 		
-		Log.i(TAG, "Y diff: " + yDiff);
+		//Log.i(TAG, "Y diff: " + yDiff + ", X diff: " + xDiff);
 		
-		if(yDiff < 5) {
+		if(yDiff < 8) {
 			return false;
 		}
 		
-		Log.i(TAG, "Key pressed! Y diff: " + yDiff);
+		Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
 		
 		return true;
 	}

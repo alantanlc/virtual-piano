@@ -116,6 +116,10 @@ public class PianoDetector extends Detector {
 		// 15. Invert piano mask
 		Core.bitwise_not(mMaskMat, mMaskMat);
 		
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		
 		// 16. Apply piano mask to binary image
 		mMaskMat.copyTo(mPianoMaskMat, mPianoMaskMat);
 		
