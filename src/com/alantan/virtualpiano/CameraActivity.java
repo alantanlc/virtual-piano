@@ -98,10 +98,10 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private boolean mIsFingersDetection;
 	
 	// Whether dilation should be applied
-	private boolean mIsDilation;
+	//private boolean mIsDilation;
 	
 	// Whether erosion should be applied
-	private boolean mIsErosion;
+	//private boolean mIsErosion;
 	
 	private SoundPoolPlayer sound;
 	
@@ -291,12 +291,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mCameraIndex = (mCameraIndex + 1) % mNumCameras;
 			recreate();
 			return true;
-		case R.id.menu_dilation:
-			mIsDilation = !mIsDilation;
-			return true;
-		case R.id.menu_erosion:
+		/*case R.id.menu_erosion:
 			mIsErosion = !mIsErosion;
-			return true;
+			return true;*/
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -341,7 +338,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
 		}
 		
-		if(mIsDilation) {
+		/*if(mIsDilation) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
 			Scalar lowerThreshold = new Scalar(3, 50, 50);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
@@ -354,7 +351,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			Scalar lowerThreshold = new Scalar(0, 0, 100);
 			Scalar upperThreshold = new Scalar(179, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-		}
+		}*/
 		
 		// Flip image if using front facing camera
 		if(mIsCameraFrontFacing) {

@@ -2080,10 +2080,7 @@ containing a value of this type.
         public static final int media_actions=0x7f0a0056;
         public static final int menu_detect_piano=0x7f0a0060;
         public static final int menu_detect_skin=0x7f0a0062;
-        public static final int menu_dilation=0x7f0a0063;
-        public static final int menu_erosion=0x7f0a0064;
-        public static final int menu_next_camera=0x7f0a0066;
-        public static final int menu_play=0x7f0a0065;
+        public static final int menu_next_camera=0x7f0a0063;
         public static final int menu_set_piano=0x7f0a0061;
         public static final int middle=0x7f0a0023;
         public static final int multiply=0x7f0a0017;
