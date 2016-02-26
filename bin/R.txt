@@ -491,11 +491,12 @@ int id line3 0x7f0a005c
 int id listMode 0x7f0a000d
 int id list_item 0x7f0a002b
 int id media_actions 0x7f0a0056
-int id menu_change_layout 0x7f0a0063
-int id menu_detect_piano 0x7f0a0060
-int id menu_detect_skin 0x7f0a0062
-int id menu_next_camera 0x7f0a0064
-int id menu_set_piano 0x7f0a0061
+int id menu_change_layout 0x7f0a0064
+int id menu_detect_piano 0x7f0a0061
+int id menu_detect_skin 0x7f0a0063
+int id menu_erosion 0x7f0a0060
+int id menu_next_camera 0x7f0a0065
+int id menu_set_piano 0x7f0a0062
 int id middle 0x7f0a0023
 int id multiply 0x7f0a0017
 int id never 0x7f0a001f

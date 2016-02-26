@@ -99,7 +99,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	//private boolean mIsDilation;
 	
 	// Whether erosion should be applied
-	//private boolean mIsErosion;
+	private boolean mIsErosion;
 	
 	private SoundPoolPlayer sound;
 	
@@ -273,6 +273,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		}
 		
 		switch (item.getItemId()) {
+		case R.id.menu_erosion:
+			mIsErosion = !mIsErosion;
+			return true;
 		case R.id.menu_detect_piano:
 			mIsPianoDetection = !mIsPianoDetection;
 			mWhiteKeysLMOP.clear();
@@ -295,9 +298,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mCameraIndex = (mCameraIndex + 1) % mNumCameras;
 			recreate();
 			return true;
-		/*case R.id.menu_erosion:
-			mIsErosion = !mIsErosion;
-			return true;*/
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -342,15 +342,15 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
 		}
 		
-		/*if(mIsDilation) {
+		if(mIsErosion) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(3, 50, 50);
+			Scalar lowerThreshold = new Scalar(3, 50, 120);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 			
 		}
 		
-		if(mIsErosion) {
+		/*if(mIsDilation) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
 			Scalar lowerThreshold = new Scalar(0, 0, 100);
 			Scalar upperThreshold = new Scalar(179, 255, 255);

@@ -24,7 +24,7 @@ public class HandDetector extends Detector {
 	private final int lowerHue = 3;
 	private final int upperHue = 33;
 	
-	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 50);
+	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 120);
 	private final Scalar upperThreshold = new Scalar(upperHue, 255, 255);
 	
 	private final Mat mMat = new Mat();
@@ -73,8 +73,6 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
 		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
-		//Log.i(TAG, Double.toString(Imgproc.contourArea(reducedHandContours.get(0))));
-		
 		// 9. Get convex hull of hand
 		MatOfInt hullMOI = new MatOfInt();
 		Imgproc.convexHull(reducedHandContours.get(0), hullMOI);
@@ -98,8 +96,8 @@ public class HandDetector extends Detector {
 		// getFingerTipPoints();
 		
 		// 11. Get convexity defects
-		MatOfInt4 convDefMOI4 = new MatOfInt4();
-		Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
+		//MatOfInt4 convDefMOI4 = new MatOfInt4();
+		//Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);

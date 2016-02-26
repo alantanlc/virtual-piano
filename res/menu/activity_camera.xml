@@ -2,6 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
     
     <item
+        android:id="@+id/menu_erosion"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_erosion" />
+    
+    <item
         android:id="@+id/menu_detect_piano"
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_detect_piano" />
@@ -24,12 +29,7 @@
     <!-- <item
         android:id="@+id/menu_dilation"
         app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_dilation" />
-    
-    <item
-        android:id="@+id/menu_erosion"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_erosion" /> -->
+        android:title="@string/menu_dilation" /> -->
     
     <item
         android:id="@+id/menu_next_camera"
