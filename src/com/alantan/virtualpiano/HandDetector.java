@@ -107,7 +107,7 @@ public class HandDetector extends Detector {
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Draw convexity defect points
-		if(!convDefMOI4.empty()) {
+		/*if(!convDefMOI4.empty()) {
 			List<Integer> cdList = convDefMOI4.toList();
 			
 			Point data[] = reducedHandContours.get(0).toArray();
@@ -117,15 +117,14 @@ public class HandDetector extends Detector {
 				Point end = data[cdList.get(i+1)];
 				Point defect = data[cdList.get(i+2)];
 				
-				//Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
-				//Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
-				//Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
+				Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
+				Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
+				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
 			}
-		}
+		}*/
 		
 		// Find lowest point
-		lowestPoint = findHighestPoint(hullContourLMOP.get(0));
-		//lowestPoint = findLowestPoint(hullContourLMOP.get(0));
+		lowestPoint = findLowestPoint(hullContourLMOP.get(0));
 		
 		// Draw lowest point
 		if(lowestPoint != null) {
@@ -137,7 +136,7 @@ public class HandDetector extends Detector {
 		return contoursOut;
 	}
 	
-	private Point findHighestPoint(MatOfPoint contour) {
+	private Point findLowestPoint(MatOfPoint contour) {
 		Point highest = new Point();
 		highest.x = 0;
 		highest.y = 0;
@@ -150,21 +149,6 @@ public class HandDetector extends Detector {
 		}
 		
 		return highest;
-	}
-	
-	private Point findLowestPoint(MatOfPoint contour) {
-		Point lowest = new Point();
-		lowest.x = 5000;
-		lowest.y = 5000;
-		
-		for(int i=0; i<contour.rows(); i++) {
-			if(contour.get(i, 0)[1] < lowest.y) {
-				lowest.x = contour.get(i, 0)[0];
-				lowest.y = contour.get(i, 0)[1];
-			}
-		}
-		
-		return lowest;
 	}
 	
 	public Point getLowestPoint() {
