@@ -41,6 +41,7 @@ public class KeyPressDetector {
 			
 			if(Imgproc.pointPolygonTest(p, point, false) == 0
 					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
+				Log.i(TAG, "Index: " + i);
 				return i;
 			}
 		}
@@ -51,6 +52,7 @@ public class KeyPressDetector {
 			
 			if(Imgproc.pointPolygonTest(p, point, false) == 0
 					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
+				Log.i(TAG, "Index: " + i);
 				return i+10;
 			}
 		}
