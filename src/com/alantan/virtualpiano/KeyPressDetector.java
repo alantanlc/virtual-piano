@@ -15,12 +15,12 @@ public class KeyPressDetector {
 	
 	private final String TAG = KeyPressDetector.class.getSimpleName();
 	
-	private List<MatOfPoint> mWhiteKeysLMOP = new ArrayList<MatOfPoint>();
-	private List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
+	private List<MatOfPoint2f> mWhiteKeysLMOP2f = new ArrayList<MatOfPoint2f>();
+	private List<MatOfPoint2f> mBlackKeysLMOP2f = new ArrayList<MatOfPoint2f>();
 	
 	private int mPianoKeyIndex = -1;
-	
-	private double mPianoDividerY;
+
+	private double mDivideConquerX;
 	
 	public boolean checkFingerDownwardMotion(Point prevPoint, Point currPoint) {
 		double xDiff = currPoint.x - prevPoint.x;
@@ -28,7 +28,7 @@ public class KeyPressDetector {
 		
 		//Log.i(TAG, "Y diff: " + yDiff + ", X diff: " + xDiff);
 		
-		if(yDiff < 8) {
+		if(yDiff < 5) {
 			return false;
 		}
 		
@@ -39,42 +39,40 @@ public class KeyPressDetector {
 	
 	public int getPianoKeyIndex(Point point) {
 		
-		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
-			MatOfPoint2f p = new MatOfPoint2f();
-			p.fromArray(mWhiteKeysLMOP.get(i).toArray());
-			
-			if(Imgproc.pointPolygonTest(p, point, false) == 0
-					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				Log.i(TAG, "Index: " + i);
-				return i;
-			}
+		int whiteIndex = -1;
+		int blackIndex = -1;
+		
+		if(point.x < mDivideConquerX) {
+			whiteIndex = whiteKeysPolygonTest(point, 5, 9);
+			blackIndex = blackKeysPolygonTest(point, 3, 6);
+		} else {
+			whiteIndex = whiteKeysPolygonTest(point, 0, 4);
+			blackIndex = blackKeysPolygonTest(point, 0, 3);
 		}
 		
-		for(int i=0; i<mBlackKeysLMOP.size(); i++) {
-			MatOfPoint2f p = new MatOfPoint2f();
-			p.fromArray(mBlackKeysLMOP.get(i).toArray());
-			
-			if(Imgproc.pointPolygonTest(p, point, false) == 0
-					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				Log.i(TAG, "Index: " + i);
-				return i+10;
-			}
+		if(whiteIndex > blackIndex) {
+			return whiteIndex;
+		} else if(blackIndex > whiteIndex) {
+			return blackIndex;
 		}
 		
 		return -1;
 	}
 	
-	public void setWhiteKeysLMOP(List<MatOfPoint> lmop) {
-		mWhiteKeysLMOP = lmop;
+	public void setWhiteKeysMOP2f(List<MatOfPoint> lmop) {
+		for(int i=0; i<lmop.size(); i++) {
+			MatOfPoint2f p = new MatOfPoint2f();
+			p.fromArray(lmop.get(i).toArray());
+			mWhiteKeysLMOP2f.add(p);
+		}
 	}
 	
-	public void setBlackKeysLMOP(List<MatOfPoint> lmop) {
-		mBlackKeysLMOP = lmop;
-	}
-	
-	public void setPianoDividingYCoord() {
-		mPianoDividerY = Imgproc.boundingRect(mBlackKeysLMOP.get(6)).tl().y;
-		
+	public void setBlackKeysMOP2f(List<MatOfPoint> lmop) {
+		for(int i=0; i<lmop.size(); i++) {
+			MatOfPoint2f p = new MatOfPoint2f();
+			p.fromArray(lmop.get(i).toArray());
+			mBlackKeysLMOP2f.add(p);
+		}
 	}
 	
 	public boolean isNotConsecutiveKey(int index) {
@@ -83,5 +81,35 @@ public class KeyPressDetector {
 	
 	public void setPianoKeyIndex(int index) {
 		mPianoKeyIndex = index;
+	}
+	
+	public void setDivideConquerX(double x) {
+		mDivideConquerX = x;
+	}
+	
+	private int whiteKeysPolygonTest(Point point, int start, int end) {
+		int polygonTest;
+		
+		for(int i=start; i<=end; i++) {
+			polygonTest = (int) Imgproc.pointPolygonTest(mWhiteKeysLMOP2f.get(i), point, false);
+			if(polygonTest == 0 || polygonTest == 1) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	private int blackKeysPolygonTest(Point point, int start, int end) {
+		int polygonTest;
+		
+		for(int i=start; i<=end; i++) {
+			polygonTest = (int) Imgproc.pointPolygonTest(mBlackKeysLMOP2f.get(i), point, false);
+			if(polygonTest == 0 || polygonTest == 1) {
+				return i+10;
+			}
+		}
+		
+		return -1;
 	}
 }

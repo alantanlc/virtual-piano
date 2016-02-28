@@ -105,6 +105,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	
 	private Point prevPoint;
 	private Point currPoint;
+	private Point midPoint;
 	
 	private boolean mIsPianoLayout1;
 	
@@ -121,6 +122,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				mKeyPressDetector = new KeyPressDetector();
 				mIsPianoLayout1 = true;
 				currPoint = new Point(640, 480);
+				midPoint = new Point(640, 480);
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -369,6 +371,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		currPoint = mHandDetector.getLowestPoint();
 		
 		if(mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
+			
 			int keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
 			
 			if(mKeyPressDetector.isNotConsecutiveKey(keyPressedIndex) && keyPressedIndex != -1) {
@@ -385,8 +388,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private void setPianoKeys() {
 		mWhiteKeysLMOP = mPianoDetector.getWhiteKeysLMOP();
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
-		mKeyPressDetector.setWhiteKeysLMOP( mPianoDetector.getWhiteKeysLMOP());
-		mKeyPressDetector.setBlackKeysLMOP( mPianoDetector.getBlackKeysLMOP());
+		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
+		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
+		mKeyPressDetector.setDivideConquerX(Imgproc.boundingRect(mWhiteKeysLMOP.get(4)).tl().x);
 	}
 	
 	private void playSound(int i) {
