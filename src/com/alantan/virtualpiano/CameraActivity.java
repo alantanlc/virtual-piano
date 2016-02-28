@@ -354,7 +354,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	}
 	
 	private void checkKeyPressed(Mat dst) {
-		Log.i(TAG, "check keypressed!");
 		List<Point> mCurrFingerTipsLP = mHandDetector.getFingerTipsLPOut();
 		
 		for(int m=0; m<mCurrFingerTipsLP.size(); m++) {
@@ -400,6 +399,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
 		mKeyPressDetector.setDivideConquerX(Imgproc.boundingRect(mWhiteKeysLMOP.get(4)).tl().x);
+		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoMaskMOP());
 	}
 	
 	private void playSound(int i) {
