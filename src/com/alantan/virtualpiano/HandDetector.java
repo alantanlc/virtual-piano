@@ -101,8 +101,8 @@ public class HandDetector extends Detector {
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
-		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
-		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
+		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
+		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Draw convexity defect points
 		/*if(!convDefMOI4.empty()) {
