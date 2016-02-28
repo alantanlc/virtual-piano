@@ -107,7 +107,7 @@ public class HandDetector extends Detector {
 		
 		// Draw lowest point
 		if(lowestPoint != null) {
-			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorRed, -1);
+			//Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorRed, -1);
 		}
 	}
 	

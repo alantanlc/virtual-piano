@@ -103,11 +103,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	
 	private SoundPoolPlayer sound;
 	
-	private Point prevPoint;
-	private Point currPoint;
-	private Point midPoint;
-	
 	private boolean mIsPianoLayout1;
+	
+	private List<Point> mPrevFingerTipsLP = new ArrayList<Point>();
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -121,8 +119,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				mHandDetector = new HandDetector();
 				mKeyPressDetector = new KeyPressDetector();
 				mIsPianoLayout1 = true;
-				currPoint = new Point(640, 480);
-				midPoint = new Point(640, 480);
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -327,9 +323,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		if(mIsFingersDetection) {
 			mHandDetector.apply(rgba, rgba);
-			
-			if(mHandDetector.getLowestPoint() != null && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
-				checkKeyPressed();
+			if(!mHandDetector.getFingerTipsLPOut().isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
+				checkKeyPressed(rgba);
 			}
 		}
 		
@@ -349,13 +344,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			
 		}
 		
-		/*if(mIsDilation) {
-			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(0, 0, 100);
-			Scalar upperThreshold = new Scalar(179, 255, 255);
-			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-		}*/
-		
 		// Flip image if using front facing camera
 		if(mIsCameraFrontFacing) {
 			// Mirror (horizontally flip) the previews.
@@ -365,24 +353,45 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		return rgba;
 	}
 	
-	private void checkKeyPressed() {
-		// Update prevPoint and currPoint
-		prevPoint = currPoint;
-		currPoint = mHandDetector.getLowestPoint();
+	private void checkKeyPressed(Mat dst) {
+		Log.i(TAG, "check keypressed!");
+		List<Point> mCurrFingerTipsLP = mHandDetector.getFingerTipsLPOut();
 		
-		if(mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
-			
-			int keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
-			
-			if(mKeyPressDetector.isNotConsecutiveKey(keyPressedIndex) && keyPressedIndex != -1) {
-				// Play sound and update mPianoKeyIndex
+		for(int m=0; m<mCurrFingerTipsLP.size(); m++) {
+			Imgproc.circle(dst, mCurrFingerTipsLP.get(m), 5, Colors.mLineColorRed, -1);
+		}
+		
+		// If prevFingerTipsLP is empty, set it to current finger tips
+		if(mPrevFingerTipsLP.size() == 0) {
+			mPrevFingerTipsLP.addAll(mCurrFingerTipsLP);
+		}
+		
+		// Since size of prev and curr LP may vary, it is crucial to find the minimum size
+		// so that 'for' loop does not face any indexing error
+		int min = (mPrevFingerTipsLP.size() < mCurrFingerTipsLP.size()) ? mPrevFingerTipsLP.size() : mCurrFingerTipsLP.size();
+		
+		// For each finger tip point, check for key press
+		for(int i=0; i<min; i++) {
+			if(mKeyPressDetector.checkFingerDownwardMotion(mPrevFingerTipsLP.get(i), mCurrFingerTipsLP.get(i))) {
+				
+				int keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(mCurrFingerTipsLP.get(i));
+				
+				/*if(mKeyPressDetector.isNotConsecutiveKey(keyPressedIndex) && keyPressedIndex != -1) {
+					// Play sound and update mPianoKeyIndex
+					playSound(keyPressedIndex);
+					mKeyPressDetector.setPianoKeyIndex(keyPressedIndex);
+					return;
+				}*/
+				
 				playSound(keyPressedIndex);
-				mKeyPressDetector.setPianoKeyIndex(keyPressedIndex);
-				return;
 			}
 		}
 		
-		mKeyPressDetector.setPianoKeyIndex(-1);
+		// Clear prevFingerTipsLP and update to current finger tips LP
+		mPrevFingerTipsLP.clear();
+		mPrevFingerTipsLP.addAll(mCurrFingerTipsLP);
+		
+		//mKeyPressDetector.setPianoKeyIndex(-1);
 	}
 	
 	private void setPianoKeys() {
