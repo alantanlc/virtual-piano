@@ -303,6 +303,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			return true;
 		case R.id.menu_toggle_hands:
 			mIsTwoHands = !mIsTwoHands;
+			mFingerTipsLP.clear();
 			return true;
 		case R.id.menu_next_camera:
 			mIsMenuLocked = true;
