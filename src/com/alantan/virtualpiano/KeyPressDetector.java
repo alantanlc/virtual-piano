@@ -32,7 +32,7 @@ public class KeyPressDetector {
 			return false;
 		}
 		
-		Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
+		//Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
 		
 		return true;
 	}
@@ -77,8 +77,8 @@ public class KeyPressDetector {
 		
 	}
 	
-	public boolean isNotConsecutiveKey(int index) {
-		return (index != mPianoKeyIndex);
+	public boolean isConsecutiveKey(int index) {
+		return index == mPianoKeyIndex;
 	}
 	
 	public void setPianoKeyIndex(int index) {

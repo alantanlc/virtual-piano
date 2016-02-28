@@ -120,6 +120,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				mHandDetector = new HandDetector();
 				mKeyPressDetector = new KeyPressDetector();
 				mIsPianoLayout1 = true;
+				currPoint = new Point(640, 480);
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -306,10 +307,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	@Override
 	public void onCameraViewStarted(int width, int height) {
 		Log.i(TAG, "onCameraViewStarted");
-		//Log.i(TAG, "Width: " + width + " Height: " + height);
-		
-		mBgr = new Mat();
-		
 		Log.i(TAG, "Width: " + width + " Height: " + height);
 	}
 
@@ -366,30 +363,29 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		return rgba;
 	}
 	
-	// This method checks for
-		// 1. Finger Press Motion
-		// 2. If true, find note index
-		// 3. Play sound
 	private void checkKeyPressed() {
-		if(prevPoint == null) prevPoint = mHandDetector.getLowestPoint();
+		// Update prevPoint and currPoint
+		prevPoint = currPoint;
 		currPoint = mHandDetector.getLowestPoint();
 		
-		// If finger downward motion is true
-		if(mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
-			int newIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
-			
-			if(mKeyPressDetector.isNotConsecutiveKey(newIndex)) {
-				playSound(newIndex);
-				mKeyPressDetector.setPianoKeyIndex(newIndex);
-			} else {
-				Log.i(TAG, "Duplicate! Index: " + newIndex);
-				mKeyPressDetector.setPianoKeyIndex(-1);
-			}
-		} else {
+		// If finger downward motion is false, return
+		if(!mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
 			mKeyPressDetector.setPianoKeyIndex(-1);
+			return;
 		}
 		
-		prevPoint = currPoint;
+		// Get key pressed index
+		int keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
+		
+		// If keyPressedIndex is -1 OR consecutive key is detected, update mPianoKeyIndex and return
+		if(keyPressedIndex == -1 || mKeyPressDetector.isConsecutiveKey(keyPressedIndex)) {
+			mKeyPressDetector.setPianoKeyIndex(-1);
+			return;
+		}
+		
+		// Play sound and update mPianoKeyIndex
+		playSound(keyPressedIndex);
+		mKeyPressDetector.setPianoKeyIndex(keyPressedIndex);
 	}
 	
 	private void setPianoKeys() {
