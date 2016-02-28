@@ -1,6 +1,8 @@
 package com.alantan.virtualpiano;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -29,9 +31,11 @@ public class HandDetector extends Detector {
 	
 	private final Mat mMat = new Mat();
 	
-	private List<MatOfPoint> contoursOut = new ArrayList<MatOfPoint>();
-	
 	private Point lowestPoint = new Point();
+	
+	private MatOfPoint mPianoMaskMOP;
+	
+	private List<Point> fingerTipsLPOut = new ArrayList<Point>();
 	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
@@ -81,46 +85,6 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
-		// 11. Draw convex hull points
-		/*for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
-			Point p = new Point(hullContourLMOP.get(0).get(i, 0));
-			Imgproc.circle(dst, p, 10, Colors.mLineColorGreen, 2);
-		}*/
-		
-		// 12. Find convex hull points that are within piano area
-		// (Create new method)
-		// getPointsByRegion();
-		
-		// 13. Reduce convex hull points to (maximum) 5 distinct points
-		// to correspond to 5 finger tips (Create new method)
-		// getFingerTipPoints();
-		
-		// 11. Get convexity defects
-		//MatOfInt4 convDefMOI4 = new MatOfInt4();
-		//Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
-		
-		// Draw contours
-		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
-		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
-		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
-		
-		// Draw convexity defect points
-		/*if(!convDefMOI4.empty()) {
-			List<Integer> cdList = convDefMOI4.toList();
-			
-			Point data[] = reducedHandContours.get(0).toArray();
-			
-			for(int i=0; i<cdList.size(); i+=4) {
-				Point start = data[cdList.get(i)];
-				Point end = data[cdList.get(i+1)];
-				Point defect = data[cdList.get(i+2)];
-				
-				Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
-				Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
-				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
-			}
-		}*/
-		
 		// Find lowest point
 		lowestPoint = findLowestPoint(hullContourLMOP.get(0));
 		
@@ -128,10 +92,6 @@ public class HandDetector extends Detector {
 		if(lowestPoint != null) {
 			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorRed, -1);
 		}
-	}
-	
-	public List<MatOfPoint> getHandContours() {
-		return contoursOut;
 	}
 	
 	private Point findLowestPoint(MatOfPoint contour) {
@@ -151,5 +111,74 @@ public class HandDetector extends Detector {
 	
 	public Point getLowestPoint() {
 		return lowestPoint;
+	}
+	
+	public void setPianoMaskMOP(MatOfPoint maskMOP) {
+		mPianoMaskMOP = maskMOP;
+	}
+	
+	private List<Point> getPointsByRegion(List<Point> hullPoints, MatOfPoint pianoMaskMOP) {
+		List<Point> lpOut = new ArrayList<Point>();
+		MatOfPoint2f p = new MatOfPoint2f();
+		p.fromArray(pianoMaskMOP.toArray());
+		
+		for(int i=0; i<hullPoints.size(); i++) {
+			if(Imgproc.pointPolygonTest(p, hullPoints.get(i), false) == 0
+					|| Imgproc.pointPolygonTest(p, hullPoints.get(i), false) == 1) {
+				lpOut.add(hullPoints.get(i));
+			}
+		}
+		
+		return lpOut;
+	}
+	
+	private List<Point> sortPoints(List<Point> pointsLP, boolean reverse) {
+		if(reverse) {
+			Collections.sort(pointsLP, new Comparator<Point>() {
+				public int compare(Point p1, Point p2) {
+					return Double.compare(p2.x, p1.x);
+				}
+			});
+		} else {
+			Collections.sort(pointsLP, new Comparator<Point>() {
+				public int compare(Point p1, Point p2) {
+					return Double.compare(p1.x, p2.x);
+				}
+			});
+		}
+		
+		return pointsLP;
+	}
+	
+	private List<Point> getFingerTipsLP(List<Point> lpIn) {
+		if(lpIn.size() <= 1) return lpIn;
+		
+		List<Point> lpOut = new ArrayList<Point>();
+		int fingerIndex = 0;
+		
+		lpOut.add(lpIn.get(0));
+		
+		for(int i=1; i<lpIn.size(); i++) {
+			//Log.i(TAG, "Gap: " + (lpIn.get(i).x - lpOut.get(fingerIndex).x));
+			if(lpIn.get(i).x - lpOut.get(fingerIndex).x < 35 && Math.abs(lpIn.get(i).y - lpOut.get(fingerIndex).y) < 25) {
+				lpOut.get(fingerIndex).x = (lpOut.get(fingerIndex).x + lpIn.get(i).x)/2;
+				//lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y + lpIn.get(i).y)/2;
+				lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y > lpIn.get(fingerIndex).y) ? lpOut.get(fingerIndex).y :  lpIn.get(fingerIndex).y;
+			} else {
+				lpOut.add(lpIn.get(i));
+				fingerIndex++;
+			}
+		}
+		
+		return lpOut;
+	}
+	
+	private void setFingerTipsLPOut(List<Point> lpIn) {
+		fingerTipsLPOut.clear();
+		fingerTipsLPOut = lpIn;
+	}
+	
+	public List<Point> getFingerTipsLPOut() {
+		return fingerTipsLPOut;
 	}
 }
