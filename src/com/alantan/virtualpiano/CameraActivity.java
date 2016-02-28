@@ -368,24 +368,18 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		prevPoint = currPoint;
 		currPoint = mHandDetector.getLowestPoint();
 		
-		// If finger downward motion is false, return
-		if(!mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
-			mKeyPressDetector.setPianoKeyIndex(-1);
-			return;
+		if(mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
+			int keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
+			
+			if(mKeyPressDetector.isNotConsecutiveKey(keyPressedIndex) && keyPressedIndex != -1) {
+				// Play sound and update mPianoKeyIndex
+				playSound(keyPressedIndex);
+				mKeyPressDetector.setPianoKeyIndex(keyPressedIndex);
+				return;
+			}
 		}
 		
-		// Get key pressed index
-		int keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
-		
-		// If keyPressedIndex is -1 OR consecutive key is detected, update mPianoKeyIndex and return
-		if(keyPressedIndex == -1 || mKeyPressDetector.isConsecutiveKey(keyPressedIndex)) {
-			mKeyPressDetector.setPianoKeyIndex(-1);
-			return;
-		}
-		
-		// Play sound and update mPianoKeyIndex
-		playSound(keyPressedIndex);
-		mKeyPressDetector.setPianoKeyIndex(keyPressedIndex);
+		mKeyPressDetector.setPianoKeyIndex(-1);
 	}
 	
 	private void setPianoKeys() {

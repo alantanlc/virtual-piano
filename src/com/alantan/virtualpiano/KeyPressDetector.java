@@ -77,8 +77,8 @@ public class KeyPressDetector {
 		
 	}
 	
-	public boolean isConsecutiveKey(int index) {
-		return index == mPianoKeyIndex;
+	public boolean isNotConsecutiveKey(int index) {
+		return (index != mPianoKeyIndex);
 	}
 	
 	public void setPianoKeyIndex(int index) {
