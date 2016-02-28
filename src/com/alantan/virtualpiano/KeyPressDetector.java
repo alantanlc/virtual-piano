@@ -18,6 +18,10 @@ public class KeyPressDetector {
 	private List<MatOfPoint> mWhiteKeysLMOP = new ArrayList<MatOfPoint>();
 	private List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
 	
+	private int mPianoKeyIndex = -1;
+	
+	private double mPianoDividerY;
+	
 	public boolean checkFingerDownwardMotion(Point prevPoint, Point currPoint) {
 		double xDiff = currPoint.x - prevPoint.x;
 		double yDiff = currPoint.y - prevPoint.y;
@@ -66,5 +70,18 @@ public class KeyPressDetector {
 	
 	public void setBlackKeysLMOP(List<MatOfPoint> lmop) {
 		mBlackKeysLMOP = lmop;
+	}
+	
+	public void setPianoDividingYCoord() {
+		mPianoDividerY = Imgproc.boundingRect(mBlackKeysLMOP.get(6)).tl().y;
+		
+	}
+	
+	public boolean isNotConsecutiveKey(int index) {
+		return (index != mPianoKeyIndex);
+	}
+	
+	public void setPianoKeyIndex(int index) {
+		mPianoKeyIndex = index;
 	}
 }
