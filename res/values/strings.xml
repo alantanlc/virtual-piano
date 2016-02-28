@@ -20,6 +20,7 @@
     <string name="menu_set_piano">Set Piano</string>
     <string name="menu_dilation">Dilation</string>
     <string name="menu_erosion">Erosion</string>
-    <string name="menu_change_layout">Layout</string>
+    <string name="menu_toggle_layout">Layout</string>
+    <string name="menu_toggle_hands">Hand</string>
 
 </resources>

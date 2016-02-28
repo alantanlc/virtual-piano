@@ -491,12 +491,13 @@ int id line3 0x7f0a005c
 int id listMode 0x7f0a000d
 int id list_item 0x7f0a002b
 int id media_actions 0x7f0a0056
-int id menu_change_layout 0x7f0a0064
-int id menu_detect_piano 0x7f0a0061
-int id menu_detect_skin 0x7f0a0063
-int id menu_erosion 0x7f0a0060
-int id menu_next_camera 0x7f0a0065
-int id menu_set_piano 0x7f0a0062
+int id menu_detect_piano 0x7f0a0060
+int id menu_detect_skin 0x7f0a0062
+int id menu_erosion 0x7f0a0065
+int id menu_next_camera 0x7f0a0066
+int id menu_set_piano 0x7f0a0061
+int id menu_toggle_hands 0x7f0a0064
+int id menu_toggle_layout 0x7f0a0063
 int id middle 0x7f0a0023
 int id multiply 0x7f0a0017
 int id never 0x7f0a001f
@@ -638,7 +639,6 @@ int string abc_toolbar_collapse_description 0x7f0b0004
 int string app_name 0x7f0b0014
 int string delete 0x7f0b0015
 int string edit 0x7f0b0016
-int string menu_change_layout 0x7f0b0027
 int string menu_detect_piano 0x7f0b0022
 int string menu_detect_skin 0x7f0b0023
 int string menu_dilation 0x7f0b0025
@@ -647,6 +647,8 @@ int string menu_image_size 0x7f0b0019
 int string menu_next_camera 0x7f0b0017
 int string menu_set_piano 0x7f0b0024
 int string menu_take_photo 0x7f0b0018
+int string menu_toggle_hands 0x7f0b0028
+int string menu_toggle_layout 0x7f0b0027
 int string photo_delete_prompt_message 0x7f0b001a
 int string photo_delete_prompt_title 0x7f0b001b
 int string photo_edit_chooser_title 0x7f0b001d

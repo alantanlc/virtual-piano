@@ -19,8 +19,9 @@ public class KeyPressDetector {
 	private List<MatOfPoint2f> mBlackKeysLMOP2f = new ArrayList<MatOfPoint2f>();
 	
 	private int mPianoKeyIndex = -1;
-
 	private double mDivideConquerX;
+	
+	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
 	
 	public boolean checkFingerDownwardMotion(Point prevPoint, Point currPoint) {
 		double xDiff = currPoint.x - prevPoint.x;

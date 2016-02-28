@@ -2,11 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
     
     <item
-        android:id="@+id/menu_erosion"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_erosion" />
-    
-    <item
         android:id="@+id/menu_detect_piano"
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_detect_piano" />
@@ -21,15 +16,20 @@
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_detect_skin" />
     
-     <item
-        android:id="@+id/menu_change_layout"
+    <item
+        android:id="@+id/menu_toggle_layout"
         app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_change_layout" />
+        android:title="@string/menu_toggle_layout" />
     
-    <!-- <item
-        android:id="@+id/menu_dilation"
+    <item
+        android:id="@+id/menu_toggle_hands"
         app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_dilation" /> -->
+        android:title="@string/menu_toggle_hands" />
+        
+    <item
+        android:id="@+id/menu_erosion"
+        app:showAsAction="ifRoom|withText"
+        android:title="@string/menu_erosion" />
     
     <item
         android:id="@+id/menu_next_camera"

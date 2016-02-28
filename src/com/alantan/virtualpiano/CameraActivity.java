@@ -16,7 +16,6 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -69,9 +68,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	// The image sizes supported by the active camera.
 	private List<Size> mSupportedImageSizes;
 	
-	// A matrix that is used when saving photos
-	private Mat mBgr;
-	
 	// Whether an asynchronous menu action is in progress.
 	// If so, menu interaction should be disabled.
 	private boolean mIsMenuLocked;
@@ -92,22 +88,32 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	// Whether skin detection should be applied
 	private boolean mIsFingersDetection;
 	
+	// To toggle piano layout
+	private boolean mIsPianoLayout1;
+	
+	// To toggle between one or two hands detection
+	private boolean mIsTwoHands;
+	
+	// Whether erosion should be applied
+	private boolean mIsErosion;
+	
 	// KeyPressDetector
 	private KeyPressDetector mKeyPressDetector;
 	
 	// Whether dilation should be applied
 	//private boolean mIsDilation;
 	
-	// Whether erosion should be applied
-	private boolean mIsErosion;
-	
+	// SoundPoolPlayer
 	private SoundPoolPlayer sound;
 	
+	// Points to detect finger downward motion
 	private Point prevPoint;
 	private Point currPoint;
-	private Point midPoint;
 	
-	private boolean mIsPianoLayout1;
+	private int keyPressedIndex;
+	
+	private List<Point> mFingerTipsLP = new ArrayList<Point>();
+	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -122,7 +128,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				mKeyPressDetector = new KeyPressDetector();
 				mIsPianoLayout1 = true;
 				currPoint = new Point(640, 480);
-				midPoint = new Point(640, 480);
+				mKeyPressedIndexLI.add(-1);
+				mKeyPressedIndexLI.add(-1);
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -291,8 +298,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		case R.id.menu_detect_skin:
 			mIsFingersDetection = !mIsFingersDetection;
 			return true;
-		case R.id.menu_change_layout:
+		case R.id.menu_toggle_layout:
 			mIsPianoLayout1 = !mIsPianoLayout1;
+			return true;
+		case R.id.menu_toggle_hands:
+			mIsTwoHands = !mIsTwoHands;
 			return true;
 		case R.id.menu_next_camera:
 			mIsMenuLocked = true;
@@ -326,9 +336,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		}
 		
 		if(mIsFingersDetection) {
-			mHandDetector.apply(rgba, rgba);
+			mHandDetector.apply(rgba, rgba, mIsTwoHands);
 			
-			if(mHandDetector.getLowestPoint() != null && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
+			if(!mHandDetector.getFingerTipsLPOut().isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				checkKeyPressed();
 			}
 		}
@@ -349,13 +359,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			
 		}
 		
-		/*if(mIsDilation) {
-			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(0, 0, 100);
-			Scalar upperThreshold = new Scalar(179, 255, 255);
-			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-		}*/
-		
 		// Flip image if using front facing camera
 		if(mIsCameraFrontFacing) {
 			// Mirror (horizontally flip) the previews.
@@ -366,23 +369,24 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	}
 	
 	private void checkKeyPressed() {
-		// Update prevPoint and currPoint
-		prevPoint = currPoint;
-		currPoint = mHandDetector.getLowestPoint();
-		
-		if(mKeyPressDetector.checkFingerDownwardMotion(prevPoint, currPoint)) {
+		for(int i=0; i<mFingerTipsLP.size(); i++) {
+			currPoint = mHandDetector.getFingerTipsLPOut().get(i);
 			
-			int keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
-			
-			if(mKeyPressDetector.isNotConsecutiveKey(keyPressedIndex) && keyPressedIndex != -1) {
-				// Play sound and update mPianoKeyIndex
-				playSound(keyPressedIndex);
-				mKeyPressDetector.setPianoKeyIndex(keyPressedIndex);
-				return;
+			if(mKeyPressDetector.checkFingerDownwardMotion(mFingerTipsLP.get(i), currPoint)) {
+				keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
+				
+				if(keyPressedIndex != -1 && keyPressedIndex != mKeyPressedIndexLI.get(i)) {
+					playSound(keyPressedIndex);
+					mKeyPressedIndexLI.set(i, keyPressedIndex);
+					continue;
+				}
 			}
+			
+			mKeyPressedIndexLI.set(i, -1);
 		}
 		
-		mKeyPressDetector.setPianoKeyIndex(-1);
+		mFingerTipsLP.clear();
+		mFingerTipsLP.addAll(mHandDetector.getFingerTipsLPOut());
 	}
 	
 	private void setPianoKeys() {

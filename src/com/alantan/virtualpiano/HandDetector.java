@@ -33,9 +33,17 @@ public class HandDetector extends Detector {
 	
 	private Point lowestPoint = new Point();
 	
+	private List<Point> mFingerTipsLPOut = new ArrayList<Point>();
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
+		
+	}
+	
+	public void apply(final Mat dst, final Mat src, boolean mIsTwoHands) {
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+		mFingerTipsLPOut.clear();
+		contours.clear();
 		
 		// 1. Convert image to HSV color space
 		Imgproc.cvtColor(src, mMat, Imgproc.COLOR_RGB2HSV);
@@ -55,17 +63,16 @@ public class HandDetector extends Detector {
 		// 5. If no contours, return
 		if(contours.size() == 0) { 
 			//Log.i(TAG, "No contours found");
-			lowestPoint = null;
+			//lowestPoint = null;
 			return;
 		}
-		
 		// 6. Find index of the largest contour, assume that is the hand
 		int largestContourIndex = findLargestContourIndex(contours);
 		
 		// 7. If index equals -1, return
 		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
 			//Log.i(TAG, "No hand detected");
-			lowestPoint = null;
+			//lowestPoint = null;
 			return;
 		};
 		
@@ -81,52 +88,36 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
-		// 11. Draw convex hull points
-		/*for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
-			Point p = new Point(hullContourLMOP.get(0).get(i, 0));
-			Imgproc.circle(dst, p, 10, Colors.mLineColorGreen, 2);
-		}*/
-		
-		// 12. Find convex hull points that are within piano area
-		// (Create new method)
-		// getPointsByRegion();
-		
-		// 13. Reduce convex hull points to (maximum) 5 distinct points
-		// to correspond to 5 finger tips (Create new method)
-		// getFingerTipPoints();
-		
-		// 11. Get convexity defects
-		//MatOfInt4 convDefMOI4 = new MatOfInt4();
-		//Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
-		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
 		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
-		// Draw convexity defect points
-		/*if(!convDefMOI4.empty()) {
-			List<Integer> cdList = convDefMOI4.toList();
-			
-			Point data[] = reducedHandContours.get(0).toArray();
-			
-			for(int i=0; i<cdList.size(); i+=4) {
-				Point start = data[cdList.get(i)];
-				Point end = data[cdList.get(i+1)];
-				Point defect = data[cdList.get(i+2)];
-				
-				Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
-				Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
-				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
-			}
-		}*/
-		
-		// Find lowest point
-		lowestPoint = findLowestPoint(hullContourLMOP.get(0));
+		// Find first lowest point
+		//lowestPoint = findLowestPoint(hullContourLMOP.get(0));
+		mFingerTipsLPOut.add(findLowestPoint(hullContourLMOP.get(0)));
 		
 		// Draw lowest point
-		if(lowestPoint != null) {
-			Imgproc.circle(dst, lowestPoint, 5, Colors.mLineColorRed, -1);
+		if(mFingerTipsLPOut.get(0) != null) {
+			Imgproc.circle(dst, mFingerTipsLPOut.get(0), 5, Colors.mLineColorRed, -1);
+		}
+		
+		if(!mIsTwoHands) {
+			return;
+		}
+		
+		// Else detect second hand
+		contours.remove(largestContourIndex);
+		largestContourIndex = findLargestContourIndex(contours);
+		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
+		Imgproc.convexHull(reducedHandContours.get(1), hullMOI);
+		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(1)));
+		Imgproc.drawContours(dst, hullContourLMOP, 1, Colors.mLineColorBlue, 2);
+		mFingerTipsLPOut.add(findLowestPoint(hullContourLMOP.get(1)));
+		
+		// Draw lowest point
+		if(mFingerTipsLPOut.get(1) != null) {
+			Imgproc.circle(dst, mFingerTipsLPOut.get(1), 5, Colors.mLineColorRed, -1);
 		}
 	}
 	
@@ -151,5 +142,9 @@ public class HandDetector extends Detector {
 	
 	public Point getLowestPoint() {
 		return lowestPoint;
+	}
+	
+	public List<Point> getFingerTipsLPOut() {
+		return mFingerTipsLPOut;
 	}
 }

@@ -2078,12 +2078,13 @@ containing a value of this type.
         public static final int listMode=0x7f0a000d;
         public static final int list_item=0x7f0a002b;
         public static final int media_actions=0x7f0a0056;
-        public static final int menu_change_layout=0x7f0a0064;
-        public static final int menu_detect_piano=0x7f0a0061;
-        public static final int menu_detect_skin=0x7f0a0063;
-        public static final int menu_erosion=0x7f0a0060;
-        public static final int menu_next_camera=0x7f0a0065;
-        public static final int menu_set_piano=0x7f0a0062;
+        public static final int menu_detect_piano=0x7f0a0060;
+        public static final int menu_detect_skin=0x7f0a0062;
+        public static final int menu_erosion=0x7f0a0065;
+        public static final int menu_next_camera=0x7f0a0066;
+        public static final int menu_set_piano=0x7f0a0061;
+        public static final int menu_toggle_hands=0x7f0a0064;
+        public static final int menu_toggle_layout=0x7f0a0063;
         public static final int middle=0x7f0a0023;
         public static final int multiply=0x7f0a0017;
         public static final int never=0x7f0a001f;
@@ -2310,7 +2311,6 @@ containing a value of this type.
         public static final int app_name=0x7f0b0014;
         public static final int delete=0x7f0b0015;
         public static final int edit=0x7f0b0016;
-        public static final int menu_change_layout=0x7f0b0027;
         public static final int menu_detect_piano=0x7f0b0022;
         public static final int menu_detect_skin=0x7f0b0023;
         public static final int menu_dilation=0x7f0b0025;
@@ -2319,6 +2319,8 @@ containing a value of this type.
         public static final int menu_next_camera=0x7f0b0017;
         public static final int menu_set_piano=0x7f0b0024;
         public static final int menu_take_photo=0x7f0b0018;
+        public static final int menu_toggle_hands=0x7f0b0028;
+        public static final int menu_toggle_layout=0x7f0b0027;
         public static final int photo_delete_prompt_message=0x7f0b001a;
         public static final int photo_delete_prompt_title=0x7f0b001b;
         public static final int photo_edit_chooser_title=0x7f0b001d;
