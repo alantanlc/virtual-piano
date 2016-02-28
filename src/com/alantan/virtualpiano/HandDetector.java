@@ -85,6 +85,23 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
+		List<Point> pianoRegionConvexLP = new ArrayList<Point>();
+		List<Point> fingerTipsLP = new ArrayList<Point>();
+		
+		// 11. Find reduced hand contour points that are within piano area
+		if(mPianoMaskMOP != null) {
+			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
+		}
+		
+		// 12. Sort convex hull points by x-coordinate
+		List<Point> sortedPianoRegionConvexLP = sortPoints(pianoRegionConvexLP, false);
+		
+		// 13. Reduce convex hull points to (maximum) 5 distinct points to correspond to 5 finger tips
+		// may not necessarily return a list of 5 points, depends on how many fingers are within piano
+		fingerTipsLP = getFingerTipsLP(sortedPianoRegionConvexLP);
+		
+		setFingerTipsLPOut(fingerTipsLP);
+		
 		// Find lowest point
 		lowestPoint = findLowestPoint(hullContourLMOP.get(0));
 		
