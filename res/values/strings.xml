@@ -22,5 +22,6 @@
     <string name="menu_erosion">Erosion</string>
     <string name="menu_toggle_layout">Layout</string>
     <string name="menu_toggle_hands">Hand</string>
+    <string name="menu_toggle_dynamic_keypress">Dynamic</string>
 
 </resources>

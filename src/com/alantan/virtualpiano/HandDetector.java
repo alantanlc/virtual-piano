@@ -109,6 +109,13 @@ public class HandDetector extends Detector {
 		// Else detect second hand
 		contours.remove(largestContourIndex);
 		largestContourIndex = findLargestContourIndex(contours);
+		
+		// 7. If index equals -1, return
+		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
+			//Log.i(TAG, "No hand detected");
+			return;
+		};
+		
 		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		Imgproc.convexHull(reducedHandContours.get(1), hullMOI);
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(1)));

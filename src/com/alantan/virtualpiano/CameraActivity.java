@@ -94,6 +94,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	// To toggle between one or two hands detection
 	private boolean mIsTwoHands;
 	
+	// To toggle dynamic keypress
+	private boolean mIsDynamicKeyPress;
+	
 	// Whether erosion should be applied
 	private boolean mIsErosion;
 	
@@ -112,8 +115,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	
 	private int keyPressedIndex;
 	
+	private int checkKeyPressedMaxIndex;
+	
 	private List<Point> mFingerTipsLP = new ArrayList<Point>();
 	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
+	private List<Point> mCurrFingerTipsLP = new ArrayList<Point>();
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -302,8 +308,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mIsPianoLayout1 = !mIsPianoLayout1;
 			return true;
 		case R.id.menu_toggle_hands:
-			mIsTwoHands = !mIsTwoHands;
 			mFingerTipsLP.clear();
+			mIsTwoHands = !mIsTwoHands;
+			return true;
+		case R.id.menu_toggle_dynamic_keypress:
+			mIsDynamicKeyPress = !mIsDynamicKeyPress;
 			return true;
 		case R.id.menu_next_camera:
 			mIsMenuLocked = true;
@@ -339,7 +348,10 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		if(mIsFingersDetection) {
 			mHandDetector.apply(rgba, rgba, mIsTwoHands);
 			
-			if(!mHandDetector.getFingerTipsLPOut().isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
+			mCurrFingerTipsLP.clear();
+			mCurrFingerTipsLP.addAll(mHandDetector.getFingerTipsLPOut());
+			
+			if(!mCurrFingerTipsLP.isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				checkKeyPressed();
 			}
 		}
@@ -370,8 +382,10 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	}
 	
 	private void checkKeyPressed() {
-		for(int i=0; i<mFingerTipsLP.size(); i++) {
-			currPoint = mHandDetector.getFingerTipsLPOut().get(i);
+		checkKeyPressedMaxIndex = (mFingerTipsLP.size() < mCurrFingerTipsLP.size()) ? mFingerTipsLP.size() : mCurrFingerTipsLP.size();
+		
+		for(int i=0; i<checkKeyPressedMaxIndex; i++) {
+			currPoint = mCurrFingerTipsLP.get(i);
 			
 			if(mKeyPressDetector.checkFingerDownwardMotion(mFingerTipsLP.get(i), currPoint)) {
 				keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
@@ -387,7 +401,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		}
 		
 		mFingerTipsLP.clear();
-		mFingerTipsLP.addAll(mHandDetector.getFingerTipsLPOut());
+		mFingerTipsLP.addAll(mCurrFingerTipsLP);
 	}
 	
 	private void setPianoKeys() {

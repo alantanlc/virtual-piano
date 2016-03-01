@@ -493,9 +493,10 @@ int id list_item 0x7f0a002b
 int id media_actions 0x7f0a0056
 int id menu_detect_piano 0x7f0a0060
 int id menu_detect_skin 0x7f0a0062
-int id menu_erosion 0x7f0a0065
-int id menu_next_camera 0x7f0a0066
+int id menu_erosion 0x7f0a0066
+int id menu_next_camera 0x7f0a0067
 int id menu_set_piano 0x7f0a0061
+int id menu_toggle_dynamic_keypress 0x7f0a0065
 int id menu_toggle_hands 0x7f0a0064
 int id menu_toggle_layout 0x7f0a0063
 int id middle 0x7f0a0023
@@ -647,6 +648,7 @@ int string menu_image_size 0x7f0b0019
 int string menu_next_camera 0x7f0b0017
 int string menu_set_piano 0x7f0b0024
 int string menu_take_photo 0x7f0b0018
+int string menu_toggle_dynamic_keypress 0x7f0b0029
 int string menu_toggle_hands 0x7f0b0028
 int string menu_toggle_layout 0x7f0b0027
 int string photo_delete_prompt_message 0x7f0b001a
