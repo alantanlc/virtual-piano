@@ -80,22 +80,6 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
 		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
-		// 9. Get convex hull of hand
-		//MatOfInt hullMOI = new MatOfInt();
-		//Imgproc.convexHull(reducedHandContours.get(0), hullMOI);
-		
-		// 10. Convert hull to contours
-		//List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
-		//hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
-		
-		// Draw contours
-		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
-		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
-		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
-		
-		// Find first lowest point
-		//lowestPoint = findLowestPoint(hullContourLMOP.get(0));
-		//mFingerTipsLPOut.add(findLowestPoint(hullContourLMOP.get(0)));
 		mFingerTipsLPOut.add(findLowestPoint(reducedHandContours.get(0)));
 		
 		// Draw lowest point
@@ -118,9 +102,6 @@ public class HandDetector extends Detector {
 		};
 		
 		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
-		//Imgproc.convexHull(reducedHandContours.get(1), hullMOI);
-		//hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(1)));
-		//Imgproc.drawContours(dst, hullContourLMOP, 1, Colors.mLineColorBlue, 2);
 		mFingerTipsLPOut.add(findLowestPoint(reducedHandContours.get(1)));
 		
 		// Draw lowest point

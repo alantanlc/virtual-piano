@@ -15,6 +15,15 @@ public class SoundPoolPlayer {
         // setup Soundpool
         this.mShortPlayer = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
         
+        mSounds.put(R.raw.pianof9, this.mShortPlayer.load(pContext, R.raw.pianof9, 1));
+        mSounds.put(R.raw.pianog9, this.mShortPlayer.load(pContext, R.raw.pianog9, 1));
+        mSounds.put(R.raw.pianoa9, this.mShortPlayer.load(pContext, R.raw.pianoa9, 1));
+        mSounds.put(R.raw.pianob9, this.mShortPlayer.load(pContext, R.raw.pianob9, 1));
+        
+        mSounds.put(R.raw.pianofg9, this.mShortPlayer.load(pContext, R.raw.pianofg9, 1));
+        mSounds.put(R.raw.pianoga9, this.mShortPlayer.load(pContext, R.raw.pianoga9, 1));
+        mSounds.put(R.raw.pianoab9, this.mShortPlayer.load(pContext, R.raw.pianoab9, 1));
+        
         mSounds.put(R.raw.pianoc0, this.mShortPlayer.load(pContext, R.raw.pianoc0, 1));
         mSounds.put(R.raw.pianod0, this.mShortPlayer.load(pContext, R.raw.pianod0, 1));
         mSounds.put(R.raw.pianoe0, this.mShortPlayer.load(pContext, R.raw.pianoe0, 1));
@@ -122,55 +131,63 @@ public class SoundPoolPlayer {
     	// Layout 2 start from note F
     	switch(i) {
 		case 0:
-			playShortResource(R.raw.pianoc0);
+			playShortResource(R.raw.pianof9);
 			break;
 		case 1:
-			playShortResource(R.raw.pianod0);
+			playShortResource(R.raw.pianog9);
 			break;
 		case 2:
-			playShortResource(R.raw.pianoe0);
+			playShortResource(R.raw.pianoa9);
 			break;
 		case 3:
-			playShortResource(R.raw.pianof0);
+			playShortResource(R.raw.pianob9);
 			break;
 		case 4:
-			playShortResource(R.raw.pianog0);
+			playShortResource(R.raw.pianoc0);
 			break;
 		case 5:
-			playShortResource(R.raw.pianoa0);
+			playShortResource(R.raw.pianod0);
 			break;
 		case 6:
-			playShortResource(R.raw.pianob0);
+			playShortResource(R.raw.pianoe0);
 			break;
 		case 7:
-			playShortResource(R.raw.pianoc1);
+			playShortResource(R.raw.pianof0);
 			break;
 		case 8:
-			playShortResource(R.raw.pianod1);
+			playShortResource(R.raw.pianog0);
 			break;
 		case 9:
-			playShortResource(R.raw.pianoe1);
+			playShortResource(R.raw.pianoa0);
 			break;
 		case 10:
-			playShortResource(R.raw.pianocd0);
+			playShortResource(R.raw.pianob0);
 			break;
+			
 		case 11:
-			playShortResource(R.raw.pianode0);
+			playShortResource(R.raw.pianofg9);
 			break;
 		case 12:
-			playShortResource(R.raw.pianofg0);
+			playShortResource(R.raw.pianoga9);
 			break;
 		case 13:
-			playShortResource(R.raw.pianoga0);
+			playShortResource(R.raw.pianoab9);
 			break;
+	
 		case 14:
-			playShortResource(R.raw.pianoab0);
+			playShortResource(R.raw.pianocd0);
 			break;
 		case 15:
-			playShortResource(R.raw.pianocd1);
+			playShortResource(R.raw.pianode0);
 			break;
 		case 16:
-			playShortResource(R.raw.pianode1);
+			playShortResource(R.raw.pianofg0);
+			break;
+		case 17:
+			playShortResource(R.raw.pianoga0);
+			break;
+		case 18:
+			playShortResource(R.raw.pianoab0);
 			break;
 		default:
 			break;

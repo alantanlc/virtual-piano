@@ -44,8 +44,8 @@ public class KeyPressDetector {
 		int blackIndex = -1;
 		
 		if(point.x < mDivideConquerX) {
-			whiteIndex = whiteKeysPolygonTest(point, 5, 9);
-			blackIndex = blackKeysPolygonTest(point, 3, 6);
+			whiteIndex = whiteKeysPolygonTest(point, 5, mWhiteKeysLMOP2f.size() - 1);
+			blackIndex = blackKeysPolygonTest(point, 3, mBlackKeysLMOP2f.size() - 1);
 		} else {
 			whiteIndex = whiteKeysPolygonTest(point, 0, 4);
 			blackIndex = blackKeysPolygonTest(point, 0, 3);
