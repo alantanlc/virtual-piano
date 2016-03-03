@@ -111,8 +111,8 @@ public class PianoDetector extends Detector {
 		// 12f. Increase piano mask range for key press detection using Rect object
 		Rect mPianoRect = Imgproc.boundingRect(mPianoMaskMOP);
 		
-		mPianoRect.y -= 20;
-		mPianoRect.height += 20;
+		mPianoRect.y -= 40;
+		mPianoRect.height += 40;
 		
 		// 12g. Convert Bounding Rect to MatOfPoint
 		List<Point> mPianoRectLP = new ArrayList<Point>();
