@@ -239,6 +239,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		mIsPianoDetection = false;
 		mIsFingersDetection = false;
+		mIsPianoLayout1 = false;
+		mIsTwoHands = false;
+		mIsDynamicKeyPress = false;
 		
 		super.onPause();
 	}
