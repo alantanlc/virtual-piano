@@ -9,6 +9,7 @@ import android.media.SoundPool;
 public class SoundPoolPlayer {
     private SoundPool mShortPlayer= null;
     private HashMap mSounds = new HashMap();
+    private float volume = 0;
 
     public SoundPoolPlayer(Context pContext)
     {
@@ -58,7 +59,19 @@ public class SoundPoolPlayer {
 
     public void playShortResource(int piResource) {
         int iSoundId = (Integer) mSounds.get(piResource);
-        this.mShortPlayer.play(iSoundId, 0.99f, 0.99f, 0, 0, 1);
+        this.mShortPlayer.play(iSoundId, volume, volume, 0, 0, 1);
+    }
+    
+    public void setVolume(double volume) {
+    	if(volume <= 10) {
+    		this.volume = 0.25f;
+    	} else if(volume <= 20) {
+    		this.volume = 0.5f;
+    	} else if(volume <= 30) {
+    		this.volume = 0.75f;
+    	} else {
+    		this.volume = 1.0f;
+    	}
     }
 
     // Cleanup

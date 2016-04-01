@@ -319,6 +319,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mIsTwoHands = !mIsTwoHands;
 			return true;
 		case R.id.menu_toggle_dynamic_keypress:
+			sound.setVolume(30);
 			mIsDynamicKeyPress = !mIsDynamicKeyPress;
 			return true;
 		case R.id.menu_next_camera:
@@ -394,11 +395,13 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		for(int i=0; i<checkKeyPressedMaxIndex; i++) {
 			currPoint = mCurrFingerTipsLP.get(i);
 			
-			if(mKeyPressDetector.checkFingerDownwardMotion(mFingerTipsLP.get(i), currPoint)) {
+			double yDiff = mFingerTipsLP.get(i).x - currPoint.x;
+			
+			if(yDiff >= 5) {
 				keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
 				
 				if(keyPressedIndex != -1 && keyPressedIndex != mKeyPressedIndexLI.get(i)) {
-					playSound(keyPressedIndex);
+					playSound(keyPressedIndex, yDiff);
 					mKeyPressedIndexLI.set(i, keyPressedIndex);
 					continue;
 				}
@@ -419,8 +422,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		mKeyPressDetector.setDivideConquerX(Imgproc.boundingRect(mWhiteKeysLMOP.get(4)).tl().x);
 	}
 	
-	private void playSound(int i) {
+	private void playSound(int i, double volume) {
 		if(i == -1) return;
+		
+		if(mIsDynamicKeyPress) sound.setVolume(volume);
+			
 		if(mIsPianoLayout1) {
 			//play sound from layout 1
 			sound.playLayout1Sound(i);
