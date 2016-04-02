@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/camera_layout" >
+    
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:id="@+id/scroll">
+        
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical"
+	        android:padding="10dp"
+	        android:background="@color/blue"
+	        android:id="@+id/left_menu">
+	        
+	        <Button android:id="@+id/my_button"
+	        	android:layout_width="50dp"
+	        	android:layout_height="50dp" />
+	        
+	        <Button android:id="@+id/my_button2"
+	        	android:layout_width="50dp"
+	        	android:layout_height="50dp" />
+	        
+	        <Button android:id="@+id/my_button3"
+	        	android:layout_width="50dp"
+	        	android:layout_height="50dp" />
+	        
+	        <Button android:id="@+id/my_button4"
+	        	android:layout_width="50dp"
+	        	android:layout_height="50dp" />
+	        
+	        <Button android:id="@+id/my_button5"
+	        	android:layout_width="50dp"
+	        	android:layout_height="50dp" />
+		        
+	        <Button android:id="@+id/my_button6"
+	        	android:layout_width="50dp"
+	        	android:layout_height="50dp" />
+	        
+	        <Button android:id="@+id/my_button7"
+	        	android:layout_width="50dp"
+	        	android:layout_height="50dp" />
+	        
+	    </LinearLayout>
+    </ScrollView>
+        
+    <org.opencv.android.JavaCameraView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/scroll"
+        android:layout_toEndOf="@id/scroll"
+        android:id="@+id/camera_view" />
+
+</RelativeLayout>

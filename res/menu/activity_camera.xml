@@ -31,11 +31,6 @@
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_change_layout" />
     
-    <!-- <item
-        android:id="@+id/menu_dilation"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_dilation" /> -->
-    
     <item
         android:id="@+id/menu_next_camera"
         app:showAsAction="ifRoom|withText"

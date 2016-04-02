@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -135,6 +136,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_camera);
 		
 		final Window window = getWindow();
 		window.addFlags(
@@ -150,14 +152,15 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		final Camera camera;
 		
-		// Certain data regarding device's cameras are unavailable on Froyo.
-		// To avoid runtime errors, we check Build.VERSION.SDK_INT before using the new APIs.
-		// Furthermore, to avoid seeing errors during static analysis (that is, before compilation),
-		// we add the @SuppressLin("NewApi") annotation to the declaration of onCreate.
+					// Certain data regarding device's cameras are unavailable on Froyo.
+					// To avoid runtime errors, we check Build.VERSION.SDK_INT before using the new APIs.
+					// Furthermore, to avoid seeing errors during static analysis (that is, before compilation),
+					// we add the @SuppressLin("NewApi") annotation to the declaration of onCreate.
+					
+					//Also note that every call to Camera.open must be paired with a call to the camera instance's release method
+					// in order to make the camera available later.
+					// Otherwise, our app and other apps may subsequently encounter a RuntimeException when calling Camera.open.
 		
-		//Also note that every call to Camera.open must be paired with a call to the camera instance's release method
-		// in order to make the camera available later.
-		// Otherwise, our app and other apps may subsequently encounter a RuntimeException when calling Camera.open.
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
 			CameraInfo cameraInfo = new CameraInfo();
 			Camera.getCameraInfo(mCameraIndex, cameraInfo);
@@ -171,16 +174,28 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			camera = Camera.open();
 		}
 		
+		// If the Android version is lower than Jellybean, use this call to hide the status bar.
+        if (Build.VERSION.SDK_INT < 16) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+		
 		final Parameters parameters = camera.getParameters();
 		camera.release();
 		mSupportedImageSizes = parameters.getSupportedPreviewSizes();
 		final Size size = mSupportedImageSizes.get(mImageSizeIndex);
 		
-		mCameraView = new JavaCameraView(this, mCameraIndex);
+		//mCameraView = new JavaCameraView(this, mCameraIndex);
+		
+		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
+		mCameraView.setCameraIndex(mCameraIndex);
 		mCameraView.setMaxFrameSize(size.width, size.height);
 		mCameraView.setCvCameraViewListener(this);
 		
-		setContentView(mCameraView);
+		View decorView = getWindow().getDecorView();
+		// Hide the status bar.
+		int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+		decorView.setSystemUiVisibility(uiOptions);
 		
 		sound = new SoundPoolPlayer(this);
 	}
