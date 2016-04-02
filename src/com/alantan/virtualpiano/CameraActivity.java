@@ -145,7 +145,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mImageSizeIndex = savedInstanceState.getInt(STATE_IMAGE_SIZE_INDEX, 0);
 		} else {
 			mCameraIndex = 0;
-			mImageSizeIndex = 0;
+			mImageSizeIndex = 8;
 		}
 		
 		final Camera camera;
@@ -177,8 +177,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		final Size size = mSupportedImageSizes.get(mImageSizeIndex);
 		
 		mCameraView = new JavaCameraView(this, mCameraIndex);
-		//mCameraView.setMaxFrameSize(size.width, size.height);
-		mCameraView.setMaxFrameSize(640, 480);
+		mCameraView.setMaxFrameSize(size.width, size.height);
 		mCameraView.setCvCameraViewListener(this);
 		
 		setContentView(mCameraView);
@@ -385,8 +384,8 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private void setPianoKeys() {
 		mWhiteKeysLMOP = mPianoDetector.getWhiteKeysLMOP();
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
-		mKeyPressDetector.setWhiteKeysLMOP( mPianoDetector.getWhiteKeysLMOP());
-		mKeyPressDetector.setBlackKeysLMOP( mPianoDetector.getBlackKeysLMOP());
+		mKeyPressDetector.setWhiteKeysLMOP(mPianoDetector.getWhiteKeysLMOP());
+		mKeyPressDetector.setBlackKeysLMOP(mPianoDetector.getBlackKeysLMOP());
 	}
 	
 	private void playSound(int i) {
