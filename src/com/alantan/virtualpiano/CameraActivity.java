@@ -1,6 +1,7 @@
 package com.alantan.virtualpiano;
 
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -16,7 +17,6 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -37,7 +37,7 @@ import android.view.WindowManager;
 @SuppressLint("NewApi")
 //Use the deprecated Camera class.
 @SuppressWarnings("deprecation")
-public class CameraActivity extends ActionBarActivity implements CvCameraViewListener2 {
+public class CameraActivity extends AppCompatActivity implements CvCameraViewListener2 {
 	// A tag for log output.
 	private static final String TAG = CameraActivity.class.getSimpleName();
 	
@@ -96,7 +96,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private KeyPressDetector mKeyPressDetector;
 	
 	// Whether dilation should be applied
-	//private boolean mIsDilation;
+	private boolean mIsDilation;
 	
 	// Whether erosion should be applied
 	private boolean mIsErosion;
@@ -257,6 +257,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 				sizeSubMenu.add(MENU_GROUP_ID_SIZE, i, Menu.NONE, String.format("%dx%d", size.width, size.height));
 			}
 		}
+		
 		return true;
 	}
 
@@ -275,6 +276,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		switch (item.getItemId()) {
 		case R.id.menu_erosion:
 			mIsErosion = !mIsErosion;
+			return true;
+		case R.id.menu_dilation:
+			mIsDilation = !mIsDilation;
 			return true;
 		case R.id.menu_detect_piano:
 			mIsPianoDetection = !mIsPianoDetection;
@@ -343,15 +347,14 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			Scalar lowerThreshold = new Scalar(3, 50, 120);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-			
 		}
 		
-		/*if(mIsDilation) {
+		if(mIsDilation) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
 			Scalar lowerThreshold = new Scalar(0, 0, 100);
 			Scalar upperThreshold = new Scalar(179, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-		}*/
+		}
 		
 		// Flip image if using front facing camera
 		if(mIsCameraFrontFacing) {
