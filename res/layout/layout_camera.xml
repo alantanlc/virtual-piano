@@ -18,6 +18,13 @@
 	        android:background="@color/blue"
 	        android:id="@+id/left_menu">
 	        
+	        <ToggleButton
+		      android:layout_width="50dp"
+		      android:layout_height="50dp"
+		      android:text="Off"
+		      android:id="@+id/toggleButton1"
+		      android:checked="false" />
+	        
 	        <Button android:id="@+id/my_button"
 	        	android:layout_width="50dp"
 	        	android:layout_height="50dp" />

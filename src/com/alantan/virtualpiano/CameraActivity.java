@@ -241,9 +241,13 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	@Override
 	public void onResume() {
 		super.onResume();
-		// Replace OpenCVLoader.OPENCV_VERSION_3_0_0 with an earlier version
-		// such as OpenCVLoader.OPENCV_VERSION_2_4_9 to adapt the code to OpenCV 2.x
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+		
+		// Hide the status bar.
+		View decorView = getWindow().getDecorView();
+		int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+		decorView.setSystemUiVisibility(uiOptions);
+		
 		mIsMenuLocked = false;
 	}
 	
