@@ -30,8 +30,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 @SuppressLint("NewApi")
@@ -108,7 +111,11 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	
 	private boolean mIsPianoLayout1;
 	
+	// Buttons
 	private ToggleButton detectPianoToggleBtn;
+	private Button setPianoBtn;
+	private ToggleButton detectSkinToggleBtn;
+	private ToggleButton dynamicTouchToggleBtn;
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -118,12 +125,11 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			case LoaderCallbackInterface.SUCCESS:
 				Log.d(TAG, "OpenCV loaded successfully");
 				mCameraView.enableView();
+				
 				mPianoDetector = new PianoDetector();
 				mHandDetector = new HandDetector();
 				mKeyPressDetector = new KeyPressDetector();
-				mIsPianoLayout1 = true;
-				mIsPianoDetection = true;
-				currPoint = new Point(640, 480);
+				
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -200,6 +206,13 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		decorView.setSystemUiVisibility(uiOptions);
 		
 		sound = new SoundPoolPlayer(this);
+		
+		mIsPianoLayout1 = true;
+		mIsPianoDetection = true;
+		
+		currPoint = new Point(640, 480);
+		
+		setButtonsClickListener();
 	}
 	
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -421,5 +434,56 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			// play sound from layout 2
 			sound.playLayout2Sound(i);
 		}
+	}
+	
+	private void setButtonsClickListener() {
+		detectPianoToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_piano);
+		setPianoBtn = (Button) findViewById(R.id.btn_set_piano);
+		detectSkinToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_skin);
+		dynamicTouchToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_dynamic_touch);
+		
+		detectPianoToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsPianoDetection = true;
+					mWhiteKeysLMOP.clear();
+					mBlackKeysLMOP.clear();
+				} else {
+					// Toggle is disabled
+					mIsPianoDetection = false;
+				}
+			}
+		});
+		
+		detectSkinToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsFingersDetection = true;
+				} else {
+					// Toggle is disabled
+					mIsFingersDetection = false;
+				}
+			}
+		});
+		
+		setPianoBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				if(!detectPianoToggleBtn.isChecked()) return;
+				
+				setPianoKeys();
+				detectPianoToggleBtn.setChecked(false);
+			}
+		});
 	}
 }
