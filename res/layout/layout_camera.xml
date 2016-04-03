@@ -23,8 +23,10 @@
 		      android:textOff="@string/menu_detect_piano"
 		      android:textOn="@string/menu_detect_piano"
 		      android:id="@+id/toggle_btn_detect_piano"
-		      android:background="@drawable/my_btn_toggle"
-		      android:textColor="@color/white"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:paddingLeft="3dp"
+		      android:paddingRight="3dp"
 		      android:checked="true" />
 	        
 	        <Button
@@ -41,8 +43,10 @@
 		      android:textOff="@string/menu_detect_skin"
 		      android:textOn="@string/menu_detect_skin"
 		      android:id="@+id/toggle_btn_detect_skin"
-		      android:background="@drawable/my_btn_toggle"
-		      android:textColor="@color/white"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:paddingLeft="5dp"
+		      android:paddingRight="5dp"
 		      android:checked="false" />
 	        
 	        <ToggleButton
@@ -51,8 +55,8 @@
 		      android:textOff="@string/menu_dynamic_touch"
 		      android:textOn="@string/menu_dynamic_touch"
 		      android:id="@+id/toggle_btn_dynamic_touch"
-		      android:background="@drawable/my_btn_toggle"
-		      android:textColor="@color/white"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
 		      android:checked="false" />
 	        
 	        <ToggleButton
@@ -61,8 +65,8 @@
 		      android:textOff="@string/menu_hsv"
 		      android:textOn="@string/menu_hsv"
 		      android:id="@+id/toggle_btn_hsv"
-		      android:background="@drawable/my_btn_toggle"
-		      android:textColor="@color/white"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
 		      android:checked="false" />
 	        
 	        <ToggleButton
@@ -71,8 +75,8 @@
 		      android:textOff="@string/menu_ycbcr"
 		      android:textOn="@string/menu_ycbcr"
 		      android:id="@+id/toggle_btn_ycbcr"
-		      android:background="@drawable/my_btn_toggle"
-		      android:textColor="@color/white"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
 		      android:checked="false" />
 	        
 	        <Button

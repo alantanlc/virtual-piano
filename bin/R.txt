@@ -300,6 +300,7 @@ int color switch_thumb_material_dark 0x7f07004b
 int color switch_thumb_material_light 0x7f07004c
 int color switch_thumb_normal_material_dark 0x7f070014
 int color switch_thumb_normal_material_light 0x7f070015
+int color toggle_btn_text_color 0x7f07004d
 int color white 0x7f07003f
 int dimen abc_action_bar_content_inset_material 0x7f08002b
 int dimen abc_action_bar_default_height_material 0x7f08002a
@@ -448,8 +449,9 @@ int drawable abc_textfield_search_activated_mtrl_alpha 0x7f020042
 int drawable abc_textfield_search_default_mtrl_alpha 0x7f020043
 int drawable abc_textfield_search_material 0x7f020044
 int drawable ic_launcher2 0x7f020045
-int drawable my_btn_toggle 0x7f020046
-int drawable notification_template_icon_bg 0x7f020047
+int drawable my_btn_toggle_color 0x7f020046
+int drawable notification_template_icon_bg 0x7f020048
+int drawable toggle_btn 0x7f020047
 int id action0 0x7f0a005f
 int id action_bar 0x7f0a0044
 int id action_bar_activity_content 0x7f0a0003

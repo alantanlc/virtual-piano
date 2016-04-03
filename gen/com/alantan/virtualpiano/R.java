@@ -1770,6 +1770,7 @@ containing a value of this type.
         public static final int switch_thumb_material_light=0x7f07004c;
         public static final int switch_thumb_normal_material_dark=0x7f070014;
         public static final int switch_thumb_normal_material_light=0x7f070015;
+        public static final int toggle_btn_text_color=0x7f07004d;
         public static final int white=0x7f07003f;
     }
     public static final class dimen {
@@ -2033,8 +2034,9 @@ containing a value of this type.
         public static final int abc_textfield_search_default_mtrl_alpha=0x7f020043;
         public static final int abc_textfield_search_material=0x7f020044;
         public static final int ic_launcher2=0x7f020045;
-        public static final int my_btn_toggle=0x7f020046;
-        public static final int notification_template_icon_bg=0x7f020047;
+        public static final int my_btn_toggle_color=0x7f020046;
+        public static final int notification_template_icon_bg=0x7f020048;
+        public static final int toggle_btn=0x7f020047;
     }
     public static final class id {
         public static final int action0=0x7f0a005f;
