@@ -99,10 +99,10 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private KeyPressDetector mKeyPressDetector;
 	
 	// Whether dilation should be applied
-	private boolean mIsDilation;
+	private boolean mIsYCbCr;
 	
 	// Whether erosion should be applied
-	private boolean mIsErosion;
+	private boolean mIsHSV;
 	
 	private SoundPoolPlayer sound;
 	
@@ -116,6 +116,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private Button setPianoBtn;
 	private ToggleButton detectSkinToggleBtn;
 	private ToggleButton dynamicTouchToggleBtn;
+	private ToggleButton hsvToggleBtn;
+	private ToggleButton yCbCrToggleBtn;
 	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -309,10 +311,10 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		switch (item.getItemId()) {
 		case R.id.menu_erosion:
-			mIsErosion = !mIsErosion;
+			mIsHSV = !mIsHSV;
 			return true;
 		case R.id.menu_dilation:
-			mIsDilation = !mIsDilation;
+			mIsYCbCr = !mIsYCbCr;
 			return true;
 		case R.id.menu_detect_piano:
 			mIsPianoDetection = !mIsPianoDetection;
@@ -376,17 +378,19 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
 		}
 		
-		if(mIsErosion) {
+		if(mIsHSV) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(3, 50, 120);
+			Scalar lowerThreshold = new Scalar(3, 50, 50);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 		}
 		
-		if(mIsDilation) {
-			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(0, 0, 100);
-			Scalar upperThreshold = new Scalar(179, 255, 255);
+		if(mIsYCbCr) {
+			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2YCrCb);
+			// Skin pixels: 133 ≤ Cr ≤ 173 and 77 ≤ Cb ≤ 127
+			// Skin pixels (Relaxed): 128 ≤ Cr ≤ 178 and 72 ≤ Cb ≤ 132
+			Scalar lowerThreshold = new Scalar(0, 133, 77);
+			Scalar upperThreshold = new Scalar(255, 173, 127);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 		}
 		
@@ -441,6 +445,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		setPianoBtn = (Button) findViewById(R.id.btn_set_piano);
 		detectSkinToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_skin);
 		dynamicTouchToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_dynamic_touch);
+		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
+		yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
 		
 		detectPianoToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			
@@ -471,6 +477,38 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				} else {
 					// Toggle is disabled
 					mIsFingersDetection = false;
+				}
+			}
+		});
+		
+		hsvToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsHSV = true;
+					yCbCrToggleBtn.setChecked(false);
+				} else {
+					// Toggle is disabled
+					mIsHSV = false;
+				}
+			}
+		});
+		
+		yCbCrToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsYCbCr = true;
+					hsvToggleBtn.setChecked(false);
+				} else {
+					// Toggle is disabled
+					mIsYCbCr = false;
 				}
 			}
 		});
