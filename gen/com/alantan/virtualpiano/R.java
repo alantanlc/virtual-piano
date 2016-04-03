@@ -2035,8 +2035,9 @@ containing a value of this type.
         public static final int abc_textfield_search_material=0x7f020044;
         public static final int ic_launcher2=0x7f020045;
         public static final int my_btn_toggle_color=0x7f020046;
-        public static final int notification_template_icon_bg=0x7f020048;
-        public static final int toggle_btn=0x7f020047;
+        public static final int notification_template_icon_bg=0x7f020049;
+        public static final int shape_toggle_btn=0x7f020047;
+        public static final int toggle_btn=0x7f020048;
     }
     public static final class id {
         public static final int action0=0x7f0a005f;
