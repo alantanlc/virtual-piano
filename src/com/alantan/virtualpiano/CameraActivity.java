@@ -32,6 +32,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ToggleButton;
 
 @SuppressLint("NewApi")
 //Use the deprecated Camera class.
@@ -107,6 +108,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	
 	private boolean mIsPianoLayout1;
 	
+	private ToggleButton detectPianoToggleBtn;
+	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
@@ -119,6 +122,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				mHandDetector = new HandDetector();
 				mKeyPressDetector = new KeyPressDetector();
 				mIsPianoLayout1 = true;
+				mIsPianoDetection = true;
 				currPoint = new Point(640, 480);
 				break;
 			default:

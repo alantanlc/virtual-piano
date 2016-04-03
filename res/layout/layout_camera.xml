@@ -8,50 +8,88 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:scrollbars="none"
+        android:background="@color/black"
         android:id="@+id/scroll">
         
 	    <LinearLayout
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical"
-	        android:padding="10dp"
-	        android:background="@color/blue"
 	        android:id="@+id/left_menu">
 	        
 	        <ToggleButton
-		      android:layout_width="50dp"
-		      android:layout_height="50dp"
-		      android:text="Off"
-		      android:id="@+id/toggleButton1"
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_detect_piano"
+		      android:textOn="@string/menu_detect_piano"
+		      android:id="@+id/toggle_btn_detect_piano"
+		      android:background="@drawable/my_btn_toggle"
+		      android:textColor="@color/white"
+		      android:checked="true" />
+	        
+	        <Button
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:text="@string/menu_set_piano"
+		      android:background="@color/black_static"
+		      android:textColor="@color/white"
+		      android:id="@+id/btn_set_piano" />
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_detect_skin"
+		      android:textOn="@string/menu_detect_skin"
+		      android:id="@+id/toggle_btn_detect_skin"
+		      android:background="@drawable/my_btn_toggle"
+		      android:textColor="@color/white"
 		      android:checked="false" />
 	        
-	        <Button android:id="@+id/my_button"
-	        	android:layout_width="50dp"
-	        	android:layout_height="50dp" />
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_dynamic_touch"
+		      android:textOn="@string/menu_dynamic_touch"
+		      android:id="@+id/toggle_btn_dynamic_touch"
+		      android:background="@drawable/my_btn_toggle"
+		      android:textColor="@color/white"
+		      android:checked="false" />
 	        
-	        <Button android:id="@+id/my_button2"
-	        	android:layout_width="50dp"
-	        	android:layout_height="50dp" />
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_hsv"
+		      android:textOn="@string/menu_hsv"
+		      android:id="@+id/toggle_btn_hsv"
+		      android:background="@drawable/my_btn_toggle"
+		      android:textColor="@color/white"
+		      android:checked="false" />
 	        
-	        <Button android:id="@+id/my_button3"
-	        	android:layout_width="50dp"
-	        	android:layout_height="50dp" />
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_ycbcr"
+		      android:textOn="@string/menu_ycbcr"
+		      android:id="@+id/toggle_btn_ycbcr"
+		      android:background="@drawable/my_btn_toggle"
+		      android:textColor="@color/white"
+		      android:checked="false" />
 	        
-	        <Button android:id="@+id/my_button4"
-	        	android:layout_width="50dp"
-	        	android:layout_height="50dp" />
+	        <Button
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:text="@string/menu_image_size"
+		      android:background="@color/black_static"
+		      android:textColor="@color/white"
+		      android:id="@+id/btn_image_size" />
 	        
-	        <Button android:id="@+id/my_button5"
-	        	android:layout_width="50dp"
-	        	android:layout_height="50dp" />
-		        
-	        <Button android:id="@+id/my_button6"
-	        	android:layout_width="50dp"
-	        	android:layout_height="50dp" />
-	        
-	        <Button android:id="@+id/my_button7"
-	        	android:layout_width="50dp"
-	        	android:layout_height="50dp" />
+	        <Button
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:text="@string/menu_next_camera"
+		      android:background="@color/black_static"
+		      android:textColor="@color/white"
+		      android:id="@+id/toggle_btn_next_camera" />
 	        
 	    </LinearLayout>
     </ScrollView>

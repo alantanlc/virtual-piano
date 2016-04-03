@@ -1670,20 +1670,20 @@ containing a value of this type.
         public static final int abc_config_showMenuShortcutsWhenKeyboardPresent=0x7f060003;
     }
     public static final class color {
-        public static final int abc_background_cache_hint_selector_material_dark=0x7f07003e;
-        public static final int abc_background_cache_hint_selector_material_light=0x7f07003f;
-        public static final int abc_color_highlight_material=0x7f070040;
+        public static final int abc_background_cache_hint_selector_material_dark=0x7f070041;
+        public static final int abc_background_cache_hint_selector_material_light=0x7f070042;
+        public static final int abc_color_highlight_material=0x7f070043;
         public static final int abc_input_method_navigation_guard=0x7f070003;
-        public static final int abc_primary_text_disable_only_material_dark=0x7f070041;
-        public static final int abc_primary_text_disable_only_material_light=0x7f070042;
-        public static final int abc_primary_text_material_dark=0x7f070043;
-        public static final int abc_primary_text_material_light=0x7f070044;
-        public static final int abc_search_url_text=0x7f070045;
+        public static final int abc_primary_text_disable_only_material_dark=0x7f070044;
+        public static final int abc_primary_text_disable_only_material_light=0x7f070045;
+        public static final int abc_primary_text_material_dark=0x7f070046;
+        public static final int abc_primary_text_material_light=0x7f070047;
+        public static final int abc_search_url_text=0x7f070048;
         public static final int abc_search_url_text_normal=0x7f070000;
         public static final int abc_search_url_text_pressed=0x7f070002;
         public static final int abc_search_url_text_selected=0x7f070001;
-        public static final int abc_secondary_text_material_dark=0x7f070046;
-        public static final int abc_secondary_text_material_light=0x7f070047;
+        public static final int abc_secondary_text_material_dark=0x7f070049;
+        public static final int abc_secondary_text_material_light=0x7f07004a;
         public static final int accent_material_dark=0x7f070011;
         public static final int accent_material_light=0x7f070010;
         public static final int background_floating_material_dark=0x7f070008;
@@ -1691,6 +1691,8 @@ containing a value of this type.
         public static final int background_material_dark=0x7f070006;
         public static final int background_material_light=0x7f070007;
         public static final int black=0x7f07003c;
+        public static final int black_checked=0x7f07003e;
+        public static final int black_static=0x7f07003d;
         public static final int blue=0x7f07003b;
         /**  White 50% 
          */
@@ -1710,6 +1712,7 @@ containing a value of this type.
         public static final int dim_foreground_material_light=0x7f07001f;
         public static final int foreground_material_dark=0x7f070004;
         public static final int foreground_material_light=0x7f070005;
+        public static final int grey=0x7f070040;
         /**  TODO: This is 40% alpha on the default accent color. 
          */
         public static final int highlighted_text_material_dark=0x7f070024;
@@ -1763,11 +1766,11 @@ containing a value of this type.
         public static final int secondary_text_disabled_material_light=0x7f07002b;
         public static final int switch_thumb_disabled_material_dark=0x7f070016;
         public static final int switch_thumb_disabled_material_light=0x7f070017;
-        public static final int switch_thumb_material_dark=0x7f070048;
-        public static final int switch_thumb_material_light=0x7f070049;
+        public static final int switch_thumb_material_dark=0x7f07004b;
+        public static final int switch_thumb_material_light=0x7f07004c;
         public static final int switch_thumb_normal_material_dark=0x7f070014;
         public static final int switch_thumb_normal_material_light=0x7f070015;
-        public static final int white=0x7f07003d;
+        public static final int white=0x7f07003f;
     }
     public static final class dimen {
         /**  Default content inset of an action bar. 
@@ -2030,7 +2033,8 @@ containing a value of this type.
         public static final int abc_textfield_search_default_mtrl_alpha=0x7f020043;
         public static final int abc_textfield_search_material=0x7f020044;
         public static final int ic_launcher2=0x7f020045;
-        public static final int notification_template_icon_bg=0x7f020046;
+        public static final int my_btn_toggle=0x7f020046;
+        public static final int notification_template_icon_bg=0x7f020047;
     }
     public static final class id {
         public static final int action0=0x7f0a005f;
@@ -2054,6 +2058,8 @@ containing a value of this type.
         public static final int any=0x7f0a0009;
         public static final int back=0x7f0a000a;
         public static final int beginning=0x7f0a0021;
+        public static final int btn_image_size=0x7f0a005c;
+        public static final int btn_set_piano=0x7f0a0057;
         public static final int buttonPanel=0x7f0a002e;
         public static final int camera_layout=0x7f0a0053;
         public static final int camera_view=0x7f0a005e;
@@ -2094,13 +2100,6 @@ containing a value of this type.
         public static final int menu_set_piano=0x7f0a006f;
         public static final int middle=0x7f0a0023;
         public static final int multiply=0x7f0a0017;
-        public static final int my_button=0x7f0a0057;
-        public static final int my_button2=0x7f0a0058;
-        public static final int my_button3=0x7f0a0059;
-        public static final int my_button4=0x7f0a005a;
-        public static final int my_button5=0x7f0a005b;
-        public static final int my_button6=0x7f0a005c;
-        public static final int my_button7=0x7f0a005d;
         public static final int never=0x7f0a001f;
         public static final int none=0x7f0a0012;
         public static final int normal=0x7f0a000e;
@@ -2142,7 +2141,12 @@ containing a value of this type.
         public static final int time=0x7f0a0065;
         public static final int title=0x7f0a002d;
         public static final int title_template=0x7f0a0032;
-        public static final int toggleButton1=0x7f0a0056;
+        public static final int toggle_btn_detect_piano=0x7f0a0056;
+        public static final int toggle_btn_detect_skin=0x7f0a0058;
+        public static final int toggle_btn_dynamic_touch=0x7f0a0059;
+        public static final int toggle_btn_hsv=0x7f0a005a;
+        public static final int toggle_btn_next_camera=0x7f0a005d;
+        public static final int toggle_btn_ycbcr=0x7f0a005b;
         public static final int topPanel=0x7f0a0031;
         public static final int up=0x7f0a0001;
         public static final int useLogo=0x7f0a0016;
@@ -2326,25 +2330,18 @@ containing a value of this type.
          */
         public static final int abc_toolbar_collapse_description=0x7f0b0004;
         public static final int app_name=0x7f0b0014;
-        public static final int delete=0x7f0b0015;
-        public static final int edit=0x7f0b0016;
-        public static final int menu_change_layout=0x7f0b0027;
-        public static final int menu_detect_piano=0x7f0b0022;
-        public static final int menu_detect_skin=0x7f0b0023;
-        public static final int menu_dilation=0x7f0b0025;
-        public static final int menu_erosion=0x7f0b0026;
-        public static final int menu_image_size=0x7f0b0019;
-        public static final int menu_next_camera=0x7f0b0017;
-        public static final int menu_set_piano=0x7f0b0024;
-        public static final int menu_take_photo=0x7f0b0018;
-        public static final int photo_delete_prompt_message=0x7f0b001a;
-        public static final int photo_delete_prompt_title=0x7f0b001b;
-        public static final int photo_edit_chooser_title=0x7f0b001d;
-        public static final int photo_error_message=0x7f0b001c;
-        public static final int photo_send_chooser_title=0x7f0b001e;
-        public static final int photo_send_extra_subject=0x7f0b001f;
-        public static final int photo_send_extra_text=0x7f0b0020;
-        public static final int share=0x7f0b0021;
+        public static final int menu_change_layout=0x7f0b0020;
+        public static final int menu_detect_piano=0x7f0b0018;
+        public static final int menu_detect_skin=0x7f0b0019;
+        public static final int menu_dilation=0x7f0b001e;
+        public static final int menu_dynamic_touch=0x7f0b001b;
+        public static final int menu_erosion=0x7f0b001f;
+        public static final int menu_hsv=0x7f0b001c;
+        public static final int menu_image_size=0x7f0b0016;
+        public static final int menu_next_camera=0x7f0b0015;
+        public static final int menu_set_piano=0x7f0b001a;
+        public static final int menu_ycbcr=0x7f0b001d;
+        public static final int share=0x7f0b0017;
         /**  Text to use when the number in a notification info is too large
          (greater than status_bar_notification_info_maxnum, defined in
          values/config.xml) and must be truncated. May need to be localized
