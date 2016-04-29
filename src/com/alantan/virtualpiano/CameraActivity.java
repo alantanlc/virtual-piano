@@ -199,7 +199,9 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
-		mCameraView.setMaxFrameSize(size.width, size.height);
+		//mCameraView.setMaxFrameSize(size.width, size.height);
+		mCameraView.setMaxFrameSize(352, 288);
+		mCameraView.enableFpsMeter();
 		mCameraView.setCvCameraViewListener(this);
 		
 		View decorView = getWindow().getDecorView();
@@ -212,7 +214,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mIsPianoLayout1 = true;
 		mIsPianoDetection = true;
 		
-		currPoint = new Point(640, 480);
+		currPoint = new Point(0, 0);
 		
 		setButtonsClickListener();
 	}

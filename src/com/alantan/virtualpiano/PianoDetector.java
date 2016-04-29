@@ -66,7 +66,7 @@ public class PianoDetector extends Detector {
 		
 		// 5. If no contours detected, return.
 		if(mWhiteContoursLMOP.size() == 0) {
-			Log.i(TAG, "No white contours found!");
+			//Log.i(TAG, "No white contours found!");
 			return;
 		}
 		
@@ -80,7 +80,7 @@ public class PianoDetector extends Detector {
 		
 		// 9. If no contours, just return
 		if(mWhiteKeysLMOP.size() == 0) {
-			Log.i(TAG, "No white keys found!");
+			//Log.i(TAG, "No white keys found!");
 			return;
 		}
 		
@@ -141,7 +141,7 @@ public class PianoDetector extends Detector {
 		
 		// 18. If no contours detected, return.
 		if(mBlackContoursLMOP.size() == 0) {
-			Log.i(TAG, "No black contours found!");
+			//Log.i(TAG, "No black contours found!");
 			return;
 		}
 		
@@ -155,7 +155,7 @@ public class PianoDetector extends Detector {
 		
 		// 21. If no contours, just return
 		if(mBlackKeysLMOP.size() == 0) {
-			Log.i(TAG, "No black key found!");
+			//Log.i(TAG, "No black key found!");
 			return;
 		}
 		

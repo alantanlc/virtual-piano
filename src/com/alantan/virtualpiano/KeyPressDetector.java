@@ -32,6 +32,10 @@ public class KeyPressDetector {
 			return false;
 		}
 		
+		/*if(yDiff2 < 0) {
+			return false;
+		}*/
+		
 		//Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
 		
 		return true;
@@ -45,7 +49,7 @@ public class KeyPressDetector {
 			
 			if(Imgproc.pointPolygonTest(p, point, false) == 0
 					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				Log.i(TAG, "Index: " + i);
+				//Log.i(TAG, "Index: " + i);
 				return i;
 			}
 		}
@@ -56,7 +60,7 @@ public class KeyPressDetector {
 			
 			if(Imgproc.pointPolygonTest(p, point, false) == 0
 					|| Imgproc.pointPolygonTest(p, point, false) == 1) {
-				Log.i(TAG, "Index: " + i);
+				//Log.i(TAG, "Index: " + i);
 				return i+10;
 			}
 		}

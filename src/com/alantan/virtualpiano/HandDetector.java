@@ -82,44 +82,15 @@ public class HandDetector extends Detector {
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
 		// 11. Draw convex hull points
-		/*for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
+		for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
 			Point p = new Point(hullContourLMOP.get(0).get(i, 0));
-			Imgproc.circle(dst, p, 10, Colors.mLineColorGreen, 2);
-		}*/
-		
-		// 12. Find convex hull points that are within piano area
-		// (Create new method)
-		// getPointsByRegion();
-		
-		// 13. Reduce convex hull points to (maximum) 5 distinct points
-		// to correspond to 5 finger tips (Create new method)
-		// getFingerTipPoints();
-		
-		// 11. Get convexity defects
-		//MatOfInt4 convDefMOI4 = new MatOfInt4();
-		//Imgproc.convexityDefects(reducedHandContours.get(0), hullMOI, convDefMOI4);
+			Imgproc.circle(dst, p, 5, Colors.mLineColorGreen, 2);
+		}
 		
 		// Draw contours
-		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorGreen, 2);
-		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
-		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
-		
-		// Draw convexity defect points
-		/*if(!convDefMOI4.empty()) {
-			List<Integer> cdList = convDefMOI4.toList();
-			
-			Point data[] = reducedHandContours.get(0).toArray();
-			
-			for(int i=0; i<cdList.size(); i+=4) {
-				Point start = data[cdList.get(i)];
-				Point end = data[cdList.get(i+1)];
-				Point defect = data[cdList.get(i+2)];
-				
-				Imgproc.circle(dst, start, 15, Colors.mLineColorGreen, 2);
-				Imgproc.circle(dst, end, 20, Colors.mLineColorRed, 2);
-				Imgproc.circle(dst, defect, 10, Colors.mLineColorYellow, 2);
-			}
-		}*/
+		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorYellow, 2);
+		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
+		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Find lowest point
 		lowestPoint = findLowestPoint(hullContourLMOP.get(0));
