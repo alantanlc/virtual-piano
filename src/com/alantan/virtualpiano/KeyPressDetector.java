@@ -28,7 +28,7 @@ public class KeyPressDetector {
 		
 		//Log.i(TAG, "Y diff: " + yDiff + ", X diff: " + xDiff);
 		
-		if(yDiff < 8) {
+		if(yDiff < 8 || xDiff > 30) {
 			return false;
 		}
 		
