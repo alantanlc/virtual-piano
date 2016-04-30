@@ -82,14 +82,14 @@ public class HandDetector extends Detector {
 		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
 		// 11. Draw convex hull points
-		for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
+		/*(for(int i=0; i<hullContourLMOP.get(0).rows(); i++) {
 			Point p = new Point(hullContourLMOP.get(0).get(i, 0));
 			Imgproc.circle(dst, p, 5, Colors.mLineColorGreen, 2);
-		}
+		}*/
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorYellow, 2);
-		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
+		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
 		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Find lowest point
