@@ -1,6 +1,6 @@
 package com.alantan.virtualpiano;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
@@ -30,13 +29,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 @SuppressLint("NewApi")
 //Use the deprecated Camera class.
 @SuppressWarnings("deprecation")
-public class CameraActivity extends ActionBarActivity implements CvCameraViewListener2 {
+public class CameraActivity extends AppCompatActivity implements CvCameraViewListener2 {
 	// A tag for log output.
 	private static final String TAG = CameraActivity.class.getSimpleName();
 	
@@ -88,6 +92,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	// Whether skin detection should be applied
 	private boolean mIsFingersDetection;
 	
+	// KeyPressDetector
+	private KeyPressDetector mKeyPressDetector;
+	
 	// To toggle piano layout
 	private boolean mIsPianoLayout1;
 	
@@ -98,19 +105,16 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private boolean mIsDynamicKeyPress;
 	
 	// Whether erosion should be applied
-	private boolean mIsErosion;
-	
-	// KeyPressDetector
-	private KeyPressDetector mKeyPressDetector;
+	private boolean mIsHSV;
 	
 	// Whether dilation should be applied
-	//private boolean mIsDilation;
+	private boolean mIsYCbCr;
 	
 	// SoundPoolPlayer
 	private SoundPoolPlayer sound;
 	
 	// Points to detect finger downward motion
-	private Point prevPoint;
+	//private Point prevPoint;
 	private Point currPoint;
 	
 	private int keyPressedIndex;
@@ -121,6 +125,14 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
 	private List<Point> mCurrFingerTipsLP = new ArrayList<Point>();
 	
+	// Buttons
+	private ToggleButton detectPianoToggleBtn;
+	private ToggleButton detectSkinToggleBtn;
+	private ToggleButton handsToggleBtn;
+	private ToggleButton hsvToggleBtn;
+	private ToggleButton yCbCrToggleBtn;
+	private Button setPianoBtn;
+	
 	// The OpenCV loader callback.
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
@@ -129,13 +141,11 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			case LoaderCallbackInterface.SUCCESS:
 				Log.d(TAG, "OpenCV loaded successfully");
 				mCameraView.enableView();
+				
 				mPianoDetector = new PianoDetector();
 				mHandDetector = new HandDetector();
 				mKeyPressDetector = new KeyPressDetector();
-				mIsPianoLayout1 = true;
-				currPoint = new Point(640, 480);
-				mKeyPressedIndexLI.add(-1);
-				mKeyPressedIndexLI.add(-1);
+				
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -150,6 +160,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.layout_camera);
 		
 		final Window window = getWindow();
 		window.addFlags(
@@ -160,7 +171,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			mImageSizeIndex = savedInstanceState.getInt(STATE_IMAGE_SIZE_INDEX, 0);
 		} else {
 			mCameraIndex = 0;
-			mImageSizeIndex = 0;
+			mImageSizeIndex = 8;
 		}
 		
 		final Camera camera;
@@ -186,20 +197,42 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			camera = Camera.open();
 		}
 		
+		// If the Android version is lower than Jellybean, use this call to hide the status bar.
+        if (Build.VERSION.SDK_INT < 16) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+		
 		final Parameters parameters = camera.getParameters();
 		camera.release();
 		mSupportedImageSizes = parameters.getSupportedPreviewSizes();
 		final Size size = mSupportedImageSizes.get(mImageSizeIndex);
 		
-		mCameraView = new JavaCameraView(this, mCameraIndex);
+		//mCameraView = new JavaCameraView(this, mCameraIndex);
+		
+		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
+		mCameraView.setCameraIndex(mCameraIndex);
 		//mCameraView.setMaxFrameSize(size.width, size.height);
 		mCameraView.setMaxFrameSize(320, 240);
-		mCameraView.setCvCameraViewListener(this);
 		mCameraView.enableFpsMeter();
+		mCameraView.setCvCameraViewListener(this);
 		
-		setContentView(mCameraView);
+		View decorView = getWindow().getDecorView();
+		// Hide the status bar.
+		int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+		decorView.setSystemUiVisibility(uiOptions);
 		
 		sound = new SoundPoolPlayer(this);
+		
+		mIsPianoLayout1 = true;
+		mIsPianoDetection = true;
+		
+		currPoint = new Point(0, 0);
+		
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		
+		setButtonsClickListener();
 	}
 	
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -250,9 +283,13 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 	@Override
 	public void onResume() {
 		super.onResume();
-		// Replace OpenCVLoader.OPENCV_VERSION_3_0_0 with an earlier version
-		// such as OpenCVLoader.OPENCV_VERSION_2_4_9 to adapt the code to OpenCV 2.x
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+		
+		// Hide the status bar.
+		View decorView = getWindow().getDecorView();
+		int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+		decorView.setSystemUiVisibility(uiOptions);
+
 		mIsMenuLocked = false;
 	}
 	
@@ -298,7 +335,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		switch (item.getItemId()) {
 		case R.id.menu_erosion:
-			mIsErosion = !mIsErosion;
+			mIsHSV = !mIsHSV;
 			return true;
 		case R.id.menu_detect_piano:
 			mIsPianoDetection = !mIsPianoDetection;
@@ -362,22 +399,32 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			if(!mCurrFingerTipsLP.isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				checkKeyPressed();
 			}
+			
+			return rgba;
 		}
 		
-		if(!mWhiteKeysLMOP.isEmpty()) {
+		/*if(!mWhiteKeysLMOP.isEmpty()) {
 			mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 1);
 		}
 		
 		if(!mBlackKeysLMOP.isEmpty()) {
 			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
-		}
+		}*/
 		
-		if(mIsErosion) {
+		if(mIsHSV) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
 			Scalar lowerThreshold = new Scalar(3, 50, 120);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-			
+		}
+		
+		if(mIsYCbCr) {
+			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2YCrCb);
+			// Skin pixels: 133 ≤ Cr ≤ 173 and 77 ≤ Cb ≤ 127
+			// Skin pixels (Relaxed): 128 ≤ Cr ≤ 178 and 72 ≤ Cb ≤ 132
+			Scalar lowerThreshold = new Scalar(0, 133, 77);
+			Scalar upperThreshold = new Scalar(255, 173, 127);
+			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 		}
 		
 		// Flip image if using front facing camera
@@ -417,7 +464,6 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
 		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
-		mKeyPressDetector.setDivideConquerX(Imgproc.boundingRect(mWhiteKeysLMOP.get(4)).tl().x);
 	}
 	
 	private void playSound(int i) {
@@ -429,5 +475,106 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			// play sound from layout 2
 			sound.playLayout2Sound(i);
 		}
+	}
+	
+	private void setButtonsClickListener() {
+		detectPianoToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_piano);
+		setPianoBtn = (Button) findViewById(R.id.btn_set_piano);
+		detectSkinToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_skin);
+		handsToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_two_hands);
+		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
+		yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
+		
+		detectPianoToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsPianoDetection = true;
+					mWhiteKeysLMOP.clear();
+					mBlackKeysLMOP.clear();
+				} else {
+					// Toggle is disabled
+					mIsPianoDetection = false;
+				}
+			}
+		});
+		
+		detectSkinToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsFingersDetection = true;
+				} else {
+					// Toggle is disabled
+					mIsFingersDetection = false;
+				}
+			}
+		});
+		
+		handsToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsTwoHands = true;
+				} else {
+					// Toggle is disabled
+					mIsTwoHands = false;
+				}
+			}
+		});
+		
+		hsvToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsHSV = true;
+					yCbCrToggleBtn.setChecked(false);
+				} else {
+					// Toggle is disabled
+					mIsHSV = false;
+				}
+			}
+		});
+		
+		yCbCrToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsYCbCr = true;
+					hsvToggleBtn.setChecked(false);
+				} else {
+					// Toggle is disabled
+					mIsYCbCr = false;
+				}
+			}
+		});
+		
+		setPianoBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+				if(!detectPianoToggleBtn.isChecked()) return;
+				
+				setPianoKeys();
+				detectPianoToggleBtn.setChecked(false);
+			}
+		});
 	}
 }

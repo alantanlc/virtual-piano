@@ -19,9 +19,6 @@ public class KeyPressDetector {
 	private List<MatOfPoint2f> mBlackKeysLMOP2f = new ArrayList<MatOfPoint2f>();
 	
 	private int mPianoKeyIndex = -1;
-	private double mDivideConquerX;
-	
-	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
 	
 	public boolean checkFingerDownwardMotion(Point prevPoint, Point currPoint) {
 		double xDiff = currPoint.x - prevPoint.x;
@@ -40,21 +37,20 @@ public class KeyPressDetector {
 	
 	public int getPianoKeyIndex(Point point) {
 		
-		int whiteIndex = -1;
-		int blackIndex = -1;
-		
-		if(point.x < mDivideConquerX) {
-			whiteIndex = whiteKeysPolygonTest(point, 5, mWhiteKeysLMOP2f.size() - 1);
-			blackIndex = blackKeysPolygonTest(point, 3, mBlackKeysLMOP2f.size() - 1);
-		} else {
-			whiteIndex = whiteKeysPolygonTest(point, 0, 4);
-			blackIndex = blackKeysPolygonTest(point, 0, 3);
+		for(int i=0; i<mWhiteKeysLMOP2f.size(); i++) {
+			if(Imgproc.pointPolygonTest(mWhiteKeysLMOP2f.get(i), point, false) == 0
+					|| Imgproc.pointPolygonTest(mWhiteKeysLMOP2f.get(i), point, false) == 1) {
+				Log.i(TAG, "Index: " + i);
+				return i;
+			}
 		}
 		
-		if(whiteIndex > blackIndex) {
-			return whiteIndex;
-		} else if(blackIndex > whiteIndex) {
-			return blackIndex;
+		for(int i=0; i<mBlackKeysLMOP2f.size(); i++) {
+			if(Imgproc.pointPolygonTest(mBlackKeysLMOP2f.get(i), point, false) == 0
+					|| Imgproc.pointPolygonTest(mBlackKeysLMOP2f.get(i), point, false) == 1) {
+				Log.i(TAG, "Index: " + i);
+				return i+10;
+			}
 		}
 		
 		return -1;
@@ -82,35 +78,5 @@ public class KeyPressDetector {
 	
 	public void setPianoKeyIndex(int index) {
 		mPianoKeyIndex = index;
-	}
-	
-	public void setDivideConquerX(double x) {
-		mDivideConquerX = x;
-	}
-	
-	private int whiteKeysPolygonTest(Point point, int start, int end) {
-		int polygonTest;
-		
-		for(int i=start; i<=end; i++) {
-			polygonTest = (int) Imgproc.pointPolygonTest(mWhiteKeysLMOP2f.get(i), point, false);
-			if(polygonTest == 0 || polygonTest == 1) {
-				return i;
-			}
-		}
-		
-		return -1;
-	}
-	
-	private int blackKeysPolygonTest(Point point, int start, int end) {
-		int polygonTest;
-		
-		for(int i=start; i<=end; i++) {
-			polygonTest = (int) Imgproc.pointPolygonTest(mBlackKeysLMOP2f.get(i), point, false);
-			if(polygonTest == 0 || polygonTest == 1) {
-				return i+10;
-			}
-		}
-		
-		return -1;
 	}
 }

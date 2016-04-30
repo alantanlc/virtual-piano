@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/camera_layout" >
+    
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:background="@color/black"
+        android:id="@+id/scroll">
+        
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical"
+	        android:id="@+id/left_menu">
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_detect_piano"
+		      android:textOn="@string/menu_detect_piano"
+		      android:id="@+id/toggle_btn_detect_piano"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:paddingLeft="3dp"
+		      android:paddingRight="3dp"
+		      android:checked="true" />
+	        
+	        <Button
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:text="@string/menu_set_piano"
+		      android:background="@color/black_static"
+		      android:textColor="@color/white"
+		      android:id="@+id/btn_set_piano" />
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_detect_skin"
+		      android:textOn="@string/menu_detect_skin"
+		      android:id="@+id/toggle_btn_detect_skin"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:paddingLeft="5dp"
+		      android:paddingRight="5dp"
+		      android:checked="false" />
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_toggle_hands"
+		      android:textOn="@string/menu_toggle_hands"
+		      android:id="@+id/toggle_btn_two_hands"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:checked="false" />
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_hsv"
+		      android:textOn="@string/menu_hsv"
+		      android:id="@+id/toggle_btn_hsv"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:checked="false" />
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:textOff="@string/menu_ycbcr"
+		      android:textOn="@string/menu_ycbcr"
+		      android:id="@+id/toggle_btn_ycbcr"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:checked="false" />
+	        
+	        <Button
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:text="@string/menu_image_size"
+		      android:background="@color/black_static"
+		      android:textColor="@color/white"
+		      android:id="@+id/btn_image_size" />
+	        
+	        <Button
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
+		      android:text="@string/menu_next_camera"
+		      android:background="@color/black_static"
+		      android:textColor="@color/white"
+		      android:id="@+id/toggle_btn_next_camera" />
+	        
+	    </LinearLayout>
+    </ScrollView>
+        
+    <org.opencv.android.JavaCameraView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/scroll"
+        android:layout_toEndOf="@id/scroll"
+        android:id="@+id/camera_view" />
+
+</RelativeLayout>
