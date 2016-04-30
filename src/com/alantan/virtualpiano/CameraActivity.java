@@ -193,8 +193,9 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		
 		mCameraView = new JavaCameraView(this, mCameraIndex);
 		//mCameraView.setMaxFrameSize(size.width, size.height);
-		mCameraView.setMaxFrameSize(640, 480);
+		mCameraView.setMaxFrameSize(320, 240);
 		mCameraView.setCvCameraViewListener(this);
+		mCameraView.enableFpsMeter();
 		
 		setContentView(mCameraView);
 		

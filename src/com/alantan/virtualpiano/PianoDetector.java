@@ -25,10 +25,10 @@ public class PianoDetector extends Detector {
 	private final Scalar lowerThreshold = new Scalar(0, 0, 100);
 	private final Scalar upperThreshold = new Scalar(179, 255, 255);
 	
-	private final int whiteKeySizeLower = 1000;
+	private final int whiteKeySizeLower = 500;
 	private final int whiteKeySizeUpper = 12500;
 	
-	private final int blackKeySizeLower = 1000;
+	private final int blackKeySizeLower = 500;
 	private final int blackKeySizeUpper = 5000;
 	
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
