@@ -89,7 +89,7 @@ public class HandDetector extends Detector {
 		
 		// Draw contours
 		//Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorYellow, 2);
-		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
+		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorRed, 2);
 		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 2);
 		
 		// Find lowest point

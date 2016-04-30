@@ -370,15 +370,17 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			if(mHandDetector.getLowestPoint() != null && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				checkKeyPressed();
 			}
+			
+			return rgba;
 		}
 		
-		if(!mWhiteKeysLMOP.isEmpty()) {
+		/*if(!mWhiteKeysLMOP.isEmpty()) {
 			mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 1);
 		}
 		
 		if(!mBlackKeysLMOP.isEmpty()) {
 			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
-		}
+		}*/
 		
 		if(mIsHSV) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
