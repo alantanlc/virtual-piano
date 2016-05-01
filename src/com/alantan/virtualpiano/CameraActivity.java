@@ -122,8 +122,10 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private int checkKeyPressedMaxIndex;
 	
 	private List<Point> mFingerTipsLP = new ArrayList<Point>();
-	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
+	private List<Point> mMidFingerTipsLP = new ArrayList<Point>();
 	private List<Point> mCurrFingerTipsLP = new ArrayList<Point>();
+	
+	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
 	
 	// Buttons
 	private ToggleButton detectPianoToggleBtn;
@@ -455,8 +457,11 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mKeyPressedIndexLI.set(i, -1);
 		}
 		
+		mMidFingerTipsLP.clear();
+		mMidFingerTipsLP.addAll(mCurrFingerTipsLP);
+		
 		mFingerTipsLP.clear();
-		mFingerTipsLP.addAll(mCurrFingerTipsLP);
+		mFingerTipsLP.addAll(mMidFingerTipsLP);
 	}
 	
 	private void setPianoKeys() {
