@@ -215,7 +215,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
 		//mCameraView.setMaxFrameSize(size.width, size.height);
-		mCameraView.setMaxFrameSize(320, 240);
+		mCameraView.setMaxFrameSize(352, 288);
 		mCameraView.enableFpsMeter();
 		mCameraView.setCvCameraViewListener(this);
 		
@@ -415,8 +415,10 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		if(mIsHSV) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			Scalar lowerThreshold = new Scalar(3, 50, 120);
-			Scalar upperThreshold = new Scalar(33, 255, 255);
+			//Scalar lowerThreshold = new Scalar(3, 50, 120);
+			//Scalar upperThreshold = new Scalar(33, 255, 255);
+			Scalar lowerThreshold = new Scalar(0, 0, 100);
+			Scalar upperThreshold = new Scalar(179, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 		}
 		
