@@ -58,7 +58,7 @@ public class PianoDetector extends Detector {
 		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
 		
 		// 3. Perform erosion
-		Imgproc.erode(mMaskMat, mMaskMat, new Mat());
+		//Imgproc.erode(mMaskMat, mMaskMat, new Mat());
 		
 		// 4. Find contours
 		Imgproc.findContours(mMaskMat, mWhiteContoursLMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
