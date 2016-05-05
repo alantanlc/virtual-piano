@@ -213,7 +213,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
 		//mCameraView.setMaxFrameSize(size.width, size.height);
-		mCameraView.setMaxFrameSize(320, 240);
+		mCameraView.setMaxFrameSize(352, 288);
 		mCameraView.enableFpsMeter();
 		mCameraView.setCvCameraViewListener(this);
 		
