@@ -121,8 +121,10 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	
 	private int checkKeyPressedMaxIndex;
 	
-	private List<Point> mFingerTipsLP = new ArrayList<Point>();
-	private List<Point> mMidFingerTipsLP = new ArrayList<Point>();
+	private List<Point> mFirstFingerTipsLP = new ArrayList<Point>();
+	private List<Point> mSecondFingerTipsLP = new ArrayList<Point>();
+	private List<Point> mThirdFingerTipsLP = new ArrayList<Point>();
+	private List<Point> mFourthFingerTipsLP = new ArrayList<Point>();
 	private List<Point> mCurrFingerTipsLP = new ArrayList<Point>();
 	
 	private List<Integer> mKeyPressedIndexLI = new ArrayList<Integer>();
@@ -355,7 +357,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsPianoLayout1 = !mIsPianoLayout1;
 			return true;
 		case R.id.menu_toggle_hands:
-			mFingerTipsLP.clear();
+			mFirstFingerTipsLP.clear();
 			mIsTwoHands = !mIsTwoHands;
 			return true;
 		case R.id.menu_toggle_dynamic_keypress:
@@ -441,12 +443,12 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	}
 	
 	private void checkKeyPressed() {
-		checkKeyPressedMaxIndex = (mFingerTipsLP.size() < mCurrFingerTipsLP.size()) ? mFingerTipsLP.size() : mCurrFingerTipsLP.size();
+		checkKeyPressedMaxIndex = (mFirstFingerTipsLP.size() < mCurrFingerTipsLP.size()) ? mFirstFingerTipsLP.size() : mCurrFingerTipsLP.size();
 		
 		for(int i=0; i<checkKeyPressedMaxIndex; i++) {
 			currPoint = mCurrFingerTipsLP.get(i);
 			
-			if(mKeyPressDetector.checkFingerDownwardMotion(mFingerTipsLP.get(i), currPoint)) {
+			if(mKeyPressDetector.checkFingerDownwardMotion(mFirstFingerTipsLP.get(i), currPoint)) {
 				keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
 				
 				if(keyPressedIndex != -1 && keyPressedIndex != mKeyPressedIndexLI.get(i)) {
@@ -459,11 +461,20 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mKeyPressedIndexLI.set(i, -1);
 		}
 		
-		mMidFingerTipsLP.clear();
-		mMidFingerTipsLP.addAll(mCurrFingerTipsLP);
+		mFourthFingerTipsLP.clear();
+		mFourthFingerTipsLP.addAll(mCurrFingerTipsLP);
 		
-		mFingerTipsLP.clear();
-		mFingerTipsLP.addAll(mMidFingerTipsLP);
+		mThirdFingerTipsLP.clear();
+		mThirdFingerTipsLP.addAll(mFourthFingerTipsLP);
+		
+		mThirdFingerTipsLP.clear();
+		mThirdFingerTipsLP.addAll(mCurrFingerTipsLP);
+		
+		mSecondFingerTipsLP.clear();
+		mSecondFingerTipsLP.addAll(mThirdFingerTipsLP);
+		
+		mFirstFingerTipsLP.clear();
+		mFirstFingerTipsLP.addAll(mSecondFingerTipsLP);
 	}
 	
 	private void setPianoKeys() {
