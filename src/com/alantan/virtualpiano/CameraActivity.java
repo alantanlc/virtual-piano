@@ -55,6 +55,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private static final String STATE_FINGERS_DETECTION_BOOLEAN = "fingersDetectionBoolean";
 	private static final String STATE_OCTAVE_BOOLEAN = "pianoLayoutBoolean";
 	private static final String STATE_TWO_HANDS_BOOLEAN = "twoHandsBoolean";
+	private static final String STATE_DRAW_PIANO_BOOLEAN = "drawPianoBoolean";
 	
 	// An ID for items in the image size submenu.
 	private static final int MENU_GROUP_ID_SIZE = 2;
@@ -112,6 +113,9 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	// Whether dilation should be applied
 	private boolean mIsYCbCr;
 	
+	// Whether piano should be drawn
+	private boolean mIsDrawPiano;
+	
 	// SoundPoolPlayer
 	private SoundPoolPlayer sound;
 	
@@ -134,6 +138,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private ToggleButton detectSkinToggleBtn;
 	private ToggleButton handsToggleBtn;
 	private ToggleButton octaveToggleBtn;
+	private ToggleButton drawPianoToggleBtn;
 	private ToggleButton hsvToggleBtn;
 	private ToggleButton yCbCrToggleBtn;
 	private Button setPianoBtn;
@@ -181,6 +186,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsFingersDetection = savedInstanceState.getBoolean(STATE_FINGERS_DETECTION_BOOLEAN, false);
 			mIsOctave2 = savedInstanceState.getBoolean(STATE_OCTAVE_BOOLEAN, true);
 			mIsTwoHands = savedInstanceState.getBoolean(STATE_TWO_HANDS_BOOLEAN, false);
+			mIsDrawPiano = savedInstanceState.getBoolean(STATE_DRAW_PIANO_BOOLEAN, false);
 		} else {
 			mCameraIndex = 0;
 			mImageSizeIndex = 8;	// Index 8 stands for 640x480 frame size
@@ -188,6 +194,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsFingersDetection = false;
 			mIsOctave2 = false;
 			mIsTwoHands = false;
+			mIsDrawPiano = false;
 		}
 		
 		final Camera camera;
@@ -257,8 +264,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		savedInstanceState.putBoolean(STATE_FINGERS_DETECTION_BOOLEAN, mIsFingersDetection);
 		savedInstanceState.putBoolean(STATE_OCTAVE_BOOLEAN, mIsOctave2);
 		savedInstanceState.putBoolean(STATE_TWO_HANDS_BOOLEAN, mIsTwoHands);
-		
-		
+		savedInstanceState.putBoolean(STATE_DRAW_PIANO_BOOLEAN, mIsDrawPiano);
 		
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -312,77 +318,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		/*getMenuInflater().inflate(R.menu.activity_camera, menu);
-		if(mNumCameras < 2) {
-			// Remove the option to switch cameras, since there is only 1.
-			menu.removeItem(R.id.menu_next_camera);
-		}
-		
-		int numSupportedImageSizes = mSupportedImageSizes.size();
-		if(numSupportedImageSizes > 1) {
-			final SubMenu sizeSubMenu = menu.addSubMenu(R.string.menu_image_size);
-			for(int i=0; i<numSupportedImageSizes; i++) {
-				final Size size = mSupportedImageSizes.get(i);
-				sizeSubMenu.add(MENU_GROUP_ID_SIZE, i, Menu.NONE, String.format("%dx%d", size.width, size.height));
-			}
-		}*/
-		return true;
-	}
-
-	// Suppress backward incompatibility errors because we provide
-	// backward-compatible fallbacks (for recreate).
-	@SuppressLint("NewApi")
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		/*if(item.getGroupId() == MENU_GROUP_ID_SIZE) {
-			mImageSizeIndex = item.getItemId();
-			recreate();
-			
-			return true;
-		}
-		
-		switch (item.getItemId()) {
-		case R.id.menu_erosion:
-			mIsHSV = !mIsHSV;
-			return true;
-		case R.id.menu_detect_piano:
-			mIsPianoDetection = !mIsPianoDetection;
-			mWhiteKeysLMOP.clear();
-			mBlackKeysLMOP.clear();
-			return true;
-		case R.id.menu_set_piano:
-			mIsPianoDetection = false;
-			setPianoKeys();
-			return true;
-		case R.id.menu_detect_skin:
-			mIsFingersDetection = !mIsFingersDetection;
-			return true;
-		case R.id.menu_toggle_layout:
-			mIsPianoLayout1 = !mIsPianoLayout1;
-			return true;
-		case R.id.menu_toggle_hands:
-			mFingerTipsLP.clear();
-			mIsTwoHands = !mIsTwoHands;
-			return true;
-		case R.id.menu_toggle_dynamic_keypress:
-			mIsDynamicKeyPress = !mIsDynamicKeyPress;
-			return true;
-		case R.id.menu_next_camera:
-			mIsMenuLocked = true;
-			
-			// With another camera index, recreate the activity.
-			mCameraIndex = (mCameraIndex + 1) % mNumCameras;
-			recreate();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}*/
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
 	public void onCameraViewStarted(int width, int height) {
 		Log.i(TAG, "onCameraViewStarted");
 		Log.i(TAG, "Width: " + width + " Height: " + height);
@@ -412,12 +347,14 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			}
 		}
 		
-		if(!mWhiteKeysLMOP.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 1);
-		}
-		
-		if(!mBlackKeysLMOP.isEmpty()) {
-			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
+		if(mIsDrawPiano) {
+			if(!mWhiteKeysLMOP.isEmpty()) {
+				mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 1);
+			}
+			
+			if(!mBlackKeysLMOP.isEmpty()) {
+				mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
+			}
 		}
 		
 		if(mIsHSV) {
@@ -497,6 +434,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		detectSkinToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_skin);
 		handsToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_two_hands);
 		octaveToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_octave);
+		drawPianoToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_draw_piano);
 		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
 		yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
 		
@@ -561,6 +499,22 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				} else {
 					// Toggle is disabled
 					mIsOctave2 = false;
+				}
+			}
+		});
+		
+		drawPianoToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsDrawPiano = true;
+				} else {
+					// Toggle is disabled
+					mIsDrawPiano = false;
 				}
 			}
 		});

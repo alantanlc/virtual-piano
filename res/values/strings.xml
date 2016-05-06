@@ -9,8 +9,9 @@
     <string name="menu_detect_skin">Detect Skin</string>
     <string name="menu_set_piano">Set Piano</string>
     <string name="menu_toggle_layout">Layout</string>
-    <string name="menu_toggle_hands">Hand</string>
-    <string name="menu_toggle_octave">Octave</string>
+    <string name="menu_toggle_hands">Two Hands</string>
+    <string name="menu_toggle_octave">Toggle Octave</string>
+    <string name="menu_toggle_draw_piano">Draw Piano</string>
     <string name="menu_dynamic_touch">Dynamic Touch</string>
     <string name="menu_hsv">HSV</string>
     <string name="menu_ycbcr">YCbCr</string>
