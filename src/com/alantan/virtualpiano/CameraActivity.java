@@ -295,6 +295,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mCameraView.disableView();
 		}
 		
+		sound.release();
+		
 		super.onPause();
 	}
 	
@@ -302,6 +304,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	public void onResume() {
 		super.onResume();
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+		
+		sound = new SoundPoolPlayer(this);
 		
 		// Hide the status bar.
 		View decorView = getWindow().getDecorView();
@@ -314,6 +318,9 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		if(mCameraView != null) {
 			mCameraView.disableView();
 		}
+		
+		sound.release();
+		
 		super.onDestroy();
 	}
 
@@ -424,7 +431,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			sound.playLayout1Sound(i);
 		} else {
 			// play sound from layout 2
-			sound.playLayout2Sound(i);
+			//sound.playLayout2Sound(i);
 		}
 	}
 	
