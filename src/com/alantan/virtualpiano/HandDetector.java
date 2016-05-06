@@ -5,15 +5,10 @@ import java.util.List;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-
-import android.util.Log;
 
 public class HandDetector extends Detector {
 	
@@ -35,13 +30,14 @@ public class HandDetector extends Detector {
 	
 	private List<Point> mFingerTipsLPOut = new ArrayList<Point>();
 	
+	List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		
 	}
 	
 	public void apply(final Mat dst, final Mat src, boolean mIsTwoHands) {
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		mFingerTipsLPOut.clear();
 		contours.clear();
 		
