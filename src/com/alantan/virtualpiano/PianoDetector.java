@@ -109,16 +109,16 @@ public class PianoDetector extends Detector {
 		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
 		
 		// 14. Dilate image 3 times to remove piano lines
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat(), new Point(-1, -1), 3);
+		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
 		
 		// 15. Invert piano mask
 		Core.bitwise_not(mMaskMat, mMaskMat);
 		
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mMaskMat, mMaskMat, new Mat(), new Point(-1, -1), 3);
+		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
 		
 		// 16. Apply piano mask to binary image
 		mMaskMat.copyTo(mPianoMaskMat, mPianoMaskMat);
