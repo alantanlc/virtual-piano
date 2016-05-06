@@ -3,7 +3,6 @@ package com.alantan.virtualpiano;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
@@ -30,7 +29,7 @@ public class KeyPressDetector {
 			return false;
 		}
 		
-		//Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
+		Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
 		
 		return true;
 	}

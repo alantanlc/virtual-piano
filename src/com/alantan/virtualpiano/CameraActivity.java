@@ -50,6 +50,12 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	// A key for storing the index of the active image size.
 	private static final String STATE_IMAGE_SIZE_INDEX = "imageSizeIndex";
 	
+	// Keys for storing state of application
+	private static final String STATE_PIANO_DETECTION_BOOLEAN = "pianoDetectionBoolean";
+	private static final String STATE_FINGERS_DETECTION_BOOLEAN = "fingersDetectionBoolean";
+	private static final String STATE_OCTAVE_BOOLEAN = "pianoLayoutBoolean";
+	private static final String STATE_TWO_HANDS_BOOLEAN = "twoHandsBoolean";
+	
 	// An ID for items in the image size submenu.
 	private static final int MENU_GROUP_ID_SIZE = 2;
 	
@@ -72,10 +78,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	// The image sizes supported by the active camera.
 	private List<Size> mSupportedImageSizes;
 	
-	// Whether an asynchronous menu action is in progress.
-	// If so, menu interaction should be disabled.
-	private boolean mIsMenuLocked;
-	
 	// PianoDetector
 	private PianoDetector mPianoDetector;
 	
@@ -96,7 +98,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private KeyPressDetector mKeyPressDetector;
 	
 	// To toggle piano layout
-	private boolean mIsPianoLayout1;
+	private boolean mIsOctave2;
 	
 	// To toggle between one or two hands detection
 	private boolean mIsTwoHands;
@@ -131,6 +133,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private ToggleButton detectPianoToggleBtn;
 	private ToggleButton detectSkinToggleBtn;
 	private ToggleButton handsToggleBtn;
+	private ToggleButton octaveToggleBtn;
 	private ToggleButton hsvToggleBtn;
 	private ToggleButton yCbCrToggleBtn;
 	private Button setPianoBtn;
@@ -147,6 +150,9 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				mPianoDetector = new PianoDetector();
 				mHandDetector = new HandDetector();
 				mKeyPressDetector = new KeyPressDetector();
+				
+				mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
+				mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
 				
 				break;
 			default:
@@ -171,9 +177,17 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		if(savedInstanceState != null) {
 			mCameraIndex = savedInstanceState.getInt(STATE_CAMERA_INDEX, 0);
 			mImageSizeIndex = savedInstanceState.getInt(STATE_IMAGE_SIZE_INDEX, 0);
+			mIsPianoDetection = savedInstanceState.getBoolean(STATE_PIANO_DETECTION_BOOLEAN, true);
+			mIsFingersDetection = savedInstanceState.getBoolean(STATE_FINGERS_DETECTION_BOOLEAN, false);
+			mIsOctave2 = savedInstanceState.getBoolean(STATE_OCTAVE_BOOLEAN, true);
+			mIsTwoHands = savedInstanceState.getBoolean(STATE_TWO_HANDS_BOOLEAN, false);
 		} else {
 			mCameraIndex = 0;
-			mImageSizeIndex = 8;
+			mImageSizeIndex = 8;	// Index 8 stands for 640x480 frame size
+			mIsPianoDetection = true;
+			mIsFingersDetection = false;
+			mIsOctave2 = false;
+			mIsTwoHands = false;
 		}
 		
 		final Camera camera;
@@ -210,24 +224,19 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mSupportedImageSizes = parameters.getSupportedPreviewSizes();
 		final Size size = mSupportedImageSizes.get(mImageSizeIndex);
 		
-		//mCameraView = new JavaCameraView(this, mCameraIndex);
-		
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
-		//mCameraView.setMaxFrameSize(size.width, size.height);
 		mCameraView.setMaxFrameSize(352, 288);
 		mCameraView.enableFpsMeter();
 		mCameraView.setCvCameraViewListener(this);
 		
 		View decorView = getWindow().getDecorView();
+		
 		// Hide the status bar.
 		int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 		decorView.setSystemUiVisibility(uiOptions);
 		
 		sound = new SoundPoolPlayer(this);
-		
-		mIsPianoLayout1 = true;
-		mIsPianoDetection = true;
 		
 		currPoint = new Point(0, 0);
 		
@@ -243,6 +252,13 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		// Save the current image size index.
 		savedInstanceState.putInt(STATE_IMAGE_SIZE_INDEX, mImageSizeIndex);
+		
+		savedInstanceState.putBoolean(STATE_PIANO_DETECTION_BOOLEAN, mIsPianoDetection);
+		savedInstanceState.putBoolean(STATE_FINGERS_DETECTION_BOOLEAN, mIsFingersDetection);
+		savedInstanceState.putBoolean(STATE_OCTAVE_BOOLEAN, mIsOctave2);
+		savedInstanceState.putBoolean(STATE_TWO_HANDS_BOOLEAN, mIsTwoHands);
+		
+		
 		
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -273,12 +289,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mCameraView.disableView();
 		}
 		
-		mIsPianoDetection = false;
-		mIsFingersDetection = false;
-		mIsPianoLayout1 = false;
-		mIsTwoHands = false;
-		mIsDynamicKeyPress = false;
-		
 		super.onPause();
 	}
 	
@@ -291,8 +301,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		View decorView = getWindow().getDecorView();
 		int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 		decorView.setSystemUiVisibility(uiOptions);
-
-		mIsMenuLocked = false;
 	}
 	
 	@Override
@@ -306,7 +314,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_camera, menu);
+		/*getMenuInflater().inflate(R.menu.activity_camera, menu);
 		if(mNumCameras < 2) {
 			// Remove the option to switch cameras, since there is only 1.
 			menu.removeItem(R.id.menu_next_camera);
@@ -319,7 +327,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				final Size size = mSupportedImageSizes.get(i);
 				sizeSubMenu.add(MENU_GROUP_ID_SIZE, i, Menu.NONE, String.format("%dx%d", size.width, size.height));
 			}
-		}
+		}*/
 		return true;
 	}
 
@@ -328,7 +336,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getGroupId() == MENU_GROUP_ID_SIZE) {
+		/*if(item.getGroupId() == MENU_GROUP_ID_SIZE) {
 			mImageSizeIndex = item.getItemId();
 			recreate();
 			
@@ -370,7 +378,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
-		}
+		}*/
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
@@ -401,17 +410,15 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			if(!mCurrFingerTipsLP.isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				checkKeyPressed();
 			}
-			
-			return rgba;
 		}
 		
-		/*if(!mWhiteKeysLMOP.isEmpty()) {
+		if(!mWhiteKeysLMOP.isEmpty()) {
 			mPianoDetector.drawAllContours(rgba, mWhiteKeysLMOP, Colors.mLineColorGreen, 1);
 		}
 		
 		if(!mBlackKeysLMOP.isEmpty()) {
 			mPianoDetector.drawAllContours(rgba, mBlackKeysLMOP, Colors.mLineColorYellow, 1);
-		}*/
+		}
 		
 		if(mIsHSV) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
@@ -475,7 +482,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	
 	private void playSound(int i) {
 		if(i == -1) return;
-		if(mIsPianoLayout1) {
+		if(!mIsOctave2) {
 			//play sound from layout 1
 			sound.playLayout1Sound(i);
 		} else {
@@ -489,6 +496,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		setPianoBtn = (Button) findViewById(R.id.btn_set_piano);
 		detectSkinToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_skin);
 		handsToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_two_hands);
+		octaveToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_octave);
 		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
 		yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
 		
@@ -537,6 +545,22 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				} else {
 					// Toggle is disabled
 					mIsTwoHands = false;
+				}
+			}
+		});
+		
+		octaveToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsOctave2 = true;
+				} else {
+					// Toggle is disabled
+					mIsOctave2 = false;
 				}
 			}
 		});

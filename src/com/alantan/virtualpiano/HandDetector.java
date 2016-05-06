@@ -80,7 +80,7 @@ public class HandDetector extends Detector {
 		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
 		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
-		Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorBlue, 1);
+		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorBlue, 1);
 		
 		mFingerTipsLPOut.add(findLowestPoint(reducedHandContours.get(0)));
 		
