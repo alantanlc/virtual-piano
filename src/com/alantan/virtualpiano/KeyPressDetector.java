@@ -19,6 +19,8 @@ public class KeyPressDetector {
 	
 	private int mPianoKeyIndex = -1;
 	
+	private double middleY = 0;
+	
 	public boolean checkFingerDownwardMotion(Point prevPoint, Point currPoint) {
 		double xDiff = currPoint.x - prevPoint.x;
 		double yDiff = currPoint.y - prevPoint.y;
@@ -34,10 +36,14 @@ public class KeyPressDetector {
 		return true;
 	}
 	
+	public void setMiddleY(double y) {
+		middleY = y;
+	}
+	
 	public int getPianoKeyIndex(Point point) {
 		
 		for(int i=0; i<mWhiteKeysLMOP2f.size(); i++) {
-			if(Imgproc.pointPolygonTest(mWhiteKeysLMOP2f.get(i), point, false) == 1) {
+			if(point.y < middleY && Imgproc.pointPolygonTest(mWhiteKeysLMOP2f.get(i), point, false) == 1) {
 				Log.i(TAG, "Index: " + i);
 				return i;
 			}

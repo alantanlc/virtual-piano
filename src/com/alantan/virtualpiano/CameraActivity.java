@@ -427,6 +427,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
 		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
+		mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 	}
 	
 	private void playSound(int i) {

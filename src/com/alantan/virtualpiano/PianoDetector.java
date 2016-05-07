@@ -20,7 +20,6 @@ public class PianoDetector extends Detector {
 	private final static String TAG = PianoDetector.class.getSimpleName();
 	
 	private final Mat mHSVMat = new Mat();
-	private final Mat mMaskMat = new Mat();
 	
 	private final int whiteKeySizeLower = 200;
 	private final int whiteKeySizeUpper = 5000;
@@ -31,36 +30,23 @@ public class PianoDetector extends Detector {
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
 	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
 	
-	List<MatOfPoint> mWhiteContoursLMOP = new ArrayList<MatOfPoint>();
-	List<MatOfPoint> mWhiteKeysLMOP = new ArrayList<MatOfPoint>();
-	
-	List<MatOfPoint> mBlackContoursLMOP = new ArrayList<MatOfPoint>();
-	List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
-	
-	List<Point> mWhiteKeysLP = new ArrayList<Point>();
-	MatOfPoint mWhiteKeysMOP = new MatOfPoint();
-	
-	MatOfInt hullMOI = new MatOfInt();
-	
-	MatOfPoint mPianoMaskMOP = new MatOfPoint();
-	List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
-	
-	Mat mPianoMaskMat;
-	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
-		whiteKeysOutLMOP.clear();
-		blackKeysOutLMOP.clear();
+		List<MatOfPoint> mWhiteContoursLMOP = new ArrayList<MatOfPoint>();
+		List<MatOfPoint> mWhiteKeysLMOP = new ArrayList<MatOfPoint>();
 		
-		mWhiteContoursLMOP.clear();
-		mWhiteKeysLMOP.clear();
+		List<MatOfPoint> mBlackContoursLMOP = new ArrayList<MatOfPoint>();
+		List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
 		
-		mBlackContoursLMOP.clear();
-		mBlackKeysLMOP.clear();
+		List<Point> mWhiteKeysLP = new ArrayList<Point>();
+		MatOfPoint mWhiteKeysMOP = new MatOfPoint();
 		
-		mWhiteKeysLP.clear();
+		MatOfInt hullMOI = new MatOfInt();
 		
-		mPianoMaskLMOP.clear();
+		MatOfPoint mPianoMaskMOP = new MatOfPoint();
+		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
+		
+		Mat mPianoMaskMat;
 		
 		mPianoMaskMat = new Mat(mHSVMat.size(), mHSVMat.type(), new Scalar(0));
 		
