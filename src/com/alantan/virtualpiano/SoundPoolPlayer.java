@@ -76,16 +76,16 @@ public class SoundPoolPlayer {
     
     private float getFloatVolume(double yDiff) {
     	if(yDiff < 10) {
-    		Log.i("SoundPoolPlayer", "Volume: p");
+    		//Log.i("SoundPoolPlayer", "Volume: p");
     		return 0.25f;
     	} else if(yDiff < 20) {
-    		Log.i("SoundPoolPlayer", "Volume: mf");
+    		//Log.i("SoundPoolPlayer", "Volume: mf");
     		return 0.5f;
     	} else if( yDiff < 30) {
-    		Log.i("SoundPoolPlayer", "Volume: f");
+    		//Log.i("SoundPoolPlayer", "Volume: f");
     		return 0.75f;
     	} else {
-    		Log.i("SoundPoolPlayer", "Volume: ff");
+    		//Log.i("SoundPoolPlayer", "Volume: ff");
     		return 0.99f;
     	}
     }
