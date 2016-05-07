@@ -44,14 +44,14 @@ public class KeyPressDetector {
 		
 		for(int i=0; i<mWhiteKeysLMOP2f.size(); i++) {
 			if(point.y < middleY && Imgproc.pointPolygonTest(mWhiteKeysLMOP2f.get(i), point, false) == 1) {
-				Log.i(TAG, "Index: " + i);
+				//Log.i(TAG, "Index: " + i);
 				return i;
 			}
 		}
 		
 		for(int i=0; i<mBlackKeysLMOP2f.size(); i++) {
 			if(Imgproc.pointPolygonTest(mBlackKeysLMOP2f.get(i), point, false) == 1) {
-				Log.i(TAG, "Index: " + i);
+				//Log.i(TAG, "Index: " + i);
 				return i+14;
 			}
 		}
