@@ -25,7 +25,7 @@ public class KeyPressDetector {
 		
 		//Log.i(TAG, "Y diff: " + yDiff + ", X diff: " + xDiff);
 		
-		if(yDiff < 8 /*|| Math.abs(xDiff) > 40*/) {
+		if(yDiff < 3 /*|| Math.abs(xDiff) > 40*/) {
 			return false;
 		}
 		
@@ -46,7 +46,7 @@ public class KeyPressDetector {
 		for(int i=0; i<mBlackKeysLMOP2f.size(); i++) {
 			if(Imgproc.pointPolygonTest(mBlackKeysLMOP2f.get(i), point, false) == 1) {
 				Log.i(TAG, "Index: " + i);
-				return i+10;
+				return i+14;
 			}
 		}
 		

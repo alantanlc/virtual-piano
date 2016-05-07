@@ -2240,22 +2240,29 @@ containing a value of this type.
     }
     public static final class raw {
         public static final int pianoa1=0x7f050000;
-        public static final int pianoab1=0x7f050001;
-        public static final int pianob1=0x7f050002;
-        public static final int pianoc1=0x7f050003;
-        public static final int pianoc2=0x7f050004;
-        public static final int pianocd1=0x7f050005;
-        public static final int pianocd2=0x7f050006;
-        public static final int pianod1=0x7f050007;
-        public static final int pianod2=0x7f050008;
-        public static final int pianode1=0x7f050009;
-        public static final int pianode2=0x7f05000a;
-        public static final int pianoe1=0x7f05000b;
-        public static final int pianoe2=0x7f05000c;
-        public static final int pianof1=0x7f05000d;
-        public static final int pianofg1=0x7f05000e;
-        public static final int pianog1=0x7f05000f;
-        public static final int pianoga1=0x7f050010;
+        public static final int pianoa2=0x7f050001;
+        public static final int pianoab1=0x7f050002;
+        public static final int pianoab2=0x7f050003;
+        public static final int pianob1=0x7f050004;
+        public static final int pianob2=0x7f050005;
+        public static final int pianoc1=0x7f050006;
+        public static final int pianoc2=0x7f050007;
+        public static final int pianocd1=0x7f050008;
+        public static final int pianocd2=0x7f050009;
+        public static final int pianod1=0x7f05000a;
+        public static final int pianod2=0x7f05000b;
+        public static final int pianode1=0x7f05000c;
+        public static final int pianode2=0x7f05000d;
+        public static final int pianoe1=0x7f05000e;
+        public static final int pianoe2=0x7f05000f;
+        public static final int pianof1=0x7f050010;
+        public static final int pianof2=0x7f050011;
+        public static final int pianofg1=0x7f050012;
+        public static final int pianofg2=0x7f050013;
+        public static final int pianog1=0x7f050014;
+        public static final int pianog2=0x7f050015;
+        public static final int pianoga1=0x7f050016;
+        public static final int pianoga2=0x7f050017;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
