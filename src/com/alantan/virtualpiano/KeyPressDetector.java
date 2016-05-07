@@ -8,8 +8,6 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
-import android.util.Log;
-
 public class KeyPressDetector {
 	
 	private final String TAG = KeyPressDetector.class.getSimpleName();
@@ -27,7 +25,7 @@ public class KeyPressDetector {
 		
 		//Log.i(TAG, "Y diff: " + yDiff + ", X diff: " + xDiff);
 		
-		if(yDiff < 3 /*|| Math.abs(xDiff) > 40*/) {
+		if(yDiff < 5 /*|| Math.abs(xDiff) > 40*/) {
 			return false;
 		}
 		
@@ -60,6 +58,8 @@ public class KeyPressDetector {
 	}
 	
 	public void setWhiteKeysMOP2f(List<MatOfPoint> lmop) {
+		mWhiteKeysLMOP2f.clear();
+		
 		for(int i=0; i<lmop.size(); i++) {
 			MatOfPoint2f p = new MatOfPoint2f();
 			p.fromArray(lmop.get(i).toArray());
@@ -68,6 +68,8 @@ public class KeyPressDetector {
 	}
 	
 	public void setBlackKeysMOP2f(List<MatOfPoint> lmop) {
+		mBlackKeysLMOP2f.clear();
+		
 		for(int i=0; i<lmop.size(); i++) {
 			MatOfPoint2f p = new MatOfPoint2f();
 			p.fromArray(lmop.get(i).toArray());

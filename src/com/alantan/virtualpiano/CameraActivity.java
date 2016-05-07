@@ -437,7 +437,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			sound.playLayout1Sound(i);
 		} else {
 			// play sound from layout 2
-			//sound.playLayout2Sound(i);
+			sound.playLayout2Sound(i);
 		}
 	}
 	
