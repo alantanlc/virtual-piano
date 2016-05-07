@@ -29,7 +29,7 @@ public class KeyPressDetector {
 			return false;
 		}
 		
-		Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
+		//Log.i(TAG, "Key pressed! Y diff: " + yDiff + ", X diff: " + xDiff);
 		
 		return true;
 	}
