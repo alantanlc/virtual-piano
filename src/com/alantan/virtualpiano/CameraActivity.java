@@ -195,7 +195,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsOctave2 = false;
 			mIsTwoHands = false;
 			mIsDrawPiano = false;
-			mIsCameraFrontFacing = true;
 		}
 		
 		final Camera camera;
@@ -216,7 +215,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			camera = Camera.open(mCameraIndex);
 		} else {	// pre-Gingerbread
 			// Assume there is only 1 camera and it is rear-facing.
-			mIsCameraFrontFacing = true;
+			mIsCameraFrontFacing = false;
 			mNumCameras = 1;
 			camera = Camera.open();
 		}
@@ -340,12 +339,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		final Mat rgba = inputFrame.rgba();
 		
-		// Flip image if using front facing camera
-		if(mIsCameraFrontFacing) {
-			// Mirror (horizontally flip) the previews.
-			Core.flip(rgba, rgba, 1);
-		}
-		
 		if(mIsPianoDetection) {
 			mPianoDetector.apply(rgba, rgba);
 		}
@@ -392,6 +385,12 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			Scalar lowerThreshold = new Scalar(0, 133, 77);
 			Scalar upperThreshold = new Scalar(255, 173, 127);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
+		}
+		
+		// Flip image if using front facing camera
+		if(mIsCameraFrontFacing) {
+			// Mirror (horizontally flip) the previews.
+			Core.flip(rgba, rgba, 1);
 		}
 		
 		return rgba;
