@@ -234,7 +234,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
 		mCameraView.setMaxFrameSize(352, 288);
-		mCameraView.enableFpsMeter();
+		//mCameraView.enableFpsMeter();
 		mCameraView.setCvCameraViewListener(this);
 		
 		View decorView = getWindow().getDecorView();
@@ -365,12 +365,17 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		}
 		
 		if(mIsHSV) {
-			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
+			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2GRAY);
+			//Imgproc.erode(rgba, rgba, new Mat(), new Point(-1, -1), 1);
+			//Imgproc.GaussianBlur(rgba, rgba, new org.opencv.core.Size(5,5), 0.0);
+			
+			Imgproc.threshold(rgba, rgba, 150, 255, Imgproc.THRESH_BINARY);
+			
 			//Scalar lowerThreshold = new Scalar(3, 50, 120);
 			//Scalar upperThreshold = new Scalar(33, 255, 255);
-			Scalar lowerThreshold = new Scalar(0, 0, 100);
+			/*Scalar lowerThreshold = new Scalar(0, 0, 100);
 			Scalar upperThreshold = new Scalar(179, 255, 255);
-			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
+			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);*/
 		}
 		
 		if(mIsYCbCr) {

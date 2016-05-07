@@ -22,13 +22,10 @@ public class PianoDetector extends Detector {
 	private final Mat mHSVMat = new Mat();
 	private final Mat mMaskMat = new Mat();
 	
-	private final Scalar lowerThreshold = new Scalar(0, 0, 100);
-	private final Scalar upperThreshold = new Scalar(179, 255, 255);
+	private final int whiteKeySizeLower = 200;
+	private final int whiteKeySizeUpper = 5000;
 	
-	private final int whiteKeySizeLower = 500;
-	private final int whiteKeySizeUpper = 12500;
-	
-	private final int blackKeySizeLower = 500;
+	private final int blackKeySizeLower = 50;
 	private final int blackKeySizeUpper = 5000;
 	
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
@@ -49,19 +46,16 @@ public class PianoDetector extends Detector {
 		
 		MatOfPoint mPianoMaskMOP = new MatOfPoint();
 		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
-		Mat mPianoMaskMat = new Mat(mMaskMat.size(), mMaskMat.type(), new Scalar(0));
+		Mat mPianoMaskMat = new Mat(mHSVMat.size(), mHSVMat.type(), new Scalar(0));
 		
 		// 1. Convert the image to HSV color space
-		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2HSV);
+		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2GRAY);
 		
 		// 2. Apply threshold to detect white piano keys
-		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
-		
-		// 3. Perform erosion
-		//Imgproc.erode(mMaskMat, mMaskMat, new Mat());
+		Imgproc.threshold(mHSVMat, mHSVMat, 150, 255, Imgproc.THRESH_BINARY);
 		
 		// 4. Find contours
-		Imgproc.findContours(mMaskMat, mWhiteContoursLMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+		Imgproc.findContours(mHSVMat, mWhiteContoursLMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 		
 		// 5. If no contours detected, return.
 		if(mWhiteContoursLMOP.size() == 0) {
@@ -70,9 +64,9 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 7. Reduce number of points of each contour using DP algorithm
-		for(int i=0; i<mWhiteContoursLMOP.size(); i++) {
+		/*for(int i=0; i<mWhiteContoursLMOP.size(); i++) {
 			mWhiteContoursLMOP.set(i, reduceContourPoints(mWhiteContoursLMOP.get(i)));
-		}
+		}*/
 		
 		// 8. Get contours that are within certain contour size range
 		mWhiteKeysLMOP = getPianoKeyContours(mWhiteContoursLMOP, whiteKeySizeLower, whiteKeySizeUpper);
@@ -84,7 +78,7 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 11. Draw white keys
-		drawAllContours(dst, mWhiteKeysLMOP, Colors.mLineColorBlue, -1);
+		//drawAllContours(dst, mWhiteKeysLMOP, Colors.mLineColorBlue, -1);
 		
 		// 12. Get convex hull of piano
 		// 12a. Convert LMOP to LP
@@ -106,22 +100,23 @@ public class PianoDetector extends Detector {
 		
 		// 13. Create piano mask mat
 		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
-		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
+		
+		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2GRAY);
 		
 		// 14. Dilate image 3 times to remove piano lines
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat(), new Point(-1, -1), 3);
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		//Imgproc.dilate(mHSVMat, mHSVMat, new Mat(), new Point(-1, -1), 2);
 		
 		// 15. Invert piano mask
-		Core.bitwise_not(mMaskMat, mMaskMat);
+		Core.bitwise_not(mHSVMat, mHSVMat);
 		
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat(), new Point(-1, -1), 3);
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		//Imgproc.dilate(mHSVMat, mHSVMat, new Mat(), new Point(-1, -1), 2);
 		
 		// 16. Apply piano mask to binary image
-		mMaskMat.copyTo(mPianoMaskMat, mPianoMaskMat);
+		//mHSVMat.copyTo(mPianoMaskMat, mPianoMaskMat);
+		
+		mHSVMat.copyTo(mPianoMaskMat, mPianoMaskMat);
+		
+		//mPianoMaskMat.copyTo(dst);
 		
 		// 17. Find black key contours
 		Imgproc.findContours(mPianoMaskMat, mBlackContoursLMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -136,6 +131,8 @@ public class PianoDetector extends Detector {
 		for(int i=0; i<mBlackContoursLMOP.size(); i++) {
 			mBlackContoursLMOP.set(i, reduceContourPoints(mBlackContoursLMOP.get(i)));
 		}
+		
+		//drawAllContours(dst, mBlackContoursLMOP, Colors.mLineColorRed, -1);
 		
 		// 20. Get contours that are within certain contour size range
 		mBlackKeysLMOP = getPianoKeyContours(mBlackContoursLMOP, blackKeySizeLower, blackKeySizeUpper);
@@ -174,7 +171,7 @@ public class PianoDetector extends Detector {
 		for(int i=0; i<contours.size(); i++) {
 			//Log.i(TAG, Double.toString(Imgproc.contourArea(contours.get(i))));
 			if(Imgproc.contourArea(contours.get(i)) >= lower && Imgproc.contourArea(contours.get(i)) <= upper
-					&& contours.get(i).rows() >= 4 && contours.get(i).rows() <= 8) {
+					/*&& contours.get(i).rows() >= 4 && contours.get(i).rows() <= 8*/) {
 				newContours.add(contours.get(i));
 			}
 		}
