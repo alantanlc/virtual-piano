@@ -103,6 +103,8 @@ public class PianoDetector extends Detector {
 		// 13. Create piano mask mat
 		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
 		
+		Imgproc.erode(mPianoMaskMat, mPianoMaskMat, new Mat(), new Point(-1, -1), 2);
+		
 		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2GRAY);
 		Imgproc.threshold(mHSVMat, mHSVMat, 150, 255, Imgproc.THRESH_BINARY);
 		
