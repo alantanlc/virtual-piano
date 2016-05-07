@@ -26,9 +26,6 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -234,7 +231,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
 		mCameraView.setMaxFrameSize(352, 288);
-		//mCameraView.enableFpsMeter();
+		mCameraView.enableFpsMeter();
 		mCameraView.setCvCameraViewListener(this);
 		
 		View decorView = getWindow().getDecorView();
@@ -366,11 +363,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		if(mIsHSV) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2GRAY);
-			//Imgproc.erode(rgba, rgba, new Mat(), new Point(-1, -1), 1);
-			//Imgproc.GaussianBlur(rgba, rgba, new org.opencv.core.Size(5,5), 0.0);
-			
 			Imgproc.threshold(rgba, rgba, 150, 255, Imgproc.THRESH_BINARY);
-			
 			//Scalar lowerThreshold = new Scalar(3, 50, 120);
 			//Scalar upperThreshold = new Scalar(33, 255, 255);
 			/*Scalar lowerThreshold = new Scalar(0, 0, 100);
@@ -378,14 +371,14 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);*/
 		}
 		
-		if(mIsYCbCr) {
+		/*(if(mIsYCbCr) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2YCrCb);
 			// Skin pixels: 133 ≤ Cr ≤ 173 and 77 ≤ Cb ≤ 127
 			// Skin pixels (Relaxed): 128 ≤ Cr ≤ 178 and 72 ≤ Cb ≤ 132
 			Scalar lowerThreshold = new Scalar(0, 133, 77);
 			Scalar upperThreshold = new Scalar(255, 173, 127);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-		}
+		}*/
 		
 		// Flip image if using front facing camera
 		if(mIsCameraFrontFacing) {
@@ -449,7 +442,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		octaveToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_octave);
 		drawPianoToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_draw_piano);
 		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
-		yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
+		//yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
 		
 		detectPianoToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			
@@ -548,7 +541,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			}
 		});
 		
-		yCbCrToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		/*yCbCrToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -562,7 +555,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 					mIsYCbCr = false;
 				}
 			}
-		});
+		});*/
 		
 		setPianoBtn.setOnClickListener(new OnClickListener() {
 			@Override

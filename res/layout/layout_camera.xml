@@ -89,7 +89,7 @@
 		      android:textColor="@color/toggle_btn_text_color"
 		      android:checked="false" />
 	        
-	        <ToggleButton
+	        <!-- <ToggleButton
 		      android:layout_width="70dp"
 		      android:layout_height="70dp"
 		      android:textOff="@string/menu_ycbcr"
@@ -97,23 +97,23 @@
 		      android:id="@+id/toggle_btn_ycbcr"
 		      android:background="@drawable/toggle_btn"
 		      android:textColor="@color/toggle_btn_text_color"
-		      android:checked="false" />
+		      android:checked="false" /> -->
 	        
-	        <Button
+	        <!-- <Button
 		      android:layout_width="70dp"
 		      android:layout_height="70dp"
 		      android:text="@string/menu_image_size"
 		      android:background="@color/black_static"
 		      android:textColor="@color/white"
-		      android:id="@+id/btn_image_size" />
+		      android:id="@+id/btn_image_size" /> -->
 	        
-	        <Button
+	        <!-- <Button
 		      android:layout_width="70dp"
 		      android:layout_height="70dp"
 		      android:text="@string/menu_next_camera"
 		      android:background="@color/black_static"
 		      android:textColor="@color/white"
-		      android:id="@+id/toggle_btn_next_camera" />
+		      android:id="@+id/toggle_btn_next_camera" /> -->
 	        
 	    </LinearLayout>
     </ScrollView>
