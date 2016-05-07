@@ -53,6 +53,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private static final String STATE_OCTAVE_BOOLEAN = "pianoLayoutBoolean";
 	private static final String STATE_TWO_HANDS_BOOLEAN = "twoHandsBoolean";
 	private static final String STATE_DRAW_PIANO_BOOLEAN = "drawPianoBoolean";
+	private static final String STATE_DYNAMIC_TOUCH_BOOLEAN = "dynamicTouchBoolean";
 	
 	// An ID for items in the image size submenu.
 	private static final int MENU_GROUP_ID_SIZE = 2;
@@ -102,7 +103,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private boolean mIsTwoHands;
 	
 	// To toggle dynamic keypress
-	private boolean mIsDynamicKeyPress;
+	private boolean mIsDynamicTouch;
 	
 	// Whether erosion should be applied
 	private boolean mIsHSV;
@@ -138,6 +139,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private ToggleButton drawPianoToggleBtn;
 	private ToggleButton hsvToggleBtn;
 	private ToggleButton yCbCrToggleBtn;
+	private ToggleButton dynamicTouchToggleBtn;
 	private Button setPianoBtn;
 	
 	// The OpenCV loader callback.
@@ -184,6 +186,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsOctave2 = savedInstanceState.getBoolean(STATE_OCTAVE_BOOLEAN, true);
 			mIsTwoHands = savedInstanceState.getBoolean(STATE_TWO_HANDS_BOOLEAN, false);
 			mIsDrawPiano = savedInstanceState.getBoolean(STATE_DRAW_PIANO_BOOLEAN, false);
+			mIsDynamicTouch = savedInstanceState.getBoolean(STATE_DYNAMIC_TOUCH_BOOLEAN, false);
 		} else {
 			mCameraIndex = 0;
 			mImageSizeIndex = 8;	// Index 8 stands for 640x480 frame size
@@ -192,6 +195,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsOctave2 = false;
 			mIsTwoHands = false;
 			mIsDrawPiano = false;
+			mIsDynamicTouch = false;
 		}
 		
 		final Camera camera;
@@ -231,7 +235,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
 		mCameraView.setMaxFrameSize(352, 288);
-		mCameraView.enableFpsMeter();
+		//mCameraView.enableFpsMeter();
 		mCameraView.setCvCameraViewListener(this);
 		
 		View decorView = getWindow().getDecorView();
@@ -262,6 +266,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		savedInstanceState.putBoolean(STATE_OCTAVE_BOOLEAN, mIsOctave2);
 		savedInstanceState.putBoolean(STATE_TWO_HANDS_BOOLEAN, mIsTwoHands);
 		savedInstanceState.putBoolean(STATE_DRAW_PIANO_BOOLEAN, mIsDrawPiano);
+		savedInstanceState.putBoolean(STATE_DYNAMIC_TOUCH_BOOLEAN, mIsDynamicTouch);
 		
 		super.onSaveInstanceState(savedInstanceState);
 	}
@@ -399,7 +404,12 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				keyPressedIndex = mKeyPressDetector.getPianoKeyIndex(currPoint);
 				
 				if(keyPressedIndex != -1 && keyPressedIndex != mKeyPressedIndexLI.get(i)) {
-					playSound(keyPressedIndex);
+					if(mIsDynamicTouch) {
+						playSound(keyPressedIndex, currPoint.y - mFingerTipsLP.get(i).y);
+					} else {
+						playSound(keyPressedIndex, 31);
+					}
+					
 					mKeyPressedIndexLI.set(i, keyPressedIndex);
 					continue;
 				}
@@ -423,14 +433,14 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 	}
 	
-	private void playSound(int i) {
+	private void playSound(int i, double yDiff) {
 		if(i == -1) return;
 		if(!mIsOctave2) {
 			//play sound from layout 1
-			sound.playLayout1Sound(i);
+			sound.playLayout1Sound(i, yDiff);
 		} else {
 			// play sound from layout 2
-			sound.playLayout2Sound(i);
+			sound.playLayout2Sound(i, yDiff);
 		}
 	}
 	
@@ -443,6 +453,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		drawPianoToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_draw_piano);
 		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
 		//yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
+		dynamicTouchToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_dynamic_touch);
 		
 		detectPianoToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			
@@ -505,6 +516,22 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				} else {
 					// Toggle is disabled
 					mIsOctave2 = false;
+				}
+			}
+		});
+		
+		dynamicTouchToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsDynamicTouch = true;
+				} else {
+					// Toggle is disabled
+					mIsDynamicTouch = false;
 				}
 			}
 		});

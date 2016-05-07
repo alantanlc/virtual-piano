@@ -72,6 +72,16 @@
 	        <ToggleButton
 		      android:layout_width="70dp"
 		      android:layout_height="70dp"
+		      android:textOff="@string/menu_toggle_dynamic_touch"
+		      android:textOn="@string/menu_toggle_dynamic_touch"
+		      android:id="@+id/toggle_btn_dynamic_touch"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:checked="false" />
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
 		      android:textOff="@string/menu_toggle_draw_piano"
 		      android:textOn="@string/menu_toggle_draw_piano"
 		      android:id="@+id/toggle_btn_draw_piano"

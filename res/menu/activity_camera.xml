@@ -17,19 +17,9 @@
         android:title="@string/menu_detect_skin" />
     
     <item
-        android:id="@+id/menu_toggle_layout"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_toggle_layout" />
-    
-    <item
         android:id="@+id/menu_toggle_hands"
         app:showAsAction="ifRoom|withText"
         android:title="@string/menu_toggle_hands" />
-    
-    <item
-        android:id="@+id/menu_toggle_dynamic_keypress"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/menu_dynamic_touch" />
         
     <item
         android:id="@+id/menu_erosion"
