@@ -31,22 +31,38 @@ public class PianoDetector extends Detector {
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
 	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
 	
+	List<MatOfPoint> mWhiteContoursLMOP = new ArrayList<MatOfPoint>();
+	List<MatOfPoint> mWhiteKeysLMOP = new ArrayList<MatOfPoint>();
+	
+	List<MatOfPoint> mBlackContoursLMOP = new ArrayList<MatOfPoint>();
+	List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
+	
+	List<Point> mWhiteKeysLP = new ArrayList<Point>();
+	MatOfPoint mWhiteKeysMOP = new MatOfPoint();
+	
+	MatOfInt hullMOI = new MatOfInt();
+	
+	MatOfPoint mPianoMaskMOP = new MatOfPoint();
+	List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
+	
+	Mat mPianoMaskMat;
+	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
-		List<MatOfPoint> mWhiteContoursLMOP = new ArrayList<MatOfPoint>();
-		List<MatOfPoint> mWhiteKeysLMOP = new ArrayList<MatOfPoint>();
+		whiteKeysOutLMOP.clear();
+		blackKeysOutLMOP.clear();
 		
-		List<MatOfPoint> mBlackContoursLMOP = new ArrayList<MatOfPoint>();
-		List<MatOfPoint> mBlackKeysLMOP = new ArrayList<MatOfPoint>();
+		mWhiteContoursLMOP.clear();
+		mWhiteKeysLMOP.clear();
 		
-		List<Point> mWhiteKeysLP = new ArrayList<Point>();
-		MatOfPoint mWhiteKeysMOP = new MatOfPoint();
+		mBlackContoursLMOP.clear();
+		mBlackKeysLMOP.clear();
 		
-		MatOfInt hullMOI = new MatOfInt();
+		mWhiteKeysLP.clear();
 		
-		MatOfPoint mPianoMaskMOP = new MatOfPoint();
-		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
-		Mat mPianoMaskMat = new Mat(mMaskMat.size(), mMaskMat.type(), new Scalar(0));
+		mPianoMaskLMOP.clear();
+		
+		mPianoMaskMat = new Mat(mHSVMat.size(), mHSVMat.type(), new Scalar(0));
 		
 		// 1. Convert the image to HSV color space
 		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2GRAY);
@@ -78,11 +94,11 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 11. Draw white keys
-		drawAllContours(dst, mWhiteKeysLMOP, Colors.mLineColorBlue, -1);
+		//drawAllContours(dst, mWhiteKeysLMOP, Colors.mLineColorBlue, -1);
 		
 		// 12. Get convex hull of piano
 		// 12a. Convert LMOP to LP
-		/*for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
+		for(int i=0; i<mWhiteKeysLMOP.size(); i++) {
 			mWhiteKeysLP.addAll(mWhiteKeysLMOP.get(i).toList());
 		}
 		
@@ -100,22 +116,20 @@ public class PianoDetector extends Detector {
 		
 		// 13. Create piano mask mat
 		Imgproc.drawContours(mPianoMaskMat, mPianoMaskLMOP, 0, Colors.mLineColorWhite, -1);
-		Core.inRange(mHSVMat, lowerThreshold, upperThreshold, mMaskMat);
+		
+		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2GRAY);
+		Imgproc.threshold(mHSVMat, mHSVMat, 150, 255, Imgproc.THRESH_BINARY);
 		
 		// 14. Dilate image 3 times to remove piano lines
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat(), new Point(-1, -1), 3);
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mHSVMat, mHSVMat, new Mat(), new Point(-1, -1), 2);
 		
 		// 15. Invert piano mask
-		Core.bitwise_not(mMaskMat, mMaskMat);
+		Core.bitwise_not(mHSVMat, mHSVMat);
 		
-		Imgproc.dilate(mMaskMat, mMaskMat, new Mat(), new Point(-1, -1), 3);
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
-		//Imgproc.dilate(mMaskMat, mMaskMat, new Mat());
+		Imgproc.dilate(mHSVMat, mHSVMat, new Mat(), new Point(-1, -1), 2);
 		
 		// 16. Apply piano mask to binary image
-		mMaskMat.copyTo(mPianoMaskMat, mPianoMaskMat);
+		mHSVMat.copyTo(mPianoMaskMat, mPianoMaskMat);
 		
 		// 17. Find black key contours
 		Imgproc.findContours(mPianoMaskMat, mBlackContoursLMOP, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -127,25 +141,26 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 19. Reduce number of points of each contour using DP algorithm
-		for(int i=0; i<mBlackContoursLMOP.size(); i++) {
+		/*for(int i=0; i<mBlackContoursLMOP.size(); i++) {
 			mBlackContoursLMOP.set(i, reduceContourPoints(mBlackContoursLMOP.get(i)));
-		}
+		}*/
 		
 		// 20. Get contours that are within certain contour size range
 		mBlackKeysLMOP = getPianoKeyContours(mBlackContoursLMOP, blackKeySizeLower, blackKeySizeUpper);
 		
 		// 21. If no contours, just return
 		if(mBlackKeysLMOP.size() == 0) {
-			Log.i(TAG, "No black key found!");
+			Log.i(TAG, "No black keys found!");
 			return;
 		}
 		
 		// 22. Draw black key contours
+		drawAllContours(dst, mWhiteKeysLMOP, Colors.mLineColorBlue, -1);
 		drawAllContours(dst, mBlackKeysLMOP, Colors.mLineColorRed, -1);
 		
 		// 25. Sort piano keys and update whiteKeysOutLMOP and blackKeysOutLMOP
 		whiteKeysOutLMOP = sortPianoKeys(mWhiteKeysLMOP, true);
-		blackKeysOutLMOP = sortPianoKeys(mBlackKeysLMOP, true);*/
+		blackKeysOutLMOP = sortPianoKeys(mBlackKeysLMOP, true);
 	}
 	
 	public List<MatOfPoint> getWhiteKeysLMOP() {
@@ -166,9 +181,10 @@ public class PianoDetector extends Detector {
 		List<MatOfPoint> newContours = new ArrayList<MatOfPoint>();
 		
 		for(int i=0; i<contours.size(); i++) {
-			Log.i(TAG, Double.toString(Imgproc.contourArea(contours.get(i))));
+			
 			if(Imgproc.contourArea(contours.get(i)) >= lower && Imgproc.contourArea(contours.get(i)) <= upper
 					/*&& contours.get(i).rows() >= 4 && contours.get(i).rows() <= 8*/) {
+				//Log.i(TAG, Double.toString(Imgproc.contourArea(contours.get(i))));
 				newContours.add(contours.get(i));
 			}
 		}
@@ -180,13 +196,13 @@ public class PianoDetector extends Detector {
 		if(reverse) {
 			Collections.sort(contours, new Comparator<MatOfPoint>() {
 				public int compare(MatOfPoint mop1, MatOfPoint mop2) {
-					return Double.compare(Imgproc.boundingRect(mop2).tl().x, Imgproc.boundingRect(mop1).tl().x);
+					return Double.compare(Imgproc.boundingRect(mop2).x, Imgproc.boundingRect(mop1).x);
 				}
 			});
 		} else {
 			Collections.sort(contours, new Comparator<MatOfPoint>() {
 				public int compare(MatOfPoint mop1, MatOfPoint mop2) {
-					return Double.compare(Imgproc.boundingRect(mop1).tl().x, Imgproc.boundingRect(mop2).tl().x);
+					return Double.compare(Imgproc.boundingRect(mop1).x, Imgproc.boundingRect(mop2).x);
 				}
 			});
 		}

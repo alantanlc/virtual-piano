@@ -82,7 +82,7 @@ public class HandDetector extends Detector {
 		
 		// Draw lowest point
 		if(mFingerTipsLPOut.get(0) != null) {
-			Imgproc.circle(dst, mFingerTipsLPOut.get(0), 5, Colors.mLineColorRed, -1);
+			Imgproc.circle(dst, mFingerTipsLPOut.get(0), 2, Colors.mLineColorRed, -1);
 		}
 		
 		if(!mIsTwoHands) {
@@ -104,7 +104,7 @@ public class HandDetector extends Detector {
 		
 		// Draw lowest point
 		if(mFingerTipsLPOut.get(1) != null) {
-			Imgproc.circle(dst, mFingerTipsLPOut.get(1), 5, Colors.mLineColorRed, -1);
+			Imgproc.circle(dst, mFingerTipsLPOut.get(1), 2, Colors.mLineColorRed, -1);
 		}
 	}
 	
