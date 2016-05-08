@@ -19,7 +19,7 @@ public class HandDetector extends Detector {
 	private final int lowerHue = 3;
 	private final int upperHue = 33;
 	
-	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 50);
+	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 100);
 	private final Scalar upperThreshold = new Scalar(upperHue, 255, 255);
 	
 	private final Mat mMat = new Mat();
