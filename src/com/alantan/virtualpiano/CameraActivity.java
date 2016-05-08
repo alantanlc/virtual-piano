@@ -158,6 +158,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 				mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
 				
+				if(!mBlackKeysLMOP.isEmpty()) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
+				
 				break;
 			default:
 				super.onManagerConnected(status);
@@ -321,7 +323,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mCameraView.disableView();
 		}
 		
-		sound.release();
+		//sound.release();
 		
 		super.onDestroy();
 	}
