@@ -10,6 +10,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -30,6 +31,10 @@ public class PianoDetector extends Detector {
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
 	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
 	
+	private MatOfPoint mPianoRectMaskMOP = new MatOfPoint();
+	
+	private MatOfPoint mPianoMaskMOP = new MatOfPoint();
+	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
 		List<MatOfPoint> mWhiteContoursLMOP = new ArrayList<MatOfPoint>();
@@ -43,7 +48,6 @@ public class PianoDetector extends Detector {
 		
 		MatOfInt hullMOI = new MatOfInt();
 		
-		MatOfPoint mPianoMaskMOP = new MatOfPoint();
 		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
 		
 		Mat mPianoMaskMat;
@@ -212,5 +216,13 @@ public class PianoDetector extends Detector {
 		}
 		
 		return contours;
+	}
+	
+	public MatOfPoint getPianoMaskMOP() {
+		return mPianoMaskMOP;
+	}
+	
+	public MatOfPoint getPianoRectMaskMOP() {
+		return mPianoRectMaskMOP;
 	}
 }
