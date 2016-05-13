@@ -81,16 +81,16 @@ public class HandDetector extends Detector {
 		};
 		
 		// 8. Reduce number of points using DP algorithm
-		//List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
-		//reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
+		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
+		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
 		// 9. Get convex hull of hand
 		MatOfInt hullMOI = new MatOfInt();
-		Imgproc.convexHull(contours.get(largestContourIndex), hullMOI);
+		Imgproc.convexHull(reducedHandContours.get(0), hullMOI);
 		
 		// 10. Convert hull to contours
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
-		hullContourLMOP.add(hullToContour(hullMOI, contours.get(largestContourIndex)));
+		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
 		
 		List<Point> pianoRegionConvexLP = new ArrayList<Point>();
 		List<Point> fingerTipsLP = new ArrayList<Point>();
@@ -146,9 +146,9 @@ public class HandDetector extends Detector {
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
 		
 		// Draw lowest point
-		if(mFingerTipsLPOut.get(1) != null) {
+		/*if(mFingerTipsLPOut.get(1) != null) {
 			Imgproc.circle(dst, mFingerTipsLPOut.get(1), 2, Colors.mLineColorRed, -1);
-		}
+		}*/
 	}
 	
 	public void drawAllContours(final Mat dst, List<MatOfPoint> contours, Scalar color, int thickness) {

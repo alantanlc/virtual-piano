@@ -361,6 +361,11 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mCurrFingerTipsLP.clear();
 			mCurrFingerTipsLP.addAll(mHandDetector.getFingerTipsLPOut());
 			
+			// Draw finger tips
+			for(int j=0; j<mCurrFingerTipsLP.size(); j++) {
+				Imgproc.circle(rgba, mCurrFingerTipsLP.get(j), 5, Colors.mLineColorRed, 2);
+			}
+			
 			if(!mCurrFingerTipsLP.isEmpty() && !mWhiteKeysLMOP.isEmpty() && !mBlackKeysLMOP.isEmpty()) {
 				checkKeyPressed();
 			}
