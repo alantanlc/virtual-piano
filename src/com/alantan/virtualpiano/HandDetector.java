@@ -11,6 +11,8 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import android.util.Log;
+
 public class HandDetector extends Detector {
 	
 	private final static String TAG = HandDetector.class.getSimpleName();
@@ -20,7 +22,7 @@ public class HandDetector extends Detector {
 	private final int lowerHue = 3;
 	private final int upperHue = 33;
 	
-	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 100);
+	private final Scalar lowerThreshold = new Scalar(lowerHue, 50, 50);
 	private final Scalar upperThreshold = new Scalar(upperHue, 255, 255);
 	
 	private final Mat mMat = new Mat();
@@ -35,6 +37,12 @@ public class HandDetector extends Detector {
 	
 	private List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
 	
+	private Rect mBoundingRect;
+	
+	private Mat mMaskMat;
+	
+	private Mat mMatNew;
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		
@@ -47,14 +55,6 @@ public class HandDetector extends Detector {
 		// 1. Convert image to HSV color space
 		Imgproc.cvtColor(src, mMat, Imgproc.COLOR_RGB2HSV);
 		
-		if(!mPianoMaskLMOP.isEmpty()) {
-			Imgproc.drawContours(dst, mPianoMaskLMOP, 0, Colors.mLineColorGreen, 1);
-			
-			Rect r = Imgproc.boundingRect(mPianoMaskLMOP.get(0));
-			
-			Imgproc.rectangle(dst, r.tl(), r.br(), Colors.mLineColorBlue, 1);
-		}
-		
 		// 2. Apply static skin color threshold
 		Core.inRange(mMat, lowerThreshold, upperThreshold, mMat);
 		
@@ -64,12 +64,16 @@ public class HandDetector extends Detector {
 		// 3a. Perform erosion
 		Imgproc.erode(mMat, mMat, new Mat());
 		
+		mMatNew = new Mat();
+		
+		mMat.copyTo(mMatNew, mMaskMat);
+		
 		// 4. Find contours
-		Imgproc.findContours(mMat, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+		Imgproc.findContours(mMatNew, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 		
 		// 5. If no contours, return
 		if(contours.size() == 0) { 
-			//Log.i(TAG, "No contours found");
+			Log.i(TAG, "No contours found");
 			//lowestPoint = null;
 			return;
 		}
@@ -79,7 +83,7 @@ public class HandDetector extends Detector {
 		
 		// 7. If index equals -1, return
 		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
-			//Log.i(TAG, "No hand detected");
+			Log.i(TAG, "No hand detected");
 			//lowestPoint = null;
 			return;
 		};
@@ -159,5 +163,28 @@ public class HandDetector extends Detector {
 	
 	public void clearPianoMaskLMOP() {
 		mPianoMaskLMOP.clear();
+	}
+	
+	public void clearBoundingRect() {
+		mBoundingRect = null;
+	}
+	
+	public void setBoundingRect() {
+		if(!mPianoMaskLMOP.isEmpty()) {
+			mBoundingRect = Imgproc.boundingRect(mPianoMaskLMOP.get(0));
+			
+			//Log.i(TAG, "TL Y:" + mBoundingRect.tl().y);
+			mBoundingRect.height = (int) mBoundingRect.br().y;
+			mBoundingRect.y = 0;
+		}
+	}
+	
+	public void setMaskMat() {
+		mMaskMat = new Mat(new org.opencv.core.Size(352, 288), org.opencv.core.CvType.CV_8UC1, new Scalar(0));
+		Imgproc.rectangle(mMaskMat, mBoundingRect.tl(), mBoundingRect.br(), Colors.mLineColorWhite, -1);
+	}
+	
+	public void clearMaskMat() {
+		mMaskMat.setTo(new Scalar(255));
 	}
 }

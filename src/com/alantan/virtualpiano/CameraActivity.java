@@ -435,6 +435,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		//if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 		
 		mHandDetector.setmPianoMaskLMOP(mPianoDetector.getmPianoMaskMOP());
+		mHandDetector.setBoundingRect();
+		mHandDetector.setMaskMat();
 	}
 	
 	private void playSound(int i, double yDiff) {
@@ -470,6 +472,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 					mWhiteKeysLMOP.clear();
 					mBlackKeysLMOP.clear();
 					mHandDetector.clearPianoMaskLMOP();
+					mHandDetector.clearBoundingRect();
+					mHandDetector.clearMaskMat();
 				} else {
 					// Toggle is disabled
 					mIsPianoDetection = false;
