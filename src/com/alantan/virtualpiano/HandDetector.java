@@ -114,9 +114,9 @@ public class HandDetector extends Detector {
 		//mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
 		
 		// Draw lowest point
-		if(mFingerTipsLPOut.get(0) != null) {
+		/*if(mFingerTipsLPOut.get(0) != null) {
 			Imgproc.circle(dst, mFingerTipsLPOut.get(0), 2, Colors.mLineColorRed, -1);
-		}
+		}*/
 		
 		if(!mIsTwoHands) {
 			return;

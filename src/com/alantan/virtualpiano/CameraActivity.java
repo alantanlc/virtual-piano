@@ -252,6 +252,14 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		mKeyPressedIndexLI.add(-1);
 		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
 		
 		setButtonsClickListener();
 	}
@@ -432,6 +440,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
 		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
+		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoRectMaskMOP());
 		if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 	}
 	
