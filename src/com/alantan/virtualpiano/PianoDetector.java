@@ -30,6 +30,8 @@ public class PianoDetector extends Detector {
 	private List<MatOfPoint> whiteKeysOutLMOP = new ArrayList<MatOfPoint>();
 	private List<MatOfPoint> blackKeysOutLMOP = new ArrayList<MatOfPoint>();
 	
+	private MatOfPoint mPianoMaskMOP = new MatOfPoint();
+	
 	@Override
 	public void apply(final Mat src, final Mat dst) {
 		List<MatOfPoint> mWhiteContoursLMOP = new ArrayList<MatOfPoint>();
@@ -43,12 +45,9 @@ public class PianoDetector extends Detector {
 		
 		MatOfInt hullMOI = new MatOfInt();
 		
-		MatOfPoint mPianoMaskMOP = new MatOfPoint();
 		List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
 		
-		Mat mPianoMaskMat;
-		
-		mPianoMaskMat = new Mat(mHSVMat.size(), mHSVMat.type(), new Scalar(0));
+		Mat mPianoMaskMat = new Mat(mHSVMat.size(), mHSVMat.type(), new Scalar(0));
 		
 		// 1. Convert the image to HSV color space
 		Imgproc.cvtColor(src, mHSVMat, Imgproc.COLOR_RGB2GRAY);
@@ -149,6 +148,10 @@ public class PianoDetector extends Detector {
 		// 25. Sort piano keys and update whiteKeysOutLMOP and blackKeysOutLMOP
 		whiteKeysOutLMOP = sortPianoKeys(mWhiteKeysLMOP, true);
 		blackKeysOutLMOP = sortPianoKeys(mBlackKeysLMOP, true);
+	}
+	
+	public MatOfPoint getmPianoMaskMOP() {
+		return mPianoMaskMOP;
 	}
 	
 	public List<MatOfPoint> getWhiteKeysLMOP() {

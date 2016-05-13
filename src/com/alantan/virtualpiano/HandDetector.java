@@ -7,6 +7,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -32,6 +33,8 @@ public class HandDetector extends Detector {
 	
 	List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 	
+	private List<MatOfPoint> mPianoMaskLMOP = new ArrayList<MatOfPoint>();
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		
@@ -43,6 +46,14 @@ public class HandDetector extends Detector {
 		
 		// 1. Convert image to HSV color space
 		Imgproc.cvtColor(src, mMat, Imgproc.COLOR_RGB2HSV);
+		
+		if(!mPianoMaskLMOP.isEmpty()) {
+			Imgproc.drawContours(dst, mPianoMaskLMOP, 0, Colors.mLineColorGreen, 1);
+			
+			Rect r = Imgproc.boundingRect(mPianoMaskLMOP.get(0));
+			
+			Imgproc.rectangle(dst, r.tl(), r.br(), Colors.mLineColorBlue, 1);
+		}
 		
 		// 2. Apply static skin color threshold
 		Core.inRange(mMat, lowerThreshold, upperThreshold, mMat);
@@ -140,5 +151,13 @@ public class HandDetector extends Detector {
 	
 	public List<Point> getFingerTipsLPOut() {
 		return mFingerTipsLPOut;
+	}
+	
+	public void setmPianoMaskLMOP(MatOfPoint mopIn) {
+		mPianoMaskLMOP.add(mopIn);
+	}
+	
+	public void clearPianoMaskLMOP() {
+		mPianoMaskLMOP.clear();
 	}
 }
