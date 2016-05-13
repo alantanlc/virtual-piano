@@ -1,12 +1,15 @@
 package com.alantan.virtualpiano;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -32,6 +35,8 @@ public class HandDetector extends Detector {
 	private List<Point> mFingerTipsLPOut = new ArrayList<Point>();
 	
 	List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+	
+	private MatOfPoint mPianoMaskMOP;
 	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
@@ -84,6 +89,23 @@ public class HandDetector extends Detector {
 		// 10. Convert hull to contours
 		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
 		hullContourLMOP.add(hullToContour(hullMOI, contours.get(largestContourIndex)));
+		
+		List<Point> pianoRegionConvexLP = new ArrayList<Point>();
+		List<Point> fingerTipsLP = new ArrayList<Point>();
+		
+		// 11. Find reduced hand contour points that are within piano area
+		if(mPianoMaskMOP != null) {
+			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
+		}
+		
+		// 12. Sort convex hull points by x-coordinate
+		List<Point> sortedPianoRegionConvexLP = sortPoints(pianoRegionConvexLP, false);
+		
+		// 13. Reduce convex hull points to (maximum) 5 distinct points to correspond to 5 finger tips
+		// may not necessarily return a list of 5 points, depends on how many fingers are within piano
+		fingerTipsLP = getFingerTipsLP(sortedPianoRegionConvexLP);
+		
+		setFingerTipsLPOut(fingerTipsLP);
 		
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
 		
@@ -158,5 +180,65 @@ public class HandDetector extends Detector {
 	
 	public List<Point> getFingerTipsLPOut() {
 		return mFingerTipsLPOut;
+	}
+	
+	public void setPianoMaskMOP(MatOfPoint maskMOP) {
+		mPianoMaskMOP = maskMOP;
+	}
+	
+	private List<Point> getPointsByRegion(List<Point> hullPoints, MatOfPoint pianoMaskMOP) {
+		List<Point> lpOut = new ArrayList<Point>();
+		MatOfPoint2f p = new MatOfPoint2f();
+		p.fromArray(pianoMaskMOP.toArray());
+		
+		for(int i=0; i<hullPoints.size(); i++) {
+			if(Imgproc.pointPolygonTest(p, hullPoints.get(i), false) == 0
+					|| Imgproc.pointPolygonTest(p, hullPoints.get(i), false) == 1) {
+				lpOut.add(hullPoints.get(i));
+			}
+		}
+		
+		return lpOut;
+	}
+	
+	private List<Point> sortPoints(List<Point> pointsLP, boolean reverse) {
+		if(reverse) {
+			Collections.sort(pointsLP, new Comparator<Point>() {
+				public int compare(Point p1, Point p2) {
+					return Double.compare(p2.x, p1.x);
+				}
+			});
+		} else {
+			Collections.sort(pointsLP, new Comparator<Point>() {
+				public int compare(Point p1, Point p2) {
+					return Double.compare(p1.x, p2.x);
+				}
+			});
+		}
+		
+		return pointsLP;
+	}
+	
+	private List<Point> getFingerTipsLP(List<Point> lpIn) {
+		if(lpIn.size() <= 1) return lpIn;
+		
+		List<Point> lpOut = new ArrayList<Point>();
+		int fingerIndex = 0;
+		
+		lpOut.add(lpIn.get(0));
+		
+		for(int i=1; i<lpIn.size(); i++) {
+			//Log.i(TAG, "Gap: " + (lpIn.get(i).x - lpOut.get(fingerIndex).x));
+			if(lpIn.get(i).x - lpOut.get(fingerIndex).x < 35 && Math.abs(lpIn.get(i).y - lpOut.get(fingerIndex).y) < 25) {
+				lpOut.get(fingerIndex).x = (lpOut.get(fingerIndex).x + lpIn.get(i).x)/2;
+				//lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y + lpIn.get(i).y)/2;
+				lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y > lpIn.get(fingerIndex).y) ? lpOut.get(fingerIndex).y :  lpIn.get(fingerIndex).y;
+			} else {
+				lpOut.add(lpIn.get(i));
+				fingerIndex++;
+			}
+		}
+		
+		return lpOut;
 	}
 }
