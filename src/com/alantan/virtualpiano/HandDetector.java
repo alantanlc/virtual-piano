@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -69,7 +70,6 @@ public class HandDetector extends Detector {
 		// 7. If index equals -1, return
 		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
 			//Log.i(TAG, "No hand detected");
-			//lowestPoint = null;
 			return;
 		};
 		
@@ -77,7 +77,15 @@ public class HandDetector extends Detector {
 		//List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
 		//reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
-		Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorBlue, 1);
+		// 9. Get convex hull of hand
+		MatOfInt hullMOI = new MatOfInt();
+		Imgproc.convexHull(contours.get(largestContourIndex), hullMOI);
+		
+		// 10. Convert hull to contours
+		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
+		hullContourLMOP.add(hullToContour(hullMOI, contours.get(largestContourIndex)));
+		
+		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
 		
 		mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
 		
@@ -102,6 +110,16 @@ public class HandDetector extends Detector {
 		
 		//reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
+		
+		// 9. Get convex hull of hand
+		hullMOI = new MatOfInt();
+		Imgproc.convexHull(contours.get(largestContourIndex), hullMOI);
+				
+		// 10. Convert hull to contours
+		hullContourLMOP.clear();
+		hullContourLMOP.add(hullToContour(hullMOI, contours.get(largestContourIndex)));
+				
+		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
 		
 		// Draw lowest point
 		if(mFingerTipsLPOut.get(1) != null) {

@@ -191,7 +191,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsDynamicTouch = savedInstanceState.getBoolean(STATE_DYNAMIC_TOUCH_BOOLEAN, false);
 		} else {
 			mCameraIndex = 0;
-			mImageSizeIndex = 8;	// Index 8 stands for 640x480 frame size
+			mImageSizeIndex = 0;	// Index 8 stands for 640x480 frame size
 			mIsPianoDetection = true;
 			mIsFingersDetection = false;
 			mIsOctave2 = false;
