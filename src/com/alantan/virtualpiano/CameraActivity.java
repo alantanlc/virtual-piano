@@ -158,7 +158,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 				mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
 				
-				if(!mBlackKeysLMOP.isEmpty()) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
+				if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 				
 				break;
 			default:
@@ -432,7 +432,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mBlackKeysLMOP = mPianoDetector.getBlackKeysLMOP();
 		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
-		mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
+		if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 	}
 	
 	private void playSound(int i, double yDiff) {
@@ -562,7 +562,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				if(isChecked) {
 					// Toggle is enabled
 					mIsHSV = true;
-					yCbCrToggleBtn.setChecked(false);
+					//yCbCrToggleBtn.setChecked(false);
 				} else {
 					// Toggle is disabled
 					mIsHSV = false;

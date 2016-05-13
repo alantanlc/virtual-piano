@@ -62,6 +62,7 @@ public class HandDetector extends Detector {
 			//lowestPoint = null;
 			return;
 		}
+		
 		// 6. Find index of the largest contour, assume that is the hand
 		int largestContourIndex = findLargestContourIndex(contours);
 		
@@ -73,12 +74,12 @@ public class HandDetector extends Detector {
 		};
 		
 		// 8. Reduce number of points using DP algorithm
-		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
-		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
+		//List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
+		//reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
 		
-		//Imgproc.drawContours(dst, reducedHandContours, 0, Colors.mLineColorBlue, 1);
+		Imgproc.drawContours(dst, contours, largestContourIndex, Colors.mLineColorBlue, 1);
 		
-		mFingerTipsLPOut.add(findLowestPoint(reducedHandContours.get(0)));
+		mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
 		
 		// Draw lowest point
 		if(mFingerTipsLPOut.get(0) != null) {
@@ -99,12 +100,18 @@ public class HandDetector extends Detector {
 			return;
 		};
 		
-		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
-		mFingerTipsLPOut.add(findLowestPoint(reducedHandContours.get(1)));
+		//reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
+		mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
 		
 		// Draw lowest point
 		if(mFingerTipsLPOut.get(1) != null) {
 			Imgproc.circle(dst, mFingerTipsLPOut.get(1), 2, Colors.mLineColorRed, -1);
+		}
+	}
+	
+	public void drawAllContours(final Mat dst, List<MatOfPoint> contours, Scalar color, int thickness) {
+		for(int i=0; i<contours.size(); i++) {
+			Imgproc.drawContours(dst, contours, i, color, thickness);
 		}
 	}
 	

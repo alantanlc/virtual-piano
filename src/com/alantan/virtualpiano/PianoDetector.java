@@ -66,9 +66,9 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 7. Reduce number of points of each contour using DP algorithm
-		/*for(int i=0; i<mWhiteContoursLMOP.size(); i++) {
+		for(int i=0; i<mWhiteContoursLMOP.size(); i++) {
 			mWhiteContoursLMOP.set(i, reduceContourPoints(mWhiteContoursLMOP.get(i)));
-		}*/
+		}
 		
 		// 8. Get contours that are within certain contour size range
 		mWhiteKeysLMOP = getPianoKeyContours(mWhiteContoursLMOP, whiteKeySizeLower, whiteKeySizeUpper);
@@ -129,9 +129,9 @@ public class PianoDetector extends Detector {
 		}
 		
 		// 19. Reduce number of points of each contour using DP algorithm
-		/*for(int i=0; i<mBlackContoursLMOP.size(); i++) {
+		for(int i=0; i<mBlackContoursLMOP.size(); i++) {
 			mBlackContoursLMOP.set(i, reduceContourPoints(mBlackContoursLMOP.get(i)));
-		}*/
+		}
 		
 		// 20. Get contours that are within certain contour size range
 		mBlackKeysLMOP = getPianoKeyContours(mBlackContoursLMOP, blackKeySizeLower, blackKeySizeUpper);
@@ -171,7 +171,7 @@ public class PianoDetector extends Detector {
 		for(int i=0; i<contours.size(); i++) {
 			
 			if(Imgproc.contourArea(contours.get(i)) >= lower && Imgproc.contourArea(contours.get(i)) <= upper
-					/*&& contours.get(i).rows() >= 4 && contours.get(i).rows() <= 8*/) {
+					&& contours.get(i).rows() >=4 && contours.get(i).rows() <=15) {
 				//Log.i(TAG, Double.toString(Imgproc.contourArea(contours.get(i))));
 				newContours.add(contours.get(i));
 			}
