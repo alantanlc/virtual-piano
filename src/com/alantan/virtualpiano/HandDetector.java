@@ -38,6 +38,8 @@ public class HandDetector extends Detector {
 	
 	private MatOfPoint mPianoMaskMOP;
 	
+	private List<Point> fingerTipsLPOut = new ArrayList<Point>(); 
+	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		
@@ -109,7 +111,7 @@ public class HandDetector extends Detector {
 		
 		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
 		
-		mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
+		//mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
 		
 		// Draw lowest point
 		if(mFingerTipsLPOut.get(0) != null) {
@@ -240,5 +242,10 @@ public class HandDetector extends Detector {
 		}
 		
 		return lpOut;
+	}
+	
+	private void setFingerTipsLPOut(List<Point> lpIn) {
+		mFingerTipsLPOut.clear();
+		mFingerTipsLPOut = lpIn;
 	}
 }
