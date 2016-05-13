@@ -53,6 +53,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private static final String STATE_OCTAVE_BOOLEAN = "pianoLayoutBoolean";
 	private static final String STATE_TWO_HANDS_BOOLEAN = "twoHandsBoolean";
 	private static final String STATE_DRAW_PIANO_BOOLEAN = "drawPianoBoolean";
+	private static final String STATE_MULTIPLE_FINGERS_BOOLEAN = "multiFingersBoolean";
 	private static final String STATE_DYNAMIC_TOUCH_BOOLEAN = "dynamicTouchBoolean";
 	
 	// An ID for items in the image size submenu.
@@ -96,6 +97,9 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	// KeyPressDetector
 	private KeyPressDetector mKeyPressDetector;
 	
+	// To toggle multiple fingers
+	private boolean mIsMultiFingers;
+	
 	// To toggle piano layout
 	private boolean mIsOctave2;
 	
@@ -135,6 +139,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private ToggleButton detectPianoToggleBtn;
 	private ToggleButton detectSkinToggleBtn;
 	private ToggleButton handsToggleBtn;
+	private ToggleButton multiFingersToggleBtn;
 	private ToggleButton octaveToggleBtn;
 	private ToggleButton drawPianoToggleBtn;
 	private ToggleButton hsvToggleBtn;
@@ -187,6 +192,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsFingersDetection = savedInstanceState.getBoolean(STATE_FINGERS_DETECTION_BOOLEAN, false);
 			mIsOctave2 = savedInstanceState.getBoolean(STATE_OCTAVE_BOOLEAN, true);
 			mIsTwoHands = savedInstanceState.getBoolean(STATE_TWO_HANDS_BOOLEAN, false);
+			mIsMultiFingers = savedInstanceState.getBoolean(STATE_MULTIPLE_FINGERS_BOOLEAN, false);
 			mIsDrawPiano = savedInstanceState.getBoolean(STATE_DRAW_PIANO_BOOLEAN, false);
 			mIsDynamicTouch = savedInstanceState.getBoolean(STATE_DYNAMIC_TOUCH_BOOLEAN, false);
 		} else {
@@ -196,6 +202,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mIsFingersDetection = false;
 			mIsOctave2 = false;
 			mIsTwoHands = false;
+			mIsMultiFingers = false;
 			mIsDrawPiano = false;
 			mIsDynamicTouch = false;
 		}
@@ -261,6 +268,17 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mKeyPressedIndexLI.add(-1);
 		mKeyPressedIndexLI.add(-1);
 		
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		mKeyPressedIndexLI.add(-1);
+		
 		setButtonsClickListener();
 	}
 	
@@ -276,6 +294,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		savedInstanceState.putBoolean(STATE_OCTAVE_BOOLEAN, mIsOctave2);
 		savedInstanceState.putBoolean(STATE_TWO_HANDS_BOOLEAN, mIsTwoHands);
 		savedInstanceState.putBoolean(STATE_DRAW_PIANO_BOOLEAN, mIsDrawPiano);
+		savedInstanceState.putBoolean(STATE_MULTIPLE_FINGERS_BOOLEAN, mIsMultiFingers);
 		savedInstanceState.putBoolean(STATE_DYNAMIC_TOUCH_BOOLEAN, mIsDynamicTouch);
 		
 		super.onSaveInstanceState(savedInstanceState);
@@ -356,7 +375,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		}
 		
 		if(mIsFingersDetection) {
-			mHandDetector.apply(rgba, rgba, mIsTwoHands);
+			mHandDetector.apply(rgba, rgba, mIsTwoHands, mIsMultiFingers);
 			
 			mCurrFingerTipsLP.clear();
 			mCurrFingerTipsLP.addAll(mHandDetector.getFingerTipsLPOut());
@@ -382,13 +401,13 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		}
 		
 		if(mIsHSV) {
-			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2GRAY);
-			Imgproc.threshold(rgba, rgba, 150, 255, Imgproc.THRESH_BINARY);
-			//Scalar lowerThreshold = new Scalar(3, 50, 120);
-			//Scalar upperThreshold = new Scalar(33, 255, 255);
-			/*Scalar lowerThreshold = new Scalar(0, 0, 100);
-			Scalar upperThreshold = new Scalar(179, 255, 255);
-			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);*/
+			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
+			//Imgproc.threshold(rgba, rgba, 150, 255, Imgproc.THRESH_BINARY);
+			Scalar lowerThreshold = new Scalar(3, 50, 100);
+			Scalar upperThreshold = new Scalar(33, 255, 255);
+			//Scalar lowerThreshold = new Scalar(0, 0, 100);
+			//Scalar upperThreshold = new Scalar(179, 255, 255);
+			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 		}
 		
 		/*(if(mIsYCbCr) {
@@ -466,6 +485,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		detectSkinToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_detect_skin);
 		handsToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_two_hands);
 		octaveToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_octave);
+		multiFingersToggleBtn= (ToggleButton) findViewById(R.id.toggle_btn_multifingers);
 		drawPianoToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_draw_piano);
 		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
 		//yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
@@ -532,6 +552,22 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				} else {
 					// Toggle is disabled
 					mIsOctave2 = false;
+				}
+			}
+		});
+		
+		multiFingersToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				// TODO Auto-generated method stub
+				if(isChecked) {
+					// Toggle is enabled
+					mIsMultiFingers = true;
+				} else {
+					// Toggle is disabled
+					mIsMultiFingers = false;
 				}
 			}
 		});

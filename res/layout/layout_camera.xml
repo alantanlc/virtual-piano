@@ -62,6 +62,16 @@
 	        <ToggleButton
 		      android:layout_width="70dp"
 		      android:layout_height="70dp"
+		      android:textOff="@string/menu_toggle_multifingers"
+		      android:textOn="@string/menu_toggle_multifingers"
+		      android:id="@+id/toggle_btn_multifingers"
+		      android:background="@drawable/toggle_btn"
+		      android:textColor="@color/toggle_btn_text_color"
+		      android:checked="false" />
+	        
+	        <ToggleButton
+		      android:layout_width="70dp"
+		      android:layout_height="70dp"
 		      android:textOff="@string/menu_toggle_octave"
 		      android:textOn="@string/menu_toggle_octave"
 		      android:id="@+id/toggle_btn_octave"

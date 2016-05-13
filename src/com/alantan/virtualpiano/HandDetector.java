@@ -14,6 +14,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import android.util.Log;
+
 public class HandDetector extends Detector {
 	
 	private final static String TAG = HandDetector.class.getSimpleName();
@@ -45,7 +47,7 @@ public class HandDetector extends Detector {
 		
 	}
 	
-	public void apply(final Mat dst, final Mat src, boolean mIsTwoHands) {
+	public void apply(final Mat dst, final Mat src, boolean mIsTwoHands, boolean mIsMultiFingers) {
 		mFingerTipsLPOut.clear();
 		contours.clear();
 		
@@ -80,43 +82,40 @@ public class HandDetector extends Detector {
 			return;
 		};
 		
-		// 8. Reduce number of points using DP algorithm
-		List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
-		reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
-		
-		// 9. Get convex hull of hand
-		MatOfInt hullMOI = new MatOfInt();
-		Imgproc.convexHull(reducedHandContours.get(0), hullMOI);
-		
-		// 10. Convert hull to contours
-		List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
-		hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
-		
-		List<Point> pianoRegionConvexLP = new ArrayList<Point>();
-		List<Point> fingerTipsLP = new ArrayList<Point>();
-		
-		// 11. Find reduced hand contour points that are within piano area
-		if(mPianoMaskMOP != null) {
-			pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
+		if(!mIsMultiFingers) {
+			mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
+		} else {
+			// 8. Reduce number of points using DP algorithm
+			List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
+			reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
+			
+			// 9. Get convex hull of hand
+			MatOfInt hullMOI = new MatOfInt();
+			Imgproc.convexHull(reducedHandContours.get(0), hullMOI);
+			
+			// 10. Convert hull to contours
+			List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
+			hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
+			
+			List<Point> pianoRegionConvexLP = new ArrayList<Point>();
+			List<Point> fingerTipsLP = new ArrayList<Point>();
+			
+			// 11. Find reduced hand contour points that are within piano area
+			if(mPianoMaskMOP != null) {
+				pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
+			}
+			
+			// 12. Sort convex hull points by x-coordinate
+			List<Point> sortedPianoRegionConvexLP = sortPoints(pianoRegionConvexLP, false);
+			
+			// 13. Reduce convex hull points to (maximum) 5 distinct points to correspond to 5 finger tips
+			// may not necessarily return a list of 5 points, depends on how many fingers are within piano
+			fingerTipsLP = getFingerTipsLP(sortedPianoRegionConvexLP);
+			
+			setFingerTipsLPOut(fingerTipsLP);
 		}
 		
-		// 12. Sort convex hull points by x-coordinate
-		List<Point> sortedPianoRegionConvexLP = sortPoints(pianoRegionConvexLP, false);
-		
-		// 13. Reduce convex hull points to (maximum) 5 distinct points to correspond to 5 finger tips
-		// may not necessarily return a list of 5 points, depends on how many fingers are within piano
-		fingerTipsLP = getFingerTipsLP(sortedPianoRegionConvexLP);
-		
-		setFingerTipsLPOut(fingerTipsLP);
-		
-		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
-		
-		//mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
-		
-		// Draw lowest point
-		/*if(mFingerTipsLPOut.get(0) != null) {
-			Imgproc.circle(dst, mFingerTipsLPOut.get(0), 2, Colors.mLineColorRed, -1);
-		}*/
+		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
 		
 		if(!mIsTwoHands) {
 			return;
@@ -126,29 +125,44 @@ public class HandDetector extends Detector {
 		contours.remove(largestContourIndex);
 		largestContourIndex = findLargestContourIndex(contours);
 		
-		// 7. If index equals -1, return
-		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
-			//Log.i(TAG, "No hand detected");
+		// If index equals -1, return
+		if(largestContourIndex == -1 /*|| Imgproc.contourArea(contours.get(largestContourIndex)) < handArea*/) {
+			Log.i(TAG, "No hand detected");
 			return;
 		};
 		
-		//reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
-		mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
-		
-		// 9. Get convex hull of hand
-		hullMOI = new MatOfInt();
-		Imgproc.convexHull(contours.get(largestContourIndex), hullMOI);
-				
-		// 10. Convert hull to contours
-		hullContourLMOP.clear();
-		hullContourLMOP.add(hullToContour(hullMOI, contours.get(largestContourIndex)));
-				
-		Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
-		
-		// Draw lowest point
-		/*if(mFingerTipsLPOut.get(1) != null) {
-			Imgproc.circle(dst, mFingerTipsLPOut.get(1), 2, Colors.mLineColorRed, -1);
-		}*/
+		if(!mIsMultiFingers) {
+			mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
+		} else {
+			// 8. Reduce number of points using DP algorithm
+			List<MatOfPoint> reducedHandContours = new ArrayList<MatOfPoint>();
+			reducedHandContours.add(reduceContourPoints(contours.get(largestContourIndex)));
+			
+			// 9. Get convex hull of hand
+			MatOfInt hullMOI = new MatOfInt();
+			Imgproc.convexHull(reducedHandContours.get(0), hullMOI);
+			
+			// 10. Convert hull to contours
+			List<MatOfPoint> hullContourLMOP = new ArrayList<MatOfPoint>();
+			hullContourLMOP.add(hullToContour(hullMOI, reducedHandContours.get(0)));
+			
+			List<Point> pianoRegionConvexLP = new ArrayList<Point>();
+			List<Point> fingerTipsLP = new ArrayList<Point>();
+			
+			// 11. Find reduced hand contour points that are within piano area
+			if(mPianoMaskMOP != null) {
+				pianoRegionConvexLP = getPointsByRegion(hullContourLMOP.get(0).toList(), mPianoMaskMOP);
+			}
+			
+			// 12. Sort convex hull points by x-coordinate
+			List<Point> sortedPianoRegionConvexLP = sortPoints(pianoRegionConvexLP, false);
+			
+			// 13. Reduce convex hull points to (maximum) 5 distinct points to correspond to 5 finger tips
+			// may not necessarily return a list of 5 points, depends on how many fingers are within piano
+			fingerTipsLP = getFingerTipsLP(sortedPianoRegionConvexLP);
+			
+			mFingerTipsLPOut.addAll(fingerTipsLP);
+		}
 	}
 	
 	public void drawAllContours(final Mat dst, List<MatOfPoint> contours, Scalar color, int thickness) {

@@ -7,7 +7,8 @@
     <string name="menu_detect_piano">Detect Piano</string>
     <string name="menu_detect_skin">Detect Fingers</string>
     <string name="menu_set_piano">Set Piano</string>
-    <string name="menu_toggle_hands">Toggle Hands</string>
+    <string name="menu_toggle_hands">Two Hands</string>
+    <string name="menu_toggle_multifingers">Multiple Fingers</string>
     <string name="menu_toggle_octave">Toggle Octave</string>
     <string name="menu_toggle_draw_piano">Draw Piano</string>
     <string name="menu_toggle_dynamic_touch">Dynamic Touch</string>
