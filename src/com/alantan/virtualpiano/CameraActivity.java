@@ -399,7 +399,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 		double xDiff = currPoint.x - prevPoint.x;
 		double yDiff = currPoint.y - prevPoint.y;
 		
-		if(yDiff < 5) {
+		if(yDiff < 3) {
 			return;
 		}
 		
@@ -421,7 +421,7 @@ public class CameraActivity extends ActionBarActivity implements CvCameraViewLis
 			
 			if(Imgproc.pointPolygonTest(p, currPoint, false) == 0
 					|| Imgproc.pointPolygonTest(p, currPoint, false) == 1) {
-				playSound(j+10);
+				playSound(j+15);
 			}
 		}
 	}
