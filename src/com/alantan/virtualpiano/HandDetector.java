@@ -231,7 +231,7 @@ public class HandDetector extends Detector {
 		
 		for(int i=1; i<lpIn.size(); i++) {
 			//Log.i(TAG, "Gap: " + (lpIn.get(i).x - lpOut.get(fingerIndex).x));
-			if(lpIn.get(i).x - lpOut.get(fingerIndex).x < 35 && Math.abs(lpIn.get(i).y - lpOut.get(fingerIndex).y) < 25) {
+			if(lpIn.get(i).x - lpOut.get(fingerIndex).x < 15 && Math.abs(lpIn.get(i).y - lpOut.get(fingerIndex).y) < 20) {
 				lpOut.get(fingerIndex).x = (lpOut.get(fingerIndex).x + lpIn.get(i).x)/2;
 				//lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y + lpIn.get(i).y)/2;
 				lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y > lpIn.get(fingerIndex).y) ? lpOut.get(fingerIndex).y :  lpIn.get(fingerIndex).y;

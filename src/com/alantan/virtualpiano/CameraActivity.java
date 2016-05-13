@@ -158,7 +158,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 				mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
 				
-				if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
+				//if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 				
 				break;
 			default:
@@ -446,7 +446,7 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
 		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoRectMaskMOP());
-		if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
+		//if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 	}
 	
 	private void playSound(int i, double yDiff) {
