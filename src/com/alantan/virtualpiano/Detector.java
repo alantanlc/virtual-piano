@@ -6,7 +6,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
 public class Detector {
@@ -55,9 +54,6 @@ public class Detector {
 			int index = (int) hullMOI.get(i, 0)[0];
 			double[] point = new double[] { contourMOP.get(index, 0)[0], contourMOP.get(index, 0)[1] };
 			mopOut.put(i, 0, point);
-			
-			Point x = new Point(point[0], point[1]);
-			//Log.i(TAG, "Point " + i + ": " + point[0] + ", " + point[1]);
 		}
 		
 		return mopOut;

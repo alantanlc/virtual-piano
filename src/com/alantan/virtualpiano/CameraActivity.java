@@ -22,8 +22,6 @@ import org.opencv.imgproc.Imgproc;
 import android.annotation.SuppressLint;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -56,9 +54,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private static final String STATE_MULTIPLE_FINGERS_BOOLEAN = "multiFingersBoolean";
 	private static final String STATE_DYNAMIC_TOUCH_BOOLEAN = "dynamicTouchBoolean";
 	
-	// An ID for items in the image size submenu.
-	private static final int MENU_GROUP_ID_SIZE = 2;
-	
 	// The index of the active camera.
 	private int mCameraIndex;
 	
@@ -69,14 +64,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	// If so, the camera view should be mirrored.
 	private boolean mIsCameraFrontFacing;
 	
-	// The number of cameras on the device.
-	private int mNumCameras;
-	
 	// The camera view.
 	private CameraBridgeViewBase mCameraView;
-	
-	// The image sizes supported by the active camera.
-	private List<Size> mSupportedImageSizes;
 	
 	// PianoDetector
 	private PianoDetector mPianoDetector;
@@ -112,9 +101,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	// Whether erosion should be applied
 	private boolean mIsHSV;
 	
-	// Whether dilation should be applied
-	private boolean mIsYCbCr;
-	
 	// Whether piano should be drawn
 	private boolean mIsDrawPiano;
 	
@@ -143,7 +129,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 	private ToggleButton octaveToggleBtn;
 	private ToggleButton drawPianoToggleBtn;
 	private ToggleButton hsvToggleBtn;
-	private ToggleButton yCbCrToggleBtn;
 	private ToggleButton dynamicTouchToggleBtn;
 	private Button setPianoBtn;
 	
@@ -162,8 +147,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 				
 				mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 				mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
-				
-				//if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 				
 				break;
 			default:
@@ -221,12 +204,10 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			CameraInfo cameraInfo = new CameraInfo();
 			Camera.getCameraInfo(mCameraIndex, cameraInfo);
 			mIsCameraFrontFacing = (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT);
-			mNumCameras = Camera.getNumberOfCameras();
 			camera = Camera.open(mCameraIndex);
 		} else {	// pre-Gingerbread
 			// Assume there is only 1 camera and it is rear-facing.
 			mIsCameraFrontFacing = false;
-			mNumCameras = 1;
 			camera = Camera.open();
 		}
 		
@@ -236,10 +217,8 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 		
-		final Parameters parameters = camera.getParameters();
 		camera.release();
-		mSupportedImageSizes = parameters.getSupportedPreviewSizes();
-		final Size size = mSupportedImageSizes.get(mImageSizeIndex);
+		//final Size size = mSupportedImageSizes.get(mImageSizeIndex);
 		
 		mCameraView = (CameraBridgeViewBase) findViewById(R.id.camera_view);
 		mCameraView.setCameraIndex(mCameraIndex);
@@ -350,8 +329,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			mCameraView.disableView();
 		}
 		
-		//sound.release();
-		
 		super.onDestroy();
 	}
 
@@ -402,22 +379,10 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		
 		if(mIsHSV) {
 			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2HSV);
-			//Imgproc.threshold(rgba, rgba, 150, 255, Imgproc.THRESH_BINARY);
 			Scalar lowerThreshold = new Scalar(3, 50, 100);
 			Scalar upperThreshold = new Scalar(33, 255, 255);
-			//Scalar lowerThreshold = new Scalar(0, 0, 100);
-			//Scalar upperThreshold = new Scalar(179, 255, 255);
 			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
 		}
-		
-		/*(if(mIsYCbCr) {
-			Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2YCrCb);
-			// Skin pixels: 133 ≤ Cr ≤ 173 and 77 ≤ Cb ≤ 127
-			// Skin pixels (Relaxed): 128 ≤ Cr ≤ 178 and 72 ≤ Cb ≤ 132
-			Scalar lowerThreshold = new Scalar(0, 133, 77);
-			Scalar upperThreshold = new Scalar(255, 173, 127);
-			Core.inRange(rgba, lowerThreshold, upperThreshold, rgba);
-		}*/
 		
 		// Flip image if using front facing camera
 		if(mIsCameraFrontFacing) {
@@ -465,7 +430,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		mKeyPressDetector.setWhiteKeysMOP2f(mWhiteKeysLMOP);
 		mKeyPressDetector.setBlackKeysMOP2f(mBlackKeysLMOP);
 		mHandDetector.setPianoMaskMOP(mPianoDetector.getPianoRectMaskMOP());
-		//if(mBlackKeysLMOP.size() >= 5) mKeyPressDetector.setMiddleY((double) Imgproc.boundingRect(mBlackKeysLMOP.get(4)).y);
 	}
 	
 	private void playSound(int i, double yDiff) {
@@ -488,14 +452,12 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 		multiFingersToggleBtn= (ToggleButton) findViewById(R.id.toggle_btn_multifingers);
 		drawPianoToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_draw_piano);
 		hsvToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_hsv);
-		//yCbCrToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_ycbcr);
 		dynamicTouchToggleBtn = (ToggleButton) findViewById(R.id.toggle_btn_dynamic_touch);
 		
 		detectPianoToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsPianoDetection = true;
@@ -512,8 +474,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsFingersDetection = true;
@@ -528,8 +488,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsTwoHands = true;
@@ -544,8 +502,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsOctave2 = true;
@@ -560,8 +516,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsMultiFingers = true;
@@ -576,8 +530,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsDynamicTouch = true;
@@ -592,8 +544,6 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsDrawPiano = true;
@@ -608,33 +558,15 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
 				if(isChecked) {
 					// Toggle is enabled
 					mIsHSV = true;
-					//yCbCrToggleBtn.setChecked(false);
 				} else {
 					// Toggle is disabled
 					mIsHSV = false;
 				}
 			}
 		});
-		
-		/*yCbCrToggleBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-				if(isChecked) {
-					// Toggle is enabled
-					mIsYCbCr = true;
-					hsvToggleBtn.setChecked(false);
-				} else {
-					// Toggle is disabled
-					mIsYCbCr = false;
-				}
-			}
-		});*/
 		
 		setPianoBtn.setOnClickListener(new OnClickListener() {
 			@Override

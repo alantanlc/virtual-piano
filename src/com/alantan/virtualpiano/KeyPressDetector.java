@@ -20,12 +20,11 @@ public class KeyPressDetector {
 	private double middleY = 1000;
 	
 	public boolean checkFingerDownwardMotion(Point prevPoint, Point currPoint) {
-		double xDiff = currPoint.x - prevPoint.x;
 		double yDiff = currPoint.y - prevPoint.y;
 		
 		//Log.i(TAG, "Y diff: " + yDiff + ", X diff: " + xDiff);
 		
-		if(yDiff < 5 /*|| Math.abs(xDiff) > 40*/) {
+		if(yDiff < 5) {
 			return false;
 		}
 		

@@ -40,8 +40,6 @@ public class HandDetector extends Detector {
 	
 	private MatOfPoint mPianoMaskMOP;
 	
-	private List<Point> fingerTipsLPOut = new ArrayList<Point>(); 
-	
 	@Override
 	public void apply(final Mat dst, final Mat src) {
 		
@@ -57,10 +55,7 @@ public class HandDetector extends Detector {
 		// 2. Apply static skin color threshold
 		Core.inRange(mMat, lowerThreshold, upperThreshold, mMat);
 		
-		// 3a. Perform dilation
-		//Imgproc.dilate(mMat, mMat, new Mat());
-		
-		// 3a. Perform erosion
+		// 3. Perform erosion
 		Imgproc.erode(mMat, mMat, new Mat());
 		
 		// 4. Find contours
@@ -69,7 +64,6 @@ public class HandDetector extends Detector {
 		// 5. If no contours, return
 		if(contours.size() == 0) { 
 			//Log.i(TAG, "No contours found");
-			//lowestPoint = null;
 			return;
 		}
 		
@@ -83,6 +77,7 @@ public class HandDetector extends Detector {
 		};
 		
 		if(!mIsMultiFingers) {
+			// 8. Find lowest point of hand contour
 			mFingerTipsLPOut.add(findLowestPoint(contours.get(largestContourIndex)));
 		} else {
 			// 8. Reduce number of points using DP algorithm
@@ -115,18 +110,17 @@ public class HandDetector extends Detector {
 			setFingerTipsLPOut(fingerTipsLP);
 		}
 		
-		//Imgproc.drawContours(dst, hullContourLMOP, 0, Colors.mLineColorBlue, 1);
-		
+		// 14. If two hands mode is not on, return
 		if(!mIsTwoHands) {
 			return;
 		}
 		
-		// Else detect second hand
+		// 15. Else detect second hand
 		contours.remove(largestContourIndex);
 		largestContourIndex = findLargestContourIndex(contours);
 		
-		// If index equals -1, return
-		if(largestContourIndex == -1 /*|| Imgproc.contourArea(contours.get(largestContourIndex)) < handArea*/) {
+		// 16. If index equals -1, return
+		if(largestContourIndex == -1 || Imgproc.contourArea(contours.get(largestContourIndex)) < handArea) {
 			Log.i(TAG, "No hand detected");
 			return;
 		};
@@ -244,10 +238,8 @@ public class HandDetector extends Detector {
 		lpOut.add(lpIn.get(0));
 		
 		for(int i=1; i<lpIn.size(); i++) {
-			//Log.i(TAG, "Gap: " + (lpIn.get(i).x - lpOut.get(fingerIndex).x));
 			if(lpIn.get(i).x - lpOut.get(fingerIndex).x < 15 && Math.abs(lpIn.get(i).y - lpOut.get(fingerIndex).y) < 20) {
 				lpOut.get(fingerIndex).x = (lpOut.get(fingerIndex).x + lpIn.get(i).x)/2;
-				//lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y + lpIn.get(i).y)/2;
 				lpOut.get(fingerIndex).y = (lpOut.get(fingerIndex).y > lpIn.get(fingerIndex).y) ? lpOut.get(fingerIndex).y :  lpIn.get(fingerIndex).y;
 			} else {
 				lpOut.add(lpIn.get(i));
