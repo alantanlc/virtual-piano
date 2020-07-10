@@ -2,7 +2,7 @@
 
 ![screenshot](FYP16VirtualPiano_webimg.jpg)
 
-### Description
+# Description
 
 This project develops an Android mobile application that uses real-time image processing techniques which allow users to play the piano on a piece of paper with piano keys drawn or printed on it.
 
@@ -16,6 +16,6 @@ In fingertip detection, skin-coloured contours are detected through Hue threshol
 
 A finger press occurs when the fingertip moves in a downward motion towards the paper piano. The downward motion is tracked by calculating the difference of the fingertip's y-coordinate points between two consecutive captured frames. If the difference is larger than a specific value, a finger press is deemed to have occurred. When a finger press is detected, the fingertip point in the second captured frame is used to check if the effective fingertip point falls within any white or black piano key contour region using point-in-contour test.
 
-### Credits
+# Credits
 
 To Mr. Ravi Suppiah for his guidance and the opportunity given to showcase my work during the NTU Open House 2016.
